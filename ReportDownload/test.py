@@ -562,85 +562,50 @@ def PRELUDE_RECAP_report_download():
 
     print("PRELUDE_RECAP report download complete")  
 
-def trade_report_download():
-    import pythoncom
-    # 스케줄러의 별도 스레드에서 win32com 객체를 생성하려면 CoInitialize()가 필수적입니다.
-    pythoncom.CoInitialize()
-    
-    try:
-        print(f"[{datetime.datetime.now()}] 매매보고서 다운로드 시작")
-        print("===================================================")
-        kb_pbs_trade_report_download()
-        print("===================================================")
-        nh_trade_report_download()
-        print("===================================================")
-        kis_pbs_trade_report_download()
-        print("===================================================")
-        kis_trade_report_download()
-        print("===================================================")
-        yuanta_trade_report_download()
-        print("===================================================")
-        miraeasset_trade_report_download()
-        print("===================================================")
-        hsbc_trade_report_download()
-        print("===================================================")
-        eugene_trade_report_download()
-        print("===================================================")
-        jpm_trade_report_download()
-        print("===================================================")
-        clsa_trade_report_download()
-        print("===================================================")
-        GoldmanSachs_trade_report_download()
-        print("===================================================")
-        hmc_trade_report_download()
-        print("===================================================")
-        kb_swap_trade_report_download()
-        print("===================================================")
-        kis_swap_trade_report_download()
-        print("===================================================")
-        CIMB_trade_report_download()
-        print("===================================================")
-        MacQuarie_trade_report_download()
-        print("===================================================")
-        DAOL_trade_report_download()
-        print("===================================================")
-        DS_trade_report_download()
-        print("===================================================")
-        Daiwa_trade_report_download()
-        print("===================================================")
-        tradeTeam_report_download()
-        print("===================================================")
-        OESERVER_report_download()
-        print("===================================================")
-        PRELUDE_RECAP_report_download()
-        print("===================================================")
-        
-        # 파일 다운로드 후 move_files 스크립트를 통해 파일 분류
-        print("파일 이동 및 정리 작업 시작")
-        move_files.main()
-        print("===================================================")
-
-        print(f"[{datetime.datetime.now()}] 매매보고서 다운로드 및 분류 완료")
-    except Exception as e:
-        print(f"에러 발생: {e}")
-    finally:
-        pythoncom.CoUninitialize()
-
+# def trade_report_download():
 if __name__ == "__main__":
-    # 스케줄러 객체 생성
-    # scheduler = BlockingScheduler()
-
-    # 1. 특정 주기마다 실행 (예: 1시간마다) - 필요시 주석 해제
-    # scheduler.add_job(trade_report_download, 'interval', hours=1)
-
-    # 2. 매일 특정 시간에 실행 (예: 아침 8시 30분) - 필요시 조건 변경
-    # scheduler.add_job(trade_report_download, 'cron', hour=8, minute=30)
-    
-    # [참고] 프로그램을 실행하자마자 한 번 작동하게 하려면 아래 주석을 해제하세요
-    trade_report_download()
-
-    # print("스케줄러가 시작되었습니다... (종료: Ctrl+C)")
-    # try:
-    #     scheduler.start()
-    # except (KeyboardInterrupt, SystemExit):
-    #     print("스케줄러가 종료되었습니다.")
+    print("===================================================")
+    kb_pbs_trade_report_download()
+    print("===================================================")
+    nh_trade_report_download()
+    print("===================================================")
+    kis_pbs_trade_report_download()
+    print("===================================================")
+    kis_trade_report_download()
+    print("===================================================")
+    yuanta_trade_report_download()
+    print("===================================================")
+    miraeasset_trade_report_download()
+    print("===================================================")
+    hsbc_trade_report_download()
+    print("===================================================")
+    eugene_trade_report_download()
+    print("===================================================")
+    jpm_trade_report_download()
+    print("===================================================")
+    clsa_trade_report_download()
+    print("===================================================")
+    GoldmanSachs_trade_report_download()
+    print("===================================================")
+    hmc_trade_report_download()
+    print("===================================================")
+    kb_swap_trade_report_download()
+    print("===================================================")
+    kis_swap_trade_report_download()
+    print("===================================================")
+    CIMB_trade_report_download()
+    print("===================================================")
+    MacQuarie_trade_report_download()
+    print("===================================================")
+    DAOL_trade_report_download()
+    print("===================================================")
+    DS_trade_report_download()
+    print("===================================================")
+    Daiwa_trade_report_download()
+    print("===================================================")
+    tradeTeam_report_download()
+    print("===================================================")
+    OESERVER_report_download()
+    print("===================================================")
+    PRELUDE_RECAP_report_download()
+    print("===================================================")
