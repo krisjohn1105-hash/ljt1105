@@ -1,14 +1,13 @@
 import pandas as pd
 from tabulate import tabulate
-from pykrx import stock
+import FinanceDataReader as fdr
 from datetime import datetime, timedelta
 
 
 
-def read_oms_futures_file():
+def read_oms_futures_file(target_date):
 
-    today = datetime.now().strftime("%Y-%m-%d")
-    # today = "2025-04-25"
+    today = target_date.strftime("%Y-%m-%d")
 
     # 1. 엑셀 파일 불러오기
     file_path = f'Z:/02.펀드/019. 일간매매내역/파생/{today}_futures.xlsx'  # 파일 경로를 적절히 수정하세요.
@@ -60,10 +59,9 @@ def read_oms_futures_file():
     return oms_futures_df
 
 
-def read_oms_stock_file():
+def read_oms_stock_file(target_date):
 
-    today = datetime.now().strftime("%Y-%m-%d")
-    # today = "2025-04-25"
+    today = target_date.strftime("%Y-%m-%d")
 
     # 1. 엑셀 파일 불러오기
     file_path = f'Z:/02.펀드/019. 일간매매내역/주식/{today}_stock.xlsx'  # 파일 경로를 적절히 수정하세요.
@@ -92,23 +90,16 @@ def read_oms_stock_file():
     # 종목명 클렌징
     df['종목명'] = df['종목명'].str.strip()
 
-    # 4. pykrx를 사용해 종목명으로 단축코드 생성
-    today = datetime.now()
-    date = (today - timedelta(days=1)).strftime("%Y%m%d")  # 어제 날짜
+    # 4. FinanceDataReader를 사용해 종목명으로 단축코드 생성
+    # pykrx의 API 통신 에러(KeyError: '시장') 발생으로 인해 FinanceDataReader로 전환
+    krx_df = fdr.StockListing('KRX') # 코스피, 코스닥 종목 포함
+    etf_df = fdr.StockListing('ETF/KR') # 국내 ETF 종목 포함
     
-    # 코스피 및 코스닥 종목코드 가져오기
-    kospi_stocks = stock.get_market_ticker_list(date=date, market="KOSPI")
-    kosdaq_stocks = stock.get_market_ticker_list(date=date, market="KOSDAQ")
-
-    kospi_mapping = {stock.get_market_ticker_name(ticker): ticker for ticker in kospi_stocks}
-    kosdaq_mapping = {stock.get_market_ticker_name(ticker): ticker for ticker in kosdaq_stocks}
-
-    # ETF 종목코드 가져오기
-    etf_tickers = stock.get_etf_ticker_list(date=date)
-    etf_mapping = {stock.get_etf_ticker_name(ticker): ticker for ticker in etf_tickers} 
+    krx_mapping = dict(zip(krx_df['Name'], krx_df['Code']))
+    etf_mapping = dict(zip(etf_df['Name'], etf_df['Symbol']))
 
     # 두 시장의 매핑 통합
-    stock_code_mapping = {**kospi_mapping, **kosdaq_mapping, **etf_mapping}
+    stock_code_mapping = {**krx_mapping, **etf_mapping}
 
     # 종목명으로 단축코드 매핑
     df['단축코드'] = df['종목명'].map(stock_code_mapping)
@@ -135,10 +126,9 @@ def read_oms_stock_file():
 
     return oms_stock_df
 
-def read_prelude_stock_trade_history():
+def read_prelude_stock_trade_history(target_date):
 
-    today = datetime.now().strftime("%m%d%y")
-    # today = "042525"
+    today = target_date.strftime("%m%d%y")
 
     file_path = f"Z:/02.펀드/003.매매보고서 대사/PRELUDE_RECAP/Korea Stocks - {today}.xls"
     df = pd.read_excel(file_path)
@@ -171,11 +161,9 @@ def read_prelude_stock_trade_history():
     return prelude_stock_df
 
 
-def read_trader_file():
+def read_trader_file(target_date):
 
-    # today = datetime.now().strftime("%m월%d일")
-    today = f"{datetime.now().month}월{datetime.now().day}일"
-    # today = "4월25일"
+    today = f"{target_date.month}월{target_date.day}일"
 
     # 1. 엑셀 파일 불러오기
     file_path = f'Z:/02.펀드/019. 일간매매내역/{today} 전체.xlsx'  # 파일 경로를 적절히 수정하세요.
@@ -223,11 +211,11 @@ def aggregate_by_key(df):
     return aggregated_df
 
 
-def merge_and_reconcile(output_path):
+def merge_and_reconcile(output_path, target_date):
     # OMS Futures와 Stock 데이터를 읽기
-    oms_futures_df = read_oms_futures_file()
-    oms_stock_df = read_oms_stock_file()
-    prelude_stock_df = read_prelude_stock_trade_history()
+    oms_futures_df = read_oms_futures_file(target_date)
+    oms_stock_df = read_oms_stock_file(target_date)
+    prelude_stock_df = read_prelude_stock_trade_history(target_date)
 
     # 1. oms_futures_df를 oms_stock_df 아래에 병합
     trade_history_combined = pd.concat([oms_stock_df, oms_futures_df, prelude_stock_df], ignore_index=True)
@@ -235,7 +223,7 @@ def merge_and_reconcile(output_path):
     aggregated_oms = aggregate_by_key(trade_history_combined)
 
     # Trader 데이터를 읽기
-    trader_df = read_trader_file()
+    trader_df = read_trader_file(target_date)
     aggregated_trader = aggregate_by_key(trader_df)
 
     # 2. 대사 작업: 펀드명, 매매구분, 단축코드가 일치하는 행에서 체결단가, 체결수량, 체결금액 비교
@@ -269,12 +257,17 @@ def merge_and_reconcile(output_path):
     return reconciliation_df
 
 def main():
-    today = datetime.now().strftime("%Y-%m-%d")
+    # 기준 날짜 설정: 특정 날짜로 실행하려면 아래 변수를 수정하세요.
+    # 예: target_date = datetime(2025, 4, 25)
+    # target_date = datetime.now()
+    target_date = datetime(2026, 4, 9)
+
+    today_str = target_date.strftime("%Y-%m-%d")
     # read_oms_futures_file()
     # read_oms_stock_file()
     # read_trader_file()
-    output_path = f'Z:/02.펀드/019. 일간매매내역/recon_result/{today}_recon result.xlsx'  # 저장 경로 지정
-    merge_and_reconcile(output_path)
+    output_path = f'Z:/02.펀드/019. 일간매매내역/recon_result/{today_str}_recon result.xlsx'  # 저장 경로 지정
+    merge_and_reconcile(output_path, target_date)
 
 if __name__ == "__main__":
     main()

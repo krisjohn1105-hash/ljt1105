@@ -616,9 +616,9 @@ def trade_report_download():
         print("===================================================")
         
         # 파일 다운로드 후 move_files 스크립트를 통해 파일 분류
-        print("파일 이동 및 정리 작업 시작")
-        move_files.main()
-        print("===================================================")
+        # print("파일 이동 및 정리 작업 시작")
+        # move_files.main()
+        # print("===================================================")
 
         print(f"[{datetime.datetime.now()}] 매매보고서 다운로드 및 분류 완료")
     except Exception as e:
