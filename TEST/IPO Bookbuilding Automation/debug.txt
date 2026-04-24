@@ -1,0 +1,1362 @@
+<tr><td align="center">
+<script src="lib/lib.fund.js" type="text/javascript"></script>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="center" height="60" valign="top" width="810">
+<div style="padding-top:10px;"></div>
+<!-- IPO 승인종목-->
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td height="24"><img alt="기업개요" src="/images/2008/ipo/tit_ipo_sub01.gif"/></td>
+</tr>
+<tr>
+<td bgcolor="#85B0DD" height="2"></td>
+</tr>
+<tr>
+<td height="8"></td>
+</tr>
+</table>
+<table bgcolor="#C2D2DF" border="0" cellpadding="0" cellspacing="1" summary="기업개요" width="100%">
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="30" width="15%"> 종목명</td>
+<td bgcolor="#FFFFFF" width="35%">  <a href="http://forum.38.co.kr/html/forum/board/?code=0039P0"><b><font size="3">매드업</font></b></a> </td>
+<td align="center" bgcolor="#F1F4F7" width="15%"> 진행상황</td>
+<td bgcolor="#FFFFFF">  공모주	</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25"> 시장구분</td>
+<td bgcolor="#FFFFFF">  코스닥</td>
+<td align="center" bgcolor="#F1F4F7"> 종목코드</td>
+<td bgcolor="#FFFFFF">  0039P0</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25"> 업종 </td>
+<td bgcolor="#FFFFFF" colspan="3">  소프트웨어 개발 및 공급업</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25"> 대표자 </td>
+<td bgcolor="#FFFFFF">  이주민, 이동호</td>
+<td align="center" bgcolor="#F1F4F7"> 기업구분 </td>
+<td bgcolor="#FFFFFF">  중소일반</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25">본점소재지</td>
+<td bgcolor="#FFFFFF" colspan="3">   서울특별시 서초구 서초대로74길 4, 20층</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25"> 홈페이지 </td>
+<td bgcolor="#FFFFFF">  <a href="http://madup.com" target="_blank">madup.com</a></td>
+<td align="center" bgcolor="#F1F4F7"> 대표전화 </td>
+<td bgcolor="#FFFFFF">  02-1522-1060</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25">최대주주</td>
+<td bgcolor="#FFFFFF" colspan="3">   -</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25" width="15%"> 매출액 </td>
+<td bgcolor="#FFFFFF" width="35%">  34,989 (백만원)</td>
+<td align="center" bgcolor="#F1F4F7" width="15%">법인세비용차감전<br/>계속사업이익</td>
+<td bgcolor="#FFFFFF">  -2,726 (백만원)</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25" width="15%"> 순이익</td>
+<td bgcolor="#FFFFFF">  -2,728 (백만원)</td>
+<td align="center" bgcolor="#F1F4F7"> 자본금</td>
+<td bgcolor="#FFFFFF">  1,668 (백만원)</td>
+</tr>
+</table>
+<br/>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td height="24"><img alt="공모정보" src="/images/2008/ipo/tit_ipo_sub02.gif"/></td>
+</tr>
+<tr>
+<td bgcolor="#85B0DD" height="2"></td>
+</tr>
+<tr>
+<td height="8"></td>
+</tr>
+</table>
+<table bgcolor="#C2D2DF" border="0" cellpadding="0" cellspacing="1" summary="공모정보" width="100%">
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25" width="15%"> 총공모주식수 </td>
+<td bgcolor="#FFFFFF" width="35%">  2,000,000 주</td>
+<td align="center" bgcolor="#F1F4F7"> 액면가 </td>
+<td bgcolor="#FFFFFF">  100 원</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25">상장공모</td>
+<td bgcolor="#FFFFFF" colspan="3">  신주모집 : 2,000,000 주 (100%) 
+	    </td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25">희망공모가액</td>
+<td bgcolor="#FFFFFF">   7,000 ~ 8,000 원</td>
+<td align="center" bgcolor="#F1F4F7"> 청약경쟁률 </td>
+<td bgcolor="#FFFFFF">   </td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25"> 확정공모가 </td>
+<td bgcolor="#FFFFFF">  <b>-</b> 원</td>
+<td align="center" bgcolor="#F1F4F7"> 공모금액 </td>
+<td bgcolor="#FFFFFF">  14,000 (백만원)</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7" height="25"> 주간사 </td>
+<td bgcolor="#FFFFFF">  <b>미래에셋증권</b>
+</td>
+<td align="center" bgcolor="#FFFFFF" colspan="2">주식수: 500,000~600,000 주   /   청약한도: 25,000~30,000 주</td>
+</tr>
+</table>
+<br/>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td height="24"><img alt="공모청약일정" src="/images/2008/ipo/tit_ipo_sub03.gif"/></td>
+</tr>
+<tr>
+<td bgcolor="#85B0DD" height="2"></td>
+</tr>
+<tr>
+<td height="8"></td>
+</tr>
+</table>
+<table bgcolor="#C2D2DF" border="0" cellpadding="0" cellspacing="1" summary="공모청약일정" width="100%">
+<tr>
+<td align="center" bgcolor="#F1F4F7" rowspan="6" width="10%"> 주요일정</td>
+<td align="center" bgcolor="#F5F5F2" height="25" width="20%">수요예측일</td>
+<td bgcolor="#FFFFFF" colspan="3" width="70%">  2026.05.20	  ~   2026.05.27	</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F5F5F2" height="25">공모청약일</td>
+<td bgcolor="#FFFFFF" colspan="3">  2026.06.01  ~   2026.06.02 </td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F5F5F2" height="25">배정공고일(신문)</td>
+<td bgcolor="#FFFFFF" colspan="3">  2026.06.05      (주간사 홈페이지 참조)</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F5F5F2" height="25">납입일</td>
+<td bgcolor="#FFFFFF" colspan="3">  2026.06.05</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F5F5F2" height="25">환불일</td>
+<td bgcolor="#FFFFFF" colspan="3">  2026.06.05</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F5F5F2" height="25">상장일</td>
+<td bgcolor="#FFFFFF" colspan="3">  </td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7">공모사항</td>
+<td bgcolor="FFFFFF" colspan="4">
+<table bgcolor="#C2D2DF" border="0" cellpadding="0" cellspacing="1" height="100%" leftmargin="0" topmargin="0" width="100%"><tr>
+<td align="center" bgcolor="#F5F5F2" width="22%">확정공모가</td>
+<td bgcolor="#FFFFFF">  <b>-</b> 원</td>
+<td bgcolor="#FFFFFF" colspan="2">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" height="25">   주당액면가 :  100            원</td>
+</tr>
+<tr>
+<td align="left" height="25">   희망공모가액 :  7,000             ~ 8,000 원</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F5F5F2" height="25" valign="middle">총공모주식수</td>
+<td bgcolor="#FFFFFF">  2,000,000 주</td>
+<td bgcolor="#FFFFFF" colspan="2">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" colspan="3">   공모금액 : 14,000          (백만원)</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F5F5F2" rowspan="4">그<br/>
+      룹<br/>
+      별<br/>
+      배<br/>
+      정</td>
+<td align="center" bgcolor="#FFFFFF" height="25">우리사주조합</td>
+<td bgcolor="#FFFFFF" width="160">   주          </td>
+<td bgcolor="#FFFFFF" width="160"> 청약증거금율 : 100% </td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" height="25">기관투자자등 </td>
+<td bgcolor="#FFFFFF">  1,400,000~1,500,000 주  (70.00~75.00%)        </td>
+<td bgcolor="#FFFFFF"> 최고한도 :  - 주</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" rowspan="2">일반청약자</td>
+<td bgcolor="#FFFFFF" height="25">  500,000~600,000 주  (25.00~30.00%)        </td>
+<td bgcolor="#FFFFFF"> 청약증거금율 : 50% </td>
+</tr>
+<tr>
+<td bgcolor="#FFFFFF" height="25"> 청약 최고한도 :  <b>25,000~30,000</b> 주 </td>
+<td bgcolor="#FFFFFF"> 최저 :  - 주</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7">IR일정</td>
+<td align="left" bgcolor="#FFFFFF" colspan="4">
+<table bgcolor="#C2D2DF" border="0" cellpadding="0" cellspacing="1" width="100%">
+<tr>
+<td align="center" bgcolor="#F5F5F2" width="22%">
+<font color="#000000">IR일자</font> 
+		</td>
+<td align="center" bgcolor="FFFFFF" height="27" width="20%">
+		2026.05.15 ~ 05.27		</td>
+<td align="center" bgcolor="#F5F5F2" width="20%">
+<font color="#000000">IR장소/시간</font> 
+		</td>
+<td bgcolor="FFFFFF" height="40" width="38%">
+		  기관 :  <br/>
+		  일반 :  		
+		</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#F1F4F7">수요예측결과</td>
+<td align="left" bgcolor="#FFFFFF" colspan="4">
+<table bgcolor="#C2D2DF" border="0" cellpadding="0" cellspacing="1" width="100%">
+<tr>
+<td align="center" bgcolor="#F5F5F2" width="22%">
+<font color="#000000">기관경쟁률</font> 
+		</td>
+<td align="center" bgcolor="FFFFFF" height="27" width="20%">
+</td>
+<td align="center" bgcolor="#F5F5F2" width="20%">
+<font color="#000000">의무보유확약</font> 
+		</td>
+<td align="center" bgcolor="FFFFFF" width="38%">
+		0.00%		
+		</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<br/>
+<br/>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td height="30"><img alt="본질가치분석" src="/images/2008/ipo/tit_ipo_sub12.gif"/></td>
+</tr>
+<tr>
+<td bgcolor="#85B0DD" height="2"></td>
+</tr>
+<tr>
+<td height="8"></td>
+</tr>
+</table>
+<!----------------  재무비율 시작 ( B0039P0.htm ) ----------------->
+<!--재무비율 -->
+<br/>
+<table border="0" cellpadding="0" cellspacing="" width="100%">
+<tr>
+<td height="30" width="180"> <b>매드업</b></td>
+<td align="center" width="*"><b>재 무 비 율</b></td>
+<td align="right" width="180"> </td>
+</tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td valign="top" width="100%">
+<table bgcolor="#B1C0E1" border="0" cellpadding="2" cellspacing="1" width="100%">
+<tr>
+<td align="center" bgcolor="#E4E9F6" colspan="2" height="30">구분</td>
+<td align="center" bgcolor="#E4E9F6"><b>2025.12.31</b></td><td align="center" bgcolor="#E4E9F6"><b>2024.12.31</b></td><td align="center" bgcolor="#E4E9F6"><b>2023.12.31</b></td> </tr>
+<tr>
+<td align="center" bgcolor="F2F5FC" rowspan="2" width="8%"><b>안정성</b></td>
+<td align="center" bgcolor="#F5F5F2" height="30" width="14%">부채비율</td>
+<td align="right" bgcolor="#ffffff">155.18 %  </td><td align="right" bgcolor="#ffffff">0.00 %  </td><td align="right" bgcolor="#ffffff">0.00 %  </td> </tr>
+<tr>
+<td align="center" bgcolor="#F5F5F2" height="30">유동비율</td>
+<td align="right" bgcolor="#ffffff">154.91 %  </td><td align="right" bgcolor="#ffffff">74.59 %  </td><td align="right" bgcolor="#ffffff">68.56 %  </td> </tr>
+<tr>
+<td align="center" bgcolor="F2F5FC" rowspan="2"><b>수익성</b></td>
+<td align="center" bgcolor="#F5F5F2" height="30">자기자본수익률</td>
+<td align="right" bgcolor="#ffffff">22.90 %  </td><td align="right" bgcolor="#ffffff">18.11 %  </td><td align="right" bgcolor="#ffffff">23.92 %  </td> </tr>
+<tr>
+<td align="center" bgcolor="#F5F5F2" height="30">영업이익률</td>
+<td align="right" bgcolor="#ffffff">18.95 %  </td><td align="right" bgcolor="#ffffff">-1.12 %  </td><td align="right" bgcolor="#ffffff">3.44 %  </td> </tr>
+<tr>
+<td align="center" bgcolor="F2F5FC" rowspan="2"><b>성장성</b></td>
+<td align="center" bgcolor="#F5F5F2" height="30">매출액증가율</td>
+<td align="right" bgcolor="#ffffff">44.36 %  </td><td align="right" bgcolor="#ffffff">22.74 %  </td><td align="right" bgcolor="#ffffff">-24.81 %  </td> </tr>
+<tr>
+<td align="center" bgcolor="#F5F5F2" height="30">영업이익증가율</td>
+<td align="right" bgcolor="#ffffff">-2,549.14 %  </td><td align="right" bgcolor="#ffffff">-139.82 %  </td><td align="right" bgcolor="#ffffff">-111.57 %  </td> </tr>
+</table>
+</td>
+</tr>
+</table>
+<!--재무비율 끝-->
+<!-- <br><br>
+
+<table width=100% cellspacing=0 cellpadding=0 border=0>
+
+<tr>
+
+<td align="center" width="50%">
+
+<table cellspacing=1 cellpadding=0 border=0 bgcolor="#B1C0E1">
+
+<tr>
+
+	<td height="20" width="280" bgcolor="#E4E9F6" align="center"><b>부채비율 (%)</b></td>
+
+</tr>
+
+<tr>
+
+	<td align="center" bgcolor="#ffffff"><img src="http://chart.apis.google.com/chart?cht=bvg&chbh=r,0.5,1.5&chs=250x150&chd=t:0,0,155.176031709&chds=a&chl=2023.12.31|2024.12.31|2025.12.31&chxt=y&chco=C6D9FD|97BBFE|4D89F9&chtt=www.38.co.kr&chts=B9B9B9,16&chm=N*cf2,000000,0,-1,12" alt='차트1'></td>
+
+</tr>
+
+</table>
+
+</td>
+
+<td align="center" width="50%">
+
+<table cellspacing=1 cellpadding=0 border=0 bgcolor="#B1C0E1">
+
+<tr>
+
+	<td height="20" width="280" bgcolor="#E4E9F6" align="center"><b>유동비율 (%)</b></td>
+
+</tr>
+
+<tr>
+
+	<td align="center" bgcolor="#ffffff"><img src="http://chart.apis.google.com/chart?cht=bvg&chbh=r,0.5,1.5&chs=250x150&chd=t:68.5565038452,74.5937655951,154.908511123&chds=a&chl=2023.12.31|2024.12.31|2025.12.31&chxt=y&chco=C6D9FD|97BBFE|4D89F9&chtt=www.38.co.kr&chts=B9B9B9,16&chm=N*cf2,000000,0,-1,12" alt='차트2'></td>
+
+</tr>
+
+</table></td>
+
+</tr>
+
+<tr>
+
+	<td colspan="2" height="20"></td>
+
+</tr>
+
+<tr>
+
+<td align="center" width="50%">
+
+<table cellspacing=1 cellpadding=0 border=0 bgcolor="#B1C0E1">
+
+<tr>
+
+	<td height="20" width="280" bgcolor="#E4E9F6" align="center"><b>자기자본수익률 (%)</b></td>
+
+</tr>
+
+<tr>
+
+	<td align="center" bgcolor="#ffffff"><img src="http://chart.apis.google.com/chart?cht=bvg&chbh=r,0.5,1.5&chs=250x150&chd=t:23.9240437456,18.1146257438,22.9045231989&chds=a&chl=2023.12.31|2024.12.31|2025.12.31&chxt=y&chco=C6D9FD|97BBFE|4D89F9&chtt=www.38.co.kr&chts=B9B9B9,16&chm=N*cf2,000000,0,-1,12" alt='차트3'></td>
+
+</tr>
+
+</table>
+
+</td>
+
+<td align="center" width="50%">
+
+<table cellspacing=1 cellpadding=0 border=0 bgcolor="#B1C0E1">
+
+<tr>
+
+	<td height="20" width="280" bgcolor="#E4E9F6" align="center"><b>영업이익률 (%)</b></td>
+
+</tr>
+
+<tr>
+
+	<td align="center" bgcolor="#ffffff"><img src="http://chart.apis.google.com/chart?cht=bvg&chbh=r,0.5,1.5&chs=250x150&chd=t:3.44379211159,-1.11717495987,18.9534780288&chds=a&chl=2023.12.31|2024.12.31|2025.12.31&chxt=y&chco=C6D9FD|97BBFE|4D89F9&chtt=www.38.co.kr&chts=B9B9B9,16&chm=N*cf2,000000,0,-1,12" alt='차트4'></td>
+
+</tr>
+
+</table></td>
+
+</tr>
+
+<tr>
+
+	<td colspan="2" height="20"></td>
+
+</tr>
+
+<tr>
+
+<td align="center" width="50%">
+
+<table cellspacing=1 cellpadding=0 border=0 bgcolor="#B1C0E1">
+
+<tr>
+
+	<td height="20" width="280" bgcolor="#E4E9F6" align="center"><b>매출액증가율 (%)</b></td>
+
+</tr>
+
+<tr>
+
+	<td align="center" bgcolor="#ffffff"><img src="http://chart.apis.google.com/chart?cht=bvg&chbh=r,0.5,1.5&chs=250x150&chd=t:-24.8118741482,22.739272627,44.3595505618&chds=a&chl=2023.12.31|2024.12.31|2025.12.31&chxt=y&chco=C6D9FD|97BBFE|4D89F9&chtt=www.38.co.kr&chts=B9B9B9,16&chm=N*cf2,000000,0,-1,12" alt='차트5'></td>
+
+</tr>
+
+</table>
+
+</td>
+
+<td align="center" width="50%">
+
+<table cellspacing=1 cellpadding=0 border=0 bgcolor="#B1C0E1">
+
+<tr>
+
+	<td height="20" width="280" bgcolor="#E4E9F6" align="center"><b>영업이익증가율 (%)</b></td>
+
+</tr>
+
+<tr>
+
+	<td align="center" bgcolor="#ffffff"><img src="http://chart.apis.google.com/chart?cht=bvg&chbh=r,0.5,1.5&chs=250x150&chd=t:-111.56543602,-139.816933638,-2549.13793103&chds=a&chl=2023.12.31|2024.12.31|2025.12.31&chxt=y&chco=C6D9FD|97BBFE|4D89F9&chtt=www.38.co.kr&chts=B9B9B9,16&chm=N*cf2,000000,0,-1,12" alt='차트6'></td>
+
+</tr>
+
+</table></td>
+
+</tr>
+
+</table>-->
+<!--주가지표 -->
+<br/><br/>
+<table border="0" cellpadding="0" cellspacing="" width="100%">
+<tr>
+<td height="30" width="180"> <b>매드업</b></td>
+<td align="center" width="*"><b>주 가 지 표</b></td>
+<td align="right" width="180"><!--현재가: <font face="돋움체" color=""><b>0</b></font>원&nbsp;(<font face="돋움체" color=""><b>원, %</b></font>)&nbsp;--></td>
+</tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td valign="top" width="100%">
+<table bgcolor="#B1C0E1" border="0" cellpadding="2" cellspacing="1" width="100%">
+<tr>
+<td align="center" bgcolor="#E4E9F6" height="30" width="22%">구 분 </td>
+<td align="center" bgcolor="#E4E9F6"><b>2025.12.31</b></td><td align="center" bgcolor="#E4E9F6"><b>2024.12.31</b></td><td align="center" bgcolor="#E4E9F6"><b>2023.12.31</b></td> </tr>
+<tr>
+<td bgcolor="#F2F5FC" height="30">  <strong>EPS</strong> (주당순이익) </td>
+<td align="right" bgcolor="#ffffff">471 원  </td><td align="right" bgcolor="#ffffff">-173 원  </td><td align="right" bgcolor="#ffffff">-264 원  </td> </tr>
+<tr>
+<td bgcolor="#F2F5FC" height="40">  <strong><font color="#3366FF">PER</font></strong> (주가수익비율)<br/>
+
+							  공모가 대비</td>
+<td align="right" bgcolor="#ffffff"><font color="#3366FF"><b>16.99</b></font>  </td><td align="right" bgcolor="#ffffff"><font color="#3366FF"><b>-46.16</b></font>  </td><td align="right" bgcolor="#ffffff"><font color="#3366FF"><b>-30.36</b></font>  </td> </tr>
+<tr>
+<td bgcolor="#F2F5FC" height="30">  <strong>BPS</strong> (주당순자산가치)</td>
+<td align="right" bgcolor="#ffffff">2,056 원  </td><td align="right" bgcolor="#ffffff">-957 원  </td><td align="right" bgcolor="#ffffff">-1,101 원  </td> </tr>
+<tr>
+<td bgcolor="#F2F5FC" height="30">  <strong>PBR</strong> (주가순자산비율)</td>
+<td align="right" bgcolor="#ffffff"><b>3.89</b>  </td><td align="right" bgcolor="#ffffff"><b>-8.36</b>  </td><td align="right" bgcolor="#ffffff"><b>-7.26</b>  </td> </tr>
+<tr>
+<td bgcolor="#F2F5FC" height="30">  <strong>SPS</strong> (주당매출액)</td>
+<td align="right" bgcolor="#ffffff">2,695 원  </td><td align="right" bgcolor="#ffffff">1,867 원  </td><td align="right" bgcolor="#ffffff">1,521 원  </td> </tr>
+<tr>
+<td bgcolor="#F2F5FC" height="30">  <strong>PSR</strong> (주가매출액비율)</td>
+<td align="right" bgcolor="#ffffff"><b>2.97</b>  </td><td align="right" bgcolor="#ffffff"><b>4.29</b>  </td><td align="right" bgcolor="#ffffff"><b>5.26</b>  </td> </tr>
+</table>
+</td>
+</tr>
+</table>
+<!--주가지표 끝-->
+<!--<br><br>
+
+<table width=100% cellspacing=0 cellpadding=0 border=0>
+
+<tr>
+
+<td align="center" width="50%">
+
+<table cellspacing=1 cellpadding=0 border=0 bgcolor="#B1C0E1">
+
+<tr>
+
+	<td height="20" width="280" bgcolor="#E4E9F6" align="center"><b>EPS (주당순이익) (원)</b></td>
+
+</tr>
+
+<tr>
+
+	<td align="center" bgcolor="#ffffff"><img src="http://chart.apis.google.com/chart?cht=bvg&chbh=r,0.5,1.5&chs=250x150&chd=t:-264,-173,471&chds=a&chl=2023.12.31|2024.12.31|2025.12.31&chxt=y&chco=C6D9FD|97BBFE|4D89F9&chtt=www.38.co.kr&chts=B9B9B9,16&chm=N*cf2,000000,0,-1,12" alt='차트7'></td>
+
+</tr>
+
+</table>
+
+</td>
+
+<td align="center" width="50%">
+
+<table cellspacing=1 cellpadding=0 border=0 bgcolor="#B1C0E1">
+
+<tr>
+
+	<td height="20" width="280" bgcolor="#E4E9F6" align="center"><b>PER (주가수익비율)</b></td>
+
+</tr>
+
+<tr>
+
+	<td align="center" bgcolor="#ffffff"><img src="http://chart.apis.google.com/chart?cht=bvg&chbh=r,0.5,1.5&chs=250x150&chd=t:-30.36,-46.16,16.99&chds=a&chl=2023.12.31|2024.12.31|2025.12.31&chxt=y&chco=C6D9FD|97BBFE|4D89F9&chtt=www.38.co.kr&chts=B9B9B9,16&chm=N*cf2,000000,0,-1,12" alt='차트8'></td>
+
+</tr>
+
+</table></td>
+
+</tr>
+
+<tr>
+
+	<td colspan="2" height="20"></td>
+
+</tr>
+
+<tr>
+
+<td align="center" width="50%">
+
+<table cellspacing=1 cellpadding=0 border=0 bgcolor="#B1C0E1">
+
+<tr>
+
+	<td height="20" width="280" bgcolor="#E4E9F6" align="center"><b>BPS (주당순자산가치) (원)</b></td>
+
+</tr>
+
+<tr>
+
+	<td align="center" bgcolor="#ffffff"><img src="http://chart.apis.google.com/chart?cht=bvg&chbh=r,0.5,1.5&chs=250x150&chd=t:-1101,-957,2056&chds=a&chl=2023.12.31|2024.12.31|2025.12.31&chxt=y&chco=C6D9FD|97BBFE|4D89F9&chtt=www.38.co.kr&chts=B9B9B9,16&chm=N*cf2,000000,0,-1,12" alt='차트9'></td>
+
+</tr>
+
+</table>
+
+</td>
+
+<td align="center" width="50%">
+
+<table cellspacing=1 cellpadding=0 border=0 bgcolor="#B1C0E1">
+
+<tr>
+
+	<td height="20" width="280" bgcolor="#E4E9F6" align="center"><b>PBR (주가순자산비율)</b></td>
+
+</tr>
+
+<tr>
+
+	<td align="center" bgcolor="#ffffff"><img src="http://chart.apis.google.com/chart?cht=bvg&chbh=r,0.5,1.5&chs=250x150&chd=t:-7.26,-8.36,3.89&chds=a&chl=2023.12.31|2024.12.31|2025.12.31&chxt=y&chco=C6D9FD|97BBFE|4D89F9&chtt=www.38.co.kr&chts=B9B9B9,16&chm=N*cf2,000000,0,-1,12" alt='차트10'></td>
+
+</tr>
+
+</table></td>
+
+</tr>
+
+<tr>
+
+	<td colspan="2" height="20"></td>
+
+</tr>
+
+<tr>
+
+<td align="center" width="50%">
+
+<table cellspacing=1 cellpadding=0 border=0 bgcolor="#B1C0E1">
+
+<tr>
+
+	<td height="20" width="280" bgcolor="#E4E9F6" align="center"><b>SPS (주당매출액) (원)</b></td>
+
+</tr>
+
+<tr>
+
+	<td align="center" bgcolor="#ffffff"><img src="http://chart.apis.google.com/chart?cht=bvg&chbh=r,0.5,1.5&chs=250x150&chd=t:1521,1867,2695&chds=a&chl=2023.12.31|2024.12.31|2025.12.31&chxt=y&chco=C6D9FD|97BBFE|4D89F9&chtt=www.38.co.kr&chts=B9B9B9,16&chm=N*cf2,000000,0,-1,12" alt='차트11'></td>
+
+</tr>
+
+</table>
+
+</td>
+
+<td align="center" width="50%">
+
+<table cellspacing=1 cellpadding=0 border=0 bgcolor="#B1C0E1">
+
+<tr>
+
+	<td height="20" width="280" bgcolor="#E4E9F6" align="center"><b>PSR (주가매출액비율)</b></td>
+
+</tr>
+
+<tr>
+
+	<td align="center" bgcolor="#ffffff"><img src="http://chart.apis.google.com/chart?cht=bvg&chbh=r,0.5,1.5&chs=250x150&chd=t:5.26,4.29,2.97&chds=a&chl=2023.12.31|2024.12.31|2025.12.31&chxt=y&chco=C6D9FD|97BBFE|4D89F9&chtt=www.38.co.kr&chts=B9B9B9,16&chm=N*cf2,000000,0,-1,12" alt='차트12'></td>
+
+</tr>
+
+</table></td>
+
+</tr>
+
+</table>
+
+		</td>
+
+	</tr>
+
+</table> -->
+<!----------------  재무비율 끝 ( B0039P0.htm ) -----------------><br/>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td height="24"><img alt="공모분석" src="/images/2008/ipo/tit_ipo_sub04.gif"/></td>
+</tr>
+<tr>
+<td bgcolor="#85B0DD" height="2"></td>
+</tr>
+<tr>
+<td height="8"></td>
+</tr>
+</table>
+<table bgcolor="#CCCCCC" border="0" cellpadding="0" cellspacing="1" leftmargin="0" topmargin="0" width="100%">
+<tr>
+<td align="center" bgcolor="#EFEFEF" colspan="5">
+<table border="0" width="500"><tr>
+<td align="center" height="60"><span class="readtext"><pre></pre> </span>
+</td>
+</tr></table>
+</td>
+</tr>
+<tr>
+<td align="center" bgcolor="#FFFFFF" colspan="5" height="30"> 
+		<a href="/html/fund/index.htm?page=1"><img align="middle" alt="목록보기" border="0" height="21" src="/images/ipo/list.gif" width="68"/></a>
+		 </td>
+</tr>
+<tr>
+<td align="center" colspan="5"> <font color="red">IPO 공모주 정보, 공모가, 공모주식수, 공모청약일정등은 유가증권신고서 수리(금감위)과정에서 
+      변경될 수 있습니다. </font></td>
+</tr>
+</table>
+<p> 
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td id="COMINFO"></td>
+</tr>
+</table>
+<br/>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td id="COMINFO2"></td>
+</tr>
+</table>
+<br/>
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="90%">
+<tr>
+<td align="left"><div style="padding:10px;"><img align="middle" alt="" src="/images/2008/icon_07.gif"/> <a href="https://www.38.co.kr/html/forum/board/?code=0039P0" target="_top"><u><font color="#1859B5"><b>매드업 주주동호회 바로가기</b></font></u></a></div><br/></td> <td align="right"></td>
+</tr>
+</table>
+<div id="comlayer2" style="display: none;">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr height="24">
+<td><img alt="공시자료" src="/images/2008/ipo/tit_ipo_sub05.gif"/></td>
+</tr>
+<tr>
+<td bgcolor="#85B0DD" height="2"></td>
+</tr>
+<tr>
+<td height="8"></td>
+</tr>
+</table>
+<table bgcolor="#C2D2DF" border="0" cellpadding="3" cellspacing="1" summary="공시자료" width="100%">
+<thead>
+<tr bgcolor="#F1F4F7">
+<th height="25" width="120">접수일자</th>
+<th align="center" bgcolor="#F1F4F7">보고서명</th>
+</tr>
+</thead>
+<tbody>
+<tr bgcolor="#F5F5F2">
+<td align="center" height="28">2026/04/13</td>
+<td align="left" bgcolor="#FFFFFF"><a href="javascript:viewDetail2('20260413002759')"><font color="#265E84">[매드업]증권신고서(지분증권)</font></a></td></tr>
+<tr bgcolor="#F5F5F2">
+<td align="center" height="28">2026/03/31</td>
+<td align="left" bgcolor="#FFFFFF"><a href="javascript:viewDetail2('20260331003409')"><font color="#265E84">[매드업]연결감사보고서 (2025.12)</font></a></td></tr>
+<tr bgcolor="#F5F5F2">
+<td align="center" height="28">2026/03/31</td>
+<td align="left" bgcolor="#FFFFFF"><a href="javascript:viewDetail2('20260331003404')"><font color="#265E84">[매드업]감사보고서 (2025.12)</font></a></td></tr>
+<tr bgcolor="#F5F5F2">
+<td align="center" height="28">2025/04/14</td>
+<td align="left" bgcolor="#FFFFFF"><a href="javascript:viewDetail2('20250414000959')"><font color="#265E84">[매드업]연결감사보고서 (2024.12)</font></a></td></tr>
+<tr bgcolor="#F5F5F2">
+<td align="center" height="28">2025/04/14</td>
+<td align="left" bgcolor="#FFFFFF"><a href="javascript:viewDetail2('20250414000955')"><font color="#265E84">[매드업]감사보고서 (2024.12)</font></a></td></tr>
+</tbody>
+</table>
+</div>
+<div id="comlayer" style="display: none;">
+<div align="center">
+<table border="0" width="100%">
+<tr>
+<td height="50" style="font-size:13px"><b><font color="0066CC">매드업</font> 장외시장 거래동향</b></td>
+</tr>
+<tr>
+<td valign="top" width="48%">
+<!-- 매도 -->
+<table align="center" cellpadding="0" cellspacing="1" style="border:#78A2EF 1px solid;" width="380">
+<tr bgcolor="#78A2EF" height="25">
+<td align="center" width="*"><font color="#FFFFFF">팝니다 (가격참고)</font></td>
+<td align="center" nowrap="" width="18%"><font color="#FFFFFF">희망가격</font></td>
+<td align="center" nowrap="" width="16%"><font color="#FFFFFF">수량</font></td>
+<td align="center" nowrap="" width="22%"><font color="#FFFFFF">날짜</font></td>
+</tr>
+<tr bgcolor="#FFFFFF" height="30"><td> </td>
+<td align="right" nowrap=""> </td>
+<td align="right" nowrap=""> </td>
+<td align="center" nowrap=""> </td>
+</tr>
+<tr bgcolor="#F5F5F5" height="30"><td> </td>
+<td align="right" nowrap=""> </td>
+<td align="right" nowrap=""> </td>
+<td align="center" nowrap=""> </td>
+</tr>
+<tr bgcolor="#FFFFFF" height="30"><td> </td>
+<td align="right" nowrap=""> </td>
+<td align="right" nowrap=""> </td>
+<td align="center" nowrap=""> </td>
+</tr>
+<tr bgcolor="#F5F5F5" height="30"><td> </td>
+<td align="right" nowrap=""> </td>
+<td align="right" nowrap=""> </td>
+<td align="center" nowrap=""> </td>
+</tr>
+<tr bgcolor="#FFFFFF" height="30"><td> </td>
+<td align="right" nowrap=""> </td>
+<td align="right" nowrap=""> </td>
+<td align="center" nowrap=""> </td>
+</tr>
+</table>
+</td>
+<td width="4%"></td>
+<td valign="top" width="48%">
+<!-- 매수 -->
+<table align="center" cellpadding="0" cellspacing="1" style="border:#EAA83C 1px solid;" width="380">
+<tr bgcolor="#EAA83C" height="25">
+<td align="center" width="*"><font color="#FFFFFF">삽니다 (가격참고)</font></td>
+<td align="center" nowrap="" width="18%"><font color="#FFFFFF">희망가격</font></td>
+<td align="center" nowrap="" width="16%"><font color="#FFFFFF">수량</font></td>
+<td align="center" nowrap="" width="22%"><font color="#FFFFFF">날짜</font></td>
+</tr>
+<tr bgcolor="#FFFFFF" height="30"><td> </td>
+<td align="right" nowrap=""> </td>
+<td align="right" nowrap=""> </td>
+<td align="center" nowrap=""> </td>
+</tr>
+<tr bgcolor="#F5F5F5" height="30"><td> </td>
+<td align="right" nowrap=""> </td>
+<td align="right" nowrap=""> </td>
+<td align="center" nowrap=""> </td>
+</tr>
+<tr bgcolor="#FFFFFF" height="30"><td> </td>
+<td align="right" nowrap=""> </td>
+<td align="right" nowrap=""> </td>
+<td align="center" nowrap=""> </td>
+</tr>
+<tr bgcolor="#F5F5F5" height="30"><td> </td>
+<td align="right" nowrap=""> </td>
+<td align="right" nowrap=""> </td>
+<td align="center" nowrap=""> </td>
+</tr>
+<tr bgcolor="#FFFFFF" height="30"><td> </td>
+<td align="right" nowrap=""> </td>
+<td align="right" nowrap=""> </td>
+<td align="center" nowrap=""> </td>
+</tr>
+</table>
+<br/>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div align="center" style="height:35px"><br/><a href="https://www.38.co.kr/html/fund/index.htm?o=k">IPO공모, 공모청약, 공모주청약일정, 확정공모가, 공모분석</a>
+      <img alt="" src="/images/forum/icon/right_arrow.gif"/> <a href="https://www.38.co.kr">비상장주식거래, 장외주식시장 NO.1 38커뮤니케이션</a></div>
+<div class="info"><h1><strong>
+ 매드업 IPO공모,매드업 공모일정,매드업 공모주,매드업 상장,매드업 청약일정,매드업 공모가,매드업 청약경쟁률,매드업 공모주식수,매드업 확정공모가,매드업 공모금액,매드업 공모분석,매드업 공모청약,공모주분석,공모주청약일정,공모청약일정 </strong></h1></div>
+<script type="text/javascript">
+document.all.COMINFO2.innerHTML=comlayer2.innerHTML
+
+document.all.COMINFO.innerHTML=comlayer.innerHTML
+</script>
+<script type="text/javascript">
+function viewDetail2 (docno) {
+		window.open ( 'https://dart.fss.or.kr/dsaf001/main.do?rcpNo=' + docno, 'detail' , 'toolbar=0,menubar=0,resizable=yes') ;
+}
+
+</script>
+<script language="Javascript">
+	function go_ipo(num) {
+		document.moveform.action = "ipo_view.php?menu=" + num;
+		document.moveform.submit();
+	}
+</script>
+<form method="post" name="moveform">
+<input name="no" type="hidden" value="2290"/>
+<input name="code" type="hidden" value="0039P0"/>
+</form>
+<div align="center"><font color="#787878">※ IPO공모주 정보, 공모청약일정 등은 증권신고서 수리과정에서 변경될 수 있으며 입력오류도 배제 못하니 본인 책임하에 투자바랍니다</font><br/><br/></div>
+</p></td>
+<td width="10"></td>
+<td align="left" valign="top" width="160">
+<!--로그인 시작-->
+<table border="0" cellpadding="0" cellspacing="0" width="160">
+<tr>
+<td><img alt="" height="8" src="/images/2008/login_01.gif" width="160"/></td>
+</tr>
+<tr>
+<td align="center" style="background:url(/images/2008/login_02.gif)">
+<form action="https://www.38.co.kr/member/login/login_process.php" method="post" name="loginform" onsubmit="return check_form()" style="margin:0px;" target="_top">
+<input name="reurl" type="hidden" value="%2Fhtml%2Ffund%2F%3Fo%3Dv%26no%3D2290%26l%3D%26page%3D1"/>
+<input name="time" type="hidden" value="1776833757"/>
+<input name="dauto" type="hidden" value="56ab998eef2d5a909c1c3d110a175470"/>
+<table border="0" cellpadding="0" cellspacing="0" width="135">
+<tr>
+<td height="25" width="53"><label for="id"><img alt="아이디" height="13" src="/images/2008/login_04.gif" width="47"/></label></td>
+<td width="86"><input id="id" maxlength="16" name="id" style="width:100px;background-color:#ffffff;border:1 solid #CECECE ; font-size:10pt;" tabindex="1" title="아이디입력" type="text" value=""/></td>
+</tr>
+<tr>
+<td height="25"><label for="pw"><img alt="비밀번호" height="13" src="/images/2008/login_05.gif" width="47"/></label></td>
+<td height="20"><input id="pw" maxlength="16" name="passwd" style="width:100px;background-color:#ffffff;border:1 solid #CECECE ; font-size:10pt;" tabindex="2" title="비밀번호입력" type="password"/></td>
+</tr>
+<tr>
+<td colspan="2">
+<table border="0" cellpadding="0" cellspacing="0" width="134">
+<tr>
+<td height="25">
+<input id="chk" name="chk_auto_id" onclick="if (this.checked) { if (confirm('[아이디저장]\n\n\공공장소에서는 사용을 자제하여 주십시오.\n\n아이디저장을 사용하시겠습니까?')) { this.checked = true; } else { this.checked = false; } }" tabindex="4" title="아이디저장체크" type="checkbox"/>
+<label for="chk"><img align="middle" alt="아이디저당" height="13" src="/images/2008/login_06.gif" width="31"/></label></td>
+<td align="right"><input alt="로그인" src="/images/2008/login_but.gif" tabindex="3" type="image"/></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td colspan="2"><img alt="" height="1" src="/images/2008/login_line.gif" width="139"/></td>
+</tr>
+<tr>
+<td align="center" colspan="2" height="30">
+<table border="0" cellpadding="0" cellspacing="0" width="138">
+<tr>
+<td><a href="https://www.38.co.kr/member/search/search_id.php" target="_top"><img alt="아이디,비밀번호찾기" border="0" height="18" src="/images/2008/login_but_02.gif" width="63"/></a></td>
+<td align="right"><a href="https://www.38.co.kr/member/join.html" target="_top"><img alt="무료회원가입" border="0" height="18" src="/images/2008/login_but_03.gif" width="69"/></a></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</form>
+<!--로그인 끝-->
+</td>
+</tr>
+<tr>
+<td><img alt="" height="8" src="/images/2008/login_03.gif" width="160"/></td>
+</tr>
+</table> <table width="100%"><tr><td height="8"></td></tr></table>
+<table border="0" cellpadding="0" cellspacing="0" width="165">
+<tr>
+<td valign="top">
+<table border="0" cellpadding="0" cellspacing="0" width="165">
+<tr>
+<td><img alt="" height="6" src="/images/0706/price_sub_righttop.gif" width="165"/></td>
+</tr>
+<tr>
+<td align="center" style="background:url(/images/0706/price_sub_rightback.gif)" valign="top">
+<!--청구종목-->
+<table border="0" cellpadding="2" cellspacing="0" width="90%">
+<tr>
+<td height="26"> <a href="/html/ipo/ipo.htm?key=2"><font color="#5A79B2"><b>최근 IPO 청구종목</b></font></a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/ipo/ipo.htm?o=v&amp;key=2&amp;no=3502">04/21 기도산업</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/ipo/ipo.htm?o=v&amp;key=2&amp;no=3501">04/16 브릴스</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/ipo/ipo.htm?o=v&amp;key=2&amp;no=3500">04/16 엠에스바이오</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/ipo/ipo.htm?o=v&amp;key=2&amp;no=3499">04/15 와이즈플래닛컴퍼</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/ipo/ipo.htm?o=v&amp;key=2&amp;no=3498">04/13 글로벌테크놀로지</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/ipo/ipo.htm?o=v&amp;key=2&amp;no=3497">04/10 엠비디</a></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td><img alt="" height="7" src="/images/0706/price_sub_rightbottom.gif" width="165"/></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td>
+<table border="0" cellpadding="0" cellspacing="0" width="165">
+<tr>
+<td><img alt="" height="6" src="/images/0706/price_sub_righttop.gif" width="165"/></td>
+</tr>
+<tr>
+<td align="center" style="background:url(/images/0706/price_sub_rightback.gif)" valign="top">
+<table border="0" cellpadding="2" cellspacing="0" width="90%">
+<tr>
+<td height="26"> <a href="/html/ipo/ipo.htm?key=1"><font color="#5A79B2"><b>최근 IPO 승인종목</b></font></a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/ipo/ipo.htm?o=v&amp;key=1&amp;no=3472">04/09 매드업</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/ipo/ipo.htm?o=v&amp;key=1&amp;no=3457">04/02 스트라드비젼</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/ipo/ipo.htm?o=v&amp;key=1&amp;no=3460">04/02 져스텍</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/ipo/ipo.htm?o=v&amp;key=1&amp;no=3481">03/30 대신밸런스스팩20</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/ipo/ipo.htm?o=v&amp;key=1&amp;no=3477">03/26 피스피스스튜디오</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/ipo/ipo.htm?o=v&amp;key=1&amp;no=3464">03/26 레몬헬스케어</a></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td><img alt="" height="7" src="/images/0706/price_sub_rightbottom.gif" width="165"/></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td>
+<table border="0" cellpadding="0" cellspacing="0" width="165">
+<tr>
+<td><img alt="" height="6" src="/images/0706/price_sub_righttop.gif" width="165"/></td>
+</tr>
+<tr>
+<td align="center" style="background:url(/images/0706/price_sub_rightback.gif)" valign="top">
+<table border="0" cellpadding="2" cellspacing="0" width="90%">
+<tr>
+<td height="26"> <a href="/html/fund/index.htm?o=k"><font color="#5A79B2"><b>IPO 공모주 청약일정</b></font></a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/fund/?o=v&amp;no=2278">04/27 코스모로보틱스(</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/fund/?o=v&amp;no=2286">05/04 폴레드</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/fund/?o=v&amp;no=2285">05/11 마키나락스</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/fund/?o=v&amp;no=2289">05/11 스트라드비젼</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/fund/?o=v&amp;no=2287">05/20 피스피스스튜디오</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/fund/?o=v&amp;no=2291">05/29 져스텍</a></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td><img alt="" height="7" src="/images/0706/price_sub_rightbottom.gif" width="165"/></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td>
+<table border="0" cellpadding="0" cellspacing="0" width="165">
+<tr>
+<td><img alt="" height="6" src="/images/0706/price_sub_righttop.gif" width="165"/></td>
+</tr>
+<tr>
+<td align="center" style="background:url(/images/0706/price_sub_rightback.gif)" valign="top">
+<table border="0" cellpadding="2" cellspacing="0" width="90%">
+<tr>
+<td height="26"> <a href="/html/fund/index.htm?o=nw"><font color="#5A79B2"><b>IPO 신규상장 일정</b></font></a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/fund/?o=v&amp;no=2282">04/23 키움히어로스팩2</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/fund/?o=v&amp;no=2281">04/29 채비(구.대영채비</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/fund/?o=v&amp;no=2284">04/30 신한스팩18호</a></td>
+</tr>
+<tr>
+<td height="24" style="padding-left:5px;"><img align="middle" alt="" height="3" src="/images/0706/price_sub_bill2.gif" width="2"/>
+<a class="slist" href="/html/fund/?o=v&amp;no=2285">05/20 마키나락스</a></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td><img alt="" height="7" src="/images/0706/price_sub_rightbottom.gif" width="165"/></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td> </td>
+</tr>
+</table><br/>
+  <img alt="" src="https://www.38.co.kr/images/2008/icon01.gif"/> <a href="/html/news/?m=IPO"><b>공모주 뉴스</b></a>
+<table border="0" cellpadding="4" cellspacing="0" style="border:3px solid #E8EFF3" width="160">
+<tr>
+<td align="center">
+<table align="center" border="0" cellpadding="0" cellspacing="0">
+<tr><td width="145">
+<tr>
+<td height="22"><img align="middle" alt="" height="3" src="/images/2008/trade/sell_icon_01.gif" width="7"/><a href="/html/news/?o=v&amp;m=nostock&amp;no=1941670&amp;files=2026042110213696745"><font color="#FF6600"><b style="letter-spacing:-1;">신한스팩18호 공모청약  </b></font></a></td>
+</tr>
+<tr>
+<td height="22"><img align="middle" alt="" height="3" src="/images/2008/trade/sell_icon_01.gif" width="7"/><a href="/html/news/?o=v&amp;m=nostock&amp;no=1941279&amp;files=2026042016280649895"><font color="#484848">채비(구.대영채비) 공모 </font></a></td>
+</tr>
+<tr>
+<td height="22"><img align="middle" alt="" height="3" src="/images/2008/trade/sell_icon_01.gif" width="7"/><a href="/html/news/?o=v&amp;m=nostock&amp;no=1938898&amp;files=2026041516250154093"><font color="#484848">키움히어로스팩2호 공모 </font></a></td>
+</tr>
+<tr>
+<td height="22"><img align="middle" alt="" height="3" src="/images/2008/trade/sell_icon_01.gif" width="7"/><a href="/html/news/?o=v&amp;m=nostock&amp;no=1936387&amp;files=2026041012295852197"><font color="#484848">스트라드비젼, 증권신고 </font></a></td>
+</tr>
+</td>
+</tr>
+</table></td>
+</tr>
+</table>
+<br/>
+  <img alt="" src="https://www.38.co.kr/images/2008/icon01.gif"/> <a href="/html/board/?code=380060"><b>공모주 일정</b></a>
+<table border="0" cellpadding="4" cellspacing="0" style="border:3px solid #E8EFF3" width="160">
+<tr>
+<td align="center">
+<table border="0" cellpadding="0" cellspacing="0" width="145">
+<tr>
+<td height="22"><img align="middle" alt="" height="3" src="/images/2008/trade/sell_icon_01.gif" width="7"/><a href="/html/board/?o=v&amp;code=380060&amp;no=3374"><font color="#484848">레몬헬스케어, 공모청약</font></a></td>
+</tr>
+<tr>
+<td height="22"><img align="middle" alt="" height="3" src="/images/2008/trade/sell_icon_01.gif" width="7"/><a href="/html/board/?o=v&amp;code=380060&amp;no=3373"><font color="#484848">채비(구.대영채비), 확</font></a></td>
+</tr>
+<tr>
+<td height="22"><img align="middle" alt="" height="3" src="/images/2008/trade/sell_icon_01.gif" width="7"/><a href="/html/board/?o=v&amp;code=380060&amp;no=3372"><font color="#484848">져스텍, 공모청약 일정</font></a></td>
+</tr>
+<tr>
+<td height="22"><img align="middle" alt="" height="3" src="/images/2008/trade/sell_icon_01.gif" width="7"/><a href="/html/board/?o=v&amp;code=380060&amp;no=3371"><font color="#484848">매드업, 공모청약 일정</font></a></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<script language="JavaScript" src="/ad/viewBanner.php?banpos=iporight" type="text/javascript"></script>
+</td>
+</tr>
+</table>
+<!-- 38 bottom menu start -->
+<script type="text/javascript">
+
+//슬라이드 배너
+
+
+
+function initMoving(target, position, topLimit, btmLimit) {
+
+	if (!target)
+
+		return false;
+
+
+
+	var obj = target;
+
+	obj.initTop = position;
+
+	obj.topLimit = topLimit;
+
+	
+
+	
+
+	obj.style.position = "absolute";
+
+	obj.top = obj.initTop;
+
+	// obj.left = obj.initLeft;
+
+
+
+	if (typeof(window.pageYOffset) == "number") {	//WebKit
+
+		obj.getTop = function() {
+
+			return window.pageYOffset;
+
+		};
+
+	} else if (typeof(document.documentElement.scrollTop) == "number") {
+
+		obj.getTop = function() {
+
+			return Math.max(document.documentElement.scrollTop, document.body.scrollTop);
+
+		};
+
+	} else {
+
+		obj.getTop = function() {
+
+			return 0;
+
+		};
+
+	}
+
+
+
+	if (self.innerHeight) {	//WebKit
+
+		obj.getHeight = function() {
+
+			return self.innerHeight;
+
+		};
+
+	} else if(document.documentElement.clientHeight) {
+
+		obj.getHeight = function() {
+
+			return document.documentElement.clientHeight;
+
+		};
+
+	} else {
+
+		obj.getHeight = function() {
+
+			return 500;
+
+		};
+
+	}
+
+
+
+	obj.move = setInterval(function() {
+
+		if (obj.initTop > 0) {
+
+			pos = obj.getTop() + obj.initTop;
+
+		} else {
+
+			pos = obj.getTop() + obj.getHeight() + obj.initTop;
+
+		}
+
+		
+
+		obj.bottomLimit = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight) - btmLimit - obj.offsetHeight;
+
+		
+
+		if (pos > obj.bottomLimit)
+
+			pos = obj.bottomLimit;
+
+		if (pos < obj.topLimit)
+
+			pos = obj.topLimit;
+
+
+
+		interval = obj.top - pos;
+
+		obj.top = obj.top - interval / 3;
+
+		obj.style.top = obj.top + "px";
+
+		
+
+	}, 30);
+
+}
+
+</script>
+<div id="quick_side_menu">
+<script type="text/javascript">initMoving(document.getElementById("quick_side_menu"), 5, 18, 250);</script>
+<div id="floater">
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="90">
+<tr>
+<td height="25"><img alt="퀵메뉴" src="/images/2008/quickmenu_top.gif"/></td>
+</tr>
+<tr>
+<td align="center" height="200" style="background:url(/images/2008/quickmenu_bg.gif)">
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="78">
+<tr>
+<td height="5"></td>
+</tr>
+<!--tr>
+
+<td class="qm"><img alt="" src="/images/2008/quickmenu_dot.gif" border="0" align="middle"><a href="https://www.38.co.kr/html/ipo/ipo_plan.htm"><span class="small"><font color="#FF6600"><b>IPO예정기업</b></font></span></a></td>
+
+</tr-->
+<tr>
+<td class="qm"><img align="middle" alt="" border="0" src="/images/2008/quickmenu_dot.gif"/><a href="http://stock.38.co.kr/html/trade/trade_sellbuy/index_red.html"><b>빨간색 매매</b></a></td>
+</tr>
+<tr>
+<td class="qm"><img align="middle" alt="" border="0" src="/images/2008/quickmenu_dot.gif"/><a href="http://stock.38.co.kr/html/trade/trade_each/?table=sell"><b>팝 니 다</b></a></td>
+</tr>
+<tr>
+<td class="qm"><img align="middle" alt="" border="0" src="/images/2008/quickmenu_dot.gif"/><a href="http://stock.38.co.kr/html/trade/trade_each/?table=buy"><b>삽 니 다</b></a></td>
+</tr>
+<tr>
+<td class="qm"><img align="middle" alt="" border="0" src="/images/2008/quickmenu_dot.gif"/><a href="https://www.38.co.kr/html/trade/price/"><span class="small"><b>장외주식시세</b></span></a></td>
+</tr>
+<tr>
+<td class="qm"><img align="middle" alt="" border="0" src="/images/2008/quickmenu_dot.gif"/><a href="https://www.38.co.kr/html/trade/price/bunsuk.php"><span class="small"><b>장외종목분석</b></span></a></td>
+</tr>
+<tr>
+<td class="qm"><img align="middle" alt="" border="0" src="/images/2008/quickmenu_dot.gif"/><a href="https://www.38.co.kr/html/ipo/ipo_plan.htm"><span class="small"><b>IPO 예정분석</b></span></a></td>
+</tr>
+<tr>
+<td class="qm"><img align="middle" alt="" border="0" src="/images/2008/quickmenu_dot.gif"/><a href="https://www.38.co.kr/html/fund/index.htm?o=k"><span class="small"><b>공모기업분석</b></span></a></td>
+</tr>
+<!--tr>
+
+<td class="qm"><img alt="" src="/images/2008/quickmenu_dot.gif" border="0" align="middle"><a href="https://www.38.co.kr/html/fund1/"><b>CB/ BW</b></a></td>
+
+</tr-->
+<tr>
+<td class="qm"><img align="middle" alt="" border="0" src="/images/2008/quickmenu_dot.gif"/><a href="https://www.38.co.kr/html/fund/index.htm?o=k"><span class="small"><b>공모청약일정</b></span></a></td>
+</tr>
+<tr>
+<td class="qm"><img align="middle" alt="" border="0" src="/images/2008/quickmenu_dot.gif"/><a href="https://www.38.co.kr/html/fund2/"><span class="small"><b>실권/일반공모</b></span></a></td>
+</tr>
+<tr>
+<td class="qm"><img align="middle" alt="" border="0" src="/images/2008/quickmenu_dot.gif"/><a href="https://www.38.co.kr/html/ipo/ipo_schedule.php"><b>증시캘린더</b></a></td>
+</tr>
+<tr>
+<td height="5"></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td height="20"><a href="#top"><img alt="top으로가기" border="0" src="/images/2008/quickmenu_bottom.gif"/></a></td>
+</tr>
+</table>
+</div>
+</div>
+<!--bottom 시작-->
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="980">
+<tr>
+<td align="left" height="31" style="background:url(/images/2008/copyright_bg.gif)"><a class="bottom" href="https://www.38.co.kr/html/intro/greeting.html" target="_top"><img alt="회사소개" border="0" height="21" src="/images/2008/copyright_menu_01.gif" width="84"/></a><a class="bottom" href="https://www.38.co.kr/html/etc/adver/intro.htm" target="_top"><img alt="광고문의" border="0" height="21" src="/images/2008/copyright_menu_02.gif" width="77"/></a><a class="bottom" href="https://www.38.co.kr/html/forum/com_list/form.htm?page=orderform&amp;w=C"><img alt="기업정보문의" border="0" height="21" src="/images/2008/copyright_menu_03.gif" width="96"/></a><a class="bottom" href="https://www.38.co.kr/html/etc/adver/partnership.html"><img alt="업무제휴문의" border="0" height="21" src="/images/2008/copyright_menu_04.gif" width="100"/></a>
+<a class="bottom" href="https://www.38.co.kr/html/board/?code=380008">
+<img alt="38에바란다" border="0" height="21" src="/images/2008/copyright_menu_05.gif" width="93"/></a><a class="bottom" href="https://www.38.co.kr/html/etc/adver/partner.html" target="_top"><img alt="업무제휴사" border="0" height="21" src="/images/2008/copyright_menu_06.gif" width="89"/></a><a class="bottom" href="https://www.38.co.kr/html/etc/help/sitemap.html" target="_top"><img alt="사이트맵" border="0" height="21" src="/images/2008/copyright_menu_07.gif" width="77"/></a><a class="bottom" href="https://www.38.co.kr/html/etc/adver/persenal.html"><img alt="개인정보취급방침" border="0" height="21" src="/images/2008/copyright_menu_08.gif" width="119"/></a><!--a href="/spam/neverspam/spam_mail.htm" onclick="javascript:openWindowPos(this.href, '300', '200', 'spamwin', '10', '10');return false" class="bottom"><img alt="이메일수집거부" src="/images/2008/copyright_menu_09.gif" width="108" height="21" border="0"></a><a href="#SPTOP"><img alt="" src="/images/2008/copyright_menu_10.gif" width="87" height="21" border="0"></a--><a class="bottom" href="https://www.38.co.kr/html/etc/adver/policy.html"><img alt="정보제공윤리정책" border="0" height="21" src="/images/2008/copyright_menu_11.gif" width="100"/></a><a class="bottom" href="https://www.38.co.kr/html/etc/adver/attend.html"><img alt="투자자유의사항" border="0" height="21" src="/images/2008/copyright_menu_12.gif" width="80"/></a>
+<a href="#SPTOP"><img alt="" border="0" src="/images/2008/copyright_menu_10_1.gif"/></a></td>
+</tr>
+</table>
+<table align="center" bgcolor="F7F7F7" border="0" cellpadding="0" cellspacing="0" width="980">
+<tr>
+<td nowrap="" width="15"></td>
+<td width="193"><img alt="38커뮤니케이션 로고" height="133" src="/images/2008/copyright_logo.gif" width="193"/></td>
+<td align="left">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td></td>
+<td height="10"></td>
+</tr>
+<tr>
+<td height="17" style="Padding-left:10px"><font color="636563" face="돋움">Copyrightⓒ 
+
+            <font color="1859B5"><b>38커뮤니케이션</b>.</font> All rights reserved.</font>      
+
+			<font color="#F7F7F7">삼팔커뮤니케이션,38stock,삼팔,38</font></td>
+</tr>
+<tr>
+<td height="17" style="Padding-left:10px"><font color="636563" face="돋움">상호 ㈜38커뮤니케이션   대표이사 서성기   사업자등록번호 108-81-21496</font>   <font color="636563" face="돋움">통신판매업 신고번호 제19-1912호</font></td>
+</tr>
+<tr>
+<td height="17" style="Padding-left:10px"><font color="636563" face="돋움"> 
+
+              주소: 서울시 구로구 디지털로 26길 111, 407호 </font> <font color="636563" face="돋움">전화 1644-3830 팩스 02-6124-6333 기사배열 책임자 이용민</font> <a href="https://www.38.co.kr/html/etc/adver/news_respons.html"><font color="636563" face="돋움">기사배열 기본방침</font></a>
+</td>
+</tr>
+<tr>
+<td height="17" style="Padding-left:10px"><font color="#F7F7F7" style="small">장외주식시장, 장외주식 시세표, 장외주식매매, 비상장주식 시세표, 비상장매매, 장외주식거래, 장외주식 현재가, 장외주식 기업분석,IPO공모</font></td>
+</tr>
+<tr>
+<td height="17" style="Padding-left:10px"><font color="636563" face="돋움">본 게시판에 게시된 정보나 의견은 38커뮤니케이션과 아무런 관련이 없으며 게시물의 내용과 관련하여 발생한 법적 책임은 게시자</font></td>
+</tr>
+<tr>
+<td height="17" style="Padding-left:10px"><font color="636563" face="돋움">또는 이를 열람하는 이용자가 부담해야 하며, 당사에서 제공하는 증권정보와 분석자료 및 주식시세는 단순정보제공을 목적으로 하며</font></td>
+</tr>
+<tr>
+<td height="17" style="Padding-left:10px"><font color="636563" face="돋움">장외주식 거래를 목적으로 하지 않음. 투자간 매매는 일체 개입하지 않으며 정보 및 거래에 대한 손익책임은 투자자 본인에게 있습니다.</font></td>
+</tr>
+</table></td>
+</tr>
+</table>
+</td></tr>
