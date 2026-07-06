@@ -538,29 +538,59 @@ def OESERVER_report_download():
     print("OESERVER report download complete")
 
 def PRELUDE_RECAP_report_download():
+    # [작업 시작 명시] PRELUDE_RECAP 매매보고서 다운로드 시작
+    print(f"[{datetime.datetime.now()}] PRELUDE_RECAP 매매보고서 다운로드 및 pre-trade 복사 작업 시작")
+    
     output_dir = Path("Z:/02.펀드/003.매매보고서 대사/PRELUDE_RECAP")
+    pre_trade_dir = Path("D:/PythonProjects/Dunamis_Workflow/data/input/pre-trade")
+    
+    # 디렉토리가 없을 경우 생성
     output_dir.mkdir(parents=True, exist_ok=True)
+    pre_trade_dir.mkdir(parents=True, exist_ok=True)
+    
     outlook = win32com.client.Dispatch("outlook.application").GetNamespace("MAPI")
     inbox = outlook.GetDefaultFolder(6).Folders("PRELUDE_RECAP")
     messages = inbox.Items
 
+    # 읽지 않은 메일 수집
+    unread_messages = []
     for message in messages:
-        if message.Unread:
+        try:
+            if message.Unread:
+                unread_messages.append(message)
+        except Exception:
+            # MailItem이 아니거나 Unread 속성이 없는 인스턴스 예외 처리
+            pass
 
-            attachments = message.Attachments
+    # 수신 시간(ReceivedTime) 기준 오름차순(과거에서 최신 순)으로 정렬
+    # 이 순서대로 덮어씌워지면 최신 메일에서 받은 동일 파일명의 파일이 최종 저장됩니다.
+    unread_messages.sort(key=lambda m: getattr(m, 'ReceivedTime', datetime.datetime.min))
 
-            target_folder = output_dir
-            target_folder.mkdir(parents=True, exist_ok=True)
+    for message in unread_messages:
+        attachments = message.Attachments
 
-            for attachment in attachments:
-                attachment.SaveAsFile(target_folder / str(attachment))
-                
-                if message.Unread:
-                    message.Unread = False
+        for attachment in attachments:
+            attachment_name = str(attachment)
+            
+            # 1. Z 드라이브 원본 대상 폴더에 저장
+            attachment.SaveAsFile(output_dir / attachment_name)
+            
+            # 2. D 드라이브 pre-trade 폴더에 저장
+            attachment.SaveAsFile(pre_trade_dir / attachment_name)
 
-            extract_attachments(output_dir, attachments)
+        # 메일 읽음 처리
+        try:
+            if message.Unread:
+                message.Unread = False
+        except Exception:
+            pass
 
-    print("PRELUDE_RECAP report download complete")  
+        # zip 파일인 경우 압축 해제 처리 (원본 폴더와 pre-trade 폴더 둘 다 수행)
+        extract_attachments(output_dir, attachments)
+        extract_attachments(pre_trade_dir, attachments)
+
+    # [작업 종료 명시] PRELUDE_RECAP 매매보고서 다운로드 완료
+    print(f"[{datetime.datetime.now()}] PRELUDE_RECAP 매매보고서 다운로드 및 pre-trade 복사 작업 완료")  
 
 def trade_report_download():
     import pythoncom
