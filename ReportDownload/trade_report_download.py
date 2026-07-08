@@ -542,7 +542,7 @@ def PRELUDE_RECAP_report_download():
     print(f"[{datetime.datetime.now()}] PRELUDE_RECAP 매매보고서 다운로드 및 pre-trade 복사 작업 시작")
     
     output_dir = Path("Z:/02.펀드/003.매매보고서 대사/PRELUDE_RECAP")
-    pre_trade_dir = Path("D:/PythonProjects/Dunamis_Workflow/data/input/pre-trade")
+    pre_trade_dir = Path("D:/PythonProjects/ljt1105/Dunamis_Workflow/data/input/pre-trade")
     
     # 디렉토리가 없을 경우 생성
     output_dir.mkdir(parents=True, exist_ok=True)
