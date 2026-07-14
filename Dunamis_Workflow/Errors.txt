@@ -1,0 +1,2 @@
+Error Scenarios:
+1. When only partial files are there (e.g., stock file but no futures file yet)

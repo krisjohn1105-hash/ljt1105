@@ -1,0 +1,6905 @@
+{
+  "rows": [
+    {
+      "positionBBYellow": {
+        "value": "000100 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "YUHAN ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -3385.0
+      },
+      "nativeNetAverageCost": {
+        "value": 94800.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 99500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -223529.47032393797,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -1322.4314261632499,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 634.7892738429437,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -12772.407028014457,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0363308148
+      },
+      "tRSAccrualDays": {
+        "value": 7
+      },
+      "financingCurrentResetSpread": {
+        "value": -0.691852
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "000150 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "DOOSAN ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 543.0
+      },
+      "nativeNetAverageCost": {
+        "value": 1026000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 1115000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 401816.46833956084,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -1410.2602418807073,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 33312.454288324174,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 17
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "000660 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SK HYNIX ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 284.0
+      },
+      "nativeNetAverageCost": {
+        "value": 807000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 893000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 168315.00494435118,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 250.68109266842322,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -349.8163449655042,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 17200.315988783565,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 1
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "000990 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "DB HITEK ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 876.0
+      },
+      "nativeNetAverageCost": {
+        "value": 78500.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 86100.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 50056.4784273645,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 4745.486726406768,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0
+      },
+      "tRSAccrualDays": {
+        "value": 0
+      },
+      "financingCurrentResetSpread": {
+        "value": 0.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "001040 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "CJ CORP ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 1051.0
+      },
+      "nativeNetAverageCost": {
+        "value": 189000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 201000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 140201.22513721406,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 1956.539485123808,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -403.54947630254173,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 10867.874796348806,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 6
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "001440 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "TAIHAN C&S ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -824.0
+      },
+      "nativeNetAverageCost": {
+        "value": 26700.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 30050.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -16433.29771630707,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 41.00660435028112,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -1895.6202831397725,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 21
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "001680 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "DAESANG ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 1602.0
+      },
+      "nativeNetAverageCost": {
+        "value": 19900.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 20350.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 21636.148848198467,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 768.1630242173657,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -82.38630580808967,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 1315.8273025209517,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "003230 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAM YANG FOODS ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 124.0
+      },
+      "nativeNetAverageCost": {
+        "value": 1200000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 1316000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 108300.53691007919,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 394.5459492822395,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -250.7886751468577,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 10397.649547293551,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 3
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "003550 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LG CORP ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -2174.0
+      },
+      "nativeNetAverageCost": {
+        "value": 82800.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 87200.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -125814.02602918827,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -3029.924938776323,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 532.793995465996,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -9701.600719224614,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "003670 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "POSCO FUTURE M ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -209.0
+      },
+      "nativeNetAverageCost": {
+        "value": 211652.121531,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 211500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -29336.594171638673,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 107.6683787686926,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0
+      },
+      "tRSAccrualDays": {
+        "value": 0
+      },
+      "financingCurrentResetSpread": {
+        "value": 0.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "004990 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LOTTE ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 18977.0
+      },
+      "nativeNetAverageCost": {
+        "value": 27300.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 28600.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 360202.41974554845,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 13381.645838449132,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -1219.520517185476,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 30998.74476436987,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 16
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "005300 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LOTTE CHILSUNG ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -765.0
+      },
+      "nativeNetAverageCost": {
+        "value": 113999.99999999999,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 117600.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -59706.52455251964,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -1726.2090431850916,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 163.4644705093815,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -3805.237681741837,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.036250000000000004
+      },
+      "tRSAccrualDays": {
+        "value": 14
+      },
+      "financingCurrentResetSpread": {
+        "value": -1.5
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "005930 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG ELECTR ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -803.0
+      },
+      "nativeNetAverageCost": {
+        "value": 167200.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 189600.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -101043.15854443613,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 305.9063639029773,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -12270.18643063775,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0324
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": -40.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "005930 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG ELECTR ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -34.0
+      },
+      "nativeNetAverageCost": {
+        "value": 188903.761519,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 189600.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -4278.290648207756,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -2.917262097649882,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -6.058548878566086,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0324
+      },
+      "tRSAccrualDays": {
+        "value": 1
+      },
+      "financingCurrentResetSpread": {
+        "value": -40.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "005930 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG ELECTR ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 193.0
+      },
+      "nativeNetAverageCost": {
+        "value": 167200.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 189600.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 24285.59103247344,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 420.82719990443144,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -40.687943329008704,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 3402.7867152882004,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0324
+      },
+      "tRSAccrualDays": {
+        "value": 17
+      },
+      "financingCurrentResetSpread": {
+        "value": -40.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "005935 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG ELEC PREFERENCE S1"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 1146.0
+      },
+      "nativeNetAverageCost": {
+        "value": 113999.99999999999,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 127500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 96972.33154363307,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -374.9968178157578,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 10513.962132094812,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Preferred +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "006260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LS ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -260.0
+      },
+      "nativeNetAverageCost": {
+        "value": 256000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 278500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -48056.43860708669,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -330.17647019784044,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 44.624222387787086,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -4484.567017306261,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 6
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "006260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LS ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -431.0
+      },
+      "nativeNetAverageCost": {
+        "value": 261698.93954948493,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 278500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -79662.78861405524,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -545.8696416838668,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 161.54535989545366,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -5534.772899873797,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 20
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "006260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LS ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 645.0
+      },
+      "nativeNetAverageCost": {
+        "value": 256000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 278500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 119216.9342368112,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 909.6444712862615,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -417.5668987203244,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 10908.864212277682,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "006400 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG SDI ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 103.0
+      },
+      "nativeNetAverageCost": {
+        "value": 408000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 432000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 29530.718025976097,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 1840.4479035166275,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0
+      },
+      "tRSAccrualDays": {
+        "value": 0
+      },
+      "financingCurrentResetSpread": {
+        "value": 0.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "007660 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "ISUPETASYS ORDINARY"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 3146.0
+      },
+      "nativeNetAverageCost": {
+        "value": 98000.00000000001,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 108700.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 226955.80612834077,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 379.51213522966356,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -535.8729763542515,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 23650.48752700215,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 1
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "008770 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HOTEL SHILLA ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -5157.0
+      },
+      "nativeNetAverageCost": {
+        "value": 44000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 44200.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -151276.8372080676,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 403.3944585617719,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -1360.21666567202,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 6
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "009150 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG EL-MECH ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -259.0
+      },
+      "nativeNetAverageCost": {
+        "value": 412962.9467181814,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 444500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -76405.4898889678,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -366.5124737020249,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 91.61246109628337,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -6088.307202600657,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.028900000000000002
+      },
+      "tRSAccrualDays": {
+        "value": 6
+      },
+      "financingCurrentResetSpread": {
+        "value": -75.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "009420 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HAN ALL BIOPHARM ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 1383.0
+      },
+      "nativeNetAverageCost": {
+        "value": 55300.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 58500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 53694.65810973142,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -118.89076331796241,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 3181.9664245905014,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.025654923000000003
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": -107.45077
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "009540 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HD KR SHIP & OFFSHORE ENG ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -497.0
+      },
+      "nativeNetAverageCost": {
+        "value": 344000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 372500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -122867.12636965165,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -2294.975344611321,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 455.04387437416153,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -12053.57168205875,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 17
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "009830 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HANWHA SOLUTIONS ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 1164.0
+      },
+      "nativeNetAverageCost": {
+        "value": 37150.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 37550.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 29007.87777829397,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 514.6530781829404,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0
+      },
+      "tRSAccrualDays": {
+        "value": 0
+      },
+      "financingCurrentResetSpread": {
+        "value": 0.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "010120 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LS ELECTRIC ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -132.0
+      },
+      "nativeNetAverageCost": {
+        "value": 718000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 794000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -69558.06128340756,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -672.9626950364025,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -15.033426665442676,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -7796.670361367293,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": -0.003599999999999999
+      },
+      "tRSAccrualDays": {
+        "value": 14
+      },
+      "financingCurrentResetSpread": {
+        "value": -400.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "011170 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LOTTE CHEMICAL ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 1793.0
+      },
+      "nativeNetAverageCost": {
+        "value": 80600.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 82000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 97576.93609509083,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 505.7341200050439,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -11.02350623907114,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 2847.9283821071394,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.020268336000000005
+      },
+      "tRSAccrualDays": {
+        "value": 2
+      },
+      "financingCurrentResetSpread": {
+        "value": -161.31663999999998
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "01117=J6 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LOTTE CHEMI APR6"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -101.0
+      },
+      "nativeNetAverageCost": {
+        "value": 79865.3900990099,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 81600.0,
+        "currency": "KRW",
+        "source": "Reuters",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -54697.13360366878,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -1523.6993470956106,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity Futures +0bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Zero Pct Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 0.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0
+      },
+      "tRSAccrualDays": {
+        "value": 0
+      },
+      "financingCurrentResetSpread": {
+        "value": 0.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "0126Z0 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG EPIS HOLDINGS ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -526.0
+      },
+      "nativeNetAverageCost": {
+        "value": 494000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 520000.0,
+        "currency": "KRW",
+        "source": "Reuters",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -181527.37312263984,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 766.4227975350004,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -9545.679296636401,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 21
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "017810 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "PULMUONE ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -2630.0
+      },
+      "nativeNetAverageCost": {
+        "value": 11631.627668442965,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 12120.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -21154.920790830718,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -165.51298472892347,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 50.50707261081948,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -1097.9560409090884,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 7
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "018260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG SDS ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 3092.0
+      },
+      "nativeNetAverageCost": {
+        "value": 150100.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 156100.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 320328.3845576963,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -978.2304380312071,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 13541.351665863293,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 1
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "023530 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LOTTE SHOPPING ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -1516.0
+      },
+      "nativeNetAverageCost": {
+        "value": 108200.00000000001,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 106000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -106649.32272344154,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -2817.151920996569,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 303.4719314685135,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -1080.282445713411,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 16
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "028260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG C&T ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 443.0
+      },
+      "nativeNetAverageCost": {
+        "value": 253500.00000000003,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 273000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 80263.74297338015,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -353.3261874614982,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 5913.862914624641,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "028260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG C&T ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 599.0
+      },
+      "nativeNetAverageCost": {
+        "value": 253500.00000000006,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 273000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 108528.17616490905,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -203.52667515743815,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 8270.618408701699,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 16
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "028260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG C&T ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -406.0
+      },
+      "nativeNetAverageCost": {
+        "value": 253500.00000000003,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 273000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -73559.99920359445,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 61.63847250120307,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -5682.105941600315,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 7
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "028260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG C&T ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 406.0
+      },
+      "nativeNetAverageCost": {
+        "value": 253500.00000000003,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 273000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 73559.99920359445,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 555.9972656742569,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -323.81587383605074,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 5975.925805939724,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "031440 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SHINSEGAE FOOD ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 2804.0
+      },
+      "nativeNetAverageCost": {
+        "value": 48700.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 48750.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 90720.54792702271,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 1423.6147520855873,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -330.74935444355174,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 1835.3222691148646,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 20
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "034020 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "DOOSAN ENERBILITY ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -4438.0
+      },
+      "nativeNetAverageCost": {
+        "value": 91800.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 99600.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -293359.17226915853,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 849.1968550930615,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -24062.215891911073,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.03615
+      },
+      "tRSAccrualDays": {
+        "value": 17
+      },
+      "financingCurrentResetSpread": {
+        "value": -2.5
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "035420 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "NAVER ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 1620.0
+      },
+      "nativeNetAverageCost": {
+        "value": 201499.99999999997,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 210000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 225780.97519860364,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 980.684178739954,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -637.4947404654968,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 11034.337964632636,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 1
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "041510 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SME ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 2925.0
+      },
+      "nativeNetAverageCost": {
+        "value": 88800.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 90000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 174711.4689036814,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -598.6701262762526,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 2966.054973682955,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 8
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "042660 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HANWHA OCEAN ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -587.0
+      },
+      "nativeNetAverageCost": {
+        "value": 121153.8367291925,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 127000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -49476.03151111318,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 40.61383705125195,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -2456.7833775643703,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 3
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "051370 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "INTERFLEX ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -10104.0
+      },
+      "nativeNetAverageCost": {
+        "value": 12167.338372907563,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 13200.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -88515.69914452771,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 119.89874828305437,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -7266.840572287175,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 6
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "051900 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LG H & H ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -1061.0
+      },
+      "nativeNetAverageCost": {
+        "value": 247000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 253500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -178503.35485840574,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -704.1552459897663,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 240.00768124192837,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -6287.461965734374,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.015600138000000003
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": -207.99862
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "051905 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LG H & H 1P PRF"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 2577.0
+      },
+      "nativeNetAverageCost": {
+        "value": 106600.00000000003,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 110100.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 188301.93061980265,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 1526.4257318635227,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -679.058291787107,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 8139.773434554929,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "051910 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LG CHEM ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -842.0
+      },
+      "nativeNetAverageCost": {
+        "value": 299000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 312500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -174628.5099915714,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -1117.622463946057,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 691.866332730453,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -9166.98681833833,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.03623961462
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": -1.6038538
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "051915 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LG CHEM PREFERENCE S1"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 1713.0
+      },
+      "nativeNetAverageCost": {
+        "value": 146600.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 153500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 174509.3809937814,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 1980.9941132355968,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -783.4972907676711,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 10236.164968383095,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "060250 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "NHN KCP ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -9116.0
+      },
+      "nativeNetAverageCost": {
+        "value": 15763.660168971697,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 16360.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -98978.45059299031,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 197.85130613649517,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -3970.6247560182223,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 2
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "068270 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "CELLTRION ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 1678.0
+      },
+      "nativeNetAverageCost": {
+        "value": 197200.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 206000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 229409.92984994393,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -743.3293363050034,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 10630.366743554358,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.035375000000000004
+      },
+      "tRSAccrualDays": {
+        "value": 21
+      },
+      "financingCurrentResetSpread": {
+        "value": -10.25
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "069620 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "DAEWOONG PHARM ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -797.0
+      },
+      "nativeNetAverageCost": {
+        "value": 160000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 170300.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -90079.50782136623,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -46.54901809724106,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -6101.136650618262,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": -0.006100000000000001
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": -425.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "070960 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "MONAYONGPYONG ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 25126.0
+      },
+      "nativeNetAverageCost": {
+        "value": 2920.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 2960.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 49359.19881601041,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -157.0181635505969,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 858.9119697309828,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 8
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "079550 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LIGNEX1 ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 114.0
+      },
+      "nativeNetAverageCost": {
+        "value": 611000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 794000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 60072.87110839744,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 196.37038167736284,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -73.88169790448887,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 14299.25101837934,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 1
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "082740 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HANWHA ENGINE ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -689.0
+      },
+      "nativeNetAverageCost": {
+        "value": 43550.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 44700.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -20439.947702701807,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 131.80708516806953,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -536.7513927809136,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 3
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "084110 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HUONS GLOBAL ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 599.0
+      },
+      "nativeNetAverageCost": {
+        "value": 66300.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 62900.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 25005.20981968051,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -10.050138496724685,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -1172.8176784754246,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 3
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "097950 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "CJ CHEILJEDANG ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -275.0
+      },
+      "nativeNetAverageCost": {
+        "value": 217073.38327287274,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 220000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -40152.11346124492,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 14.753063328596909,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -696.1246873862469,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 1
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "103140 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "POONGSAN ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 3563.0
+      },
+      "nativeNetAverageCost": {
+        "value": 86700.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 93500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 221095.78767827872,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 2475.1919669226227,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -385.44242166636013,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 19638.528535732494,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0324
+      },
+      "tRSAccrualDays": {
+        "value": 1
+      },
+      "financingCurrentResetSpread": {
+        "value": -40.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "128940 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HANMI PHARM ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 579.0
+      },
+      "nativeNetAverageCost": {
+        "value": 515000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 553000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 212498.9215341426,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 653.2516575190639,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -441.1301252357807,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 16232.288153386242,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 7
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "139480 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "E-MART ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -795.0
+      },
+      "nativeNetAverageCost": {
+        "value": 95789.5544150868,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 97000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -51179.01205890747,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -1234.4286121969515,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 83.1799077092445,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -2118.8194147806303,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 6
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "141080 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LIGA CHEM BIO ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 713.0
+      },
+      "nativeNetAverageCost": {
+        "value": 192000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 205500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 97242.11392581483,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -185.22258760657132,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 6853.978272240921,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 6
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "145020 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HUGEL ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 528.0
+      },
+      "nativeNetAverageCost": {
+        "value": 240500.00000000003,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 257000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 90057.54030143951,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -142.22132209052506,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 6243.5775641958935,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 13
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "207940 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMSUNG BIOLOG ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 161.0
+      },
+      "nativeNetAverageCost": {
+        "value": 1504000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 1572000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 167969.89586997352,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -235.52679440091015,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 8181.904566415327,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.01515
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": -212.5
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "210980 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SKD&D ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 86262.0
+      },
+      "nativeNetAverageCost": {
+        "value": 12910.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 13120.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 751114.9279584808,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -2538.0614145265426,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 14780.478060481528,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "214150 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "CLASSYS ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 1300.0
+      },
+      "nativeNetAverageCost": {
+        "value": 50500.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 54600.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 47107.38865254817,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -99.69709794456867,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 3749.880933542688,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.036231717430000004
+      },
+      "tRSAccrualDays": {
+        "value": 20
+      },
+      "financingCurrentResetSpread": {
+        "value": -1.6828257
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "226950 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "OLIX PHARM ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 229.0
+      },
+      "nativeNetAverageCost": {
+        "value": 185100.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 200500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 30472.135760600493,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -47.86889371171128,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 2494.217349379744,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 14
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "237690 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "ST PHARM"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 2201.0
+      },
+      "nativeNetAverageCost": {
+        "value": 144600.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 152800.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 223201.1521333714,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 620.8147228840501,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -636.7438778302239,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 13475.705930630811,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 7
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "267250 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HD HYUNDAI ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 2192.0
+      },
+      "nativeNetAverageCost": {
+        "value": 239000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 247000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 359327.5682420011,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 1284.1077271249098,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -1325.8964668175804,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 14087.791830619788,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 14
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "267260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HD HYUNDAI ELECTRIC ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -54.0
+      },
+      "nativeNetAverageCost": {
+        "value": 832000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 902000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -32326.101528435,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 67.54582675608981,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -2654.7946113053404,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 17
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "267260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HD HYUNDAI ELECTRIC ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -168.0
+      },
+      "nativeNetAverageCost": {
+        "value": 832000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 902000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -100570.09364402,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -579.783244954439,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 401.4048905833188,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -8647.881939451125,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "267260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HD HYUNDAI ELECTRIC ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 235.0
+      },
+      "nativeNetAverageCost": {
+        "value": 832000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 902000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 140678.40479967083,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 551.4843008554724,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -504.2365664525805,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 11894.470011151709,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 22
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "267260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HD HYUNDAI ELECTRIC ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -136.0
+      },
+      "nativeNetAverageCost": {
+        "value": 853297.2176470734,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 902000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -81413.88533087334,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 55.42382601771533,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -4649.503377001191,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 9
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "278470 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "APR ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 332.0
+      },
+      "nativeNetAverageCost": {
+        "value": 337000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 344500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 75906.74090936242,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 280.9320599693384,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -215.76552565934253,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 2249.7919291746093,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 27
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "280360 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LOTTE WELLFOOD ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -720.0
+      },
+      "nativeNetAverageCost": {
+        "value": 111100.00000000001,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 113900.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -54426.35571454171,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -1576.8830013870731,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 170.1207653680758,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -3125.139470744928,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 16
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "286940 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LOTTE INNOVATE ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 2218.0
+      },
+      "nativeNetAverageCost": {
+        "value": 19990.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 20850.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 30691.678225608423,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 875.8536472056121,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -28.033109892867287,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 2324.616494670029,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 3
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "286940 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LOTTE INNOVATE ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 584.0
+      },
+      "nativeNetAverageCost": {
+        "value": 19990.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 20850.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 8081.127179330621,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 230.61250223989063,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -20.593241613494683,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 598.8600356925158,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 21
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "286940 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LOTTE INNOVATE ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -1091.0
+      },
+      "nativeNetAverageCost": {
+        "value": 19990.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 20850.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -15096.763275085117,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -506.8457694273181,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 58.962032149247534,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -1174.2968975471404,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "286940 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LOTTE INNOVATE ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -546.0
+      },
+      "nativeNetAverageCost": {
+        "value": 19990.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 20850.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -7555.300410812533,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -253.65516966756707,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 15.212404711893214,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -601.9822567126969,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 16
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "286940 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "LOTTE INNOVATE ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -2802.0
+      },
+      "nativeNetAverageCost": {
+        "value": 19990.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 20850.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -38772.80540493905,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -1301.7248817005916,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 37.16844215946912,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -3130.1931719645318,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 13
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "293490 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "KAKAO GAMES ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -3290.0
+      },
+      "nativeNetAverageCost": {
+        "value": 12409.925790050456,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 12460.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -27206.142941523925,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 0.24989721113718133,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -32.19006931191849,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 6
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "302440 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SK BIOSCIENCE ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -5872.0
+      },
+      "nativeNetAverageCost": {
+        "value": 41700.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 43650.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -170107.4483829649,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -393.91974823750206,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -9157.707393678154,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": -0.025234747000000002
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": -616.34747
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "326030 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SKBP ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -1575.0
+      },
+      "nativeNetAverageCost": {
+        "value": 94800.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 99000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -103482.94696602668,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 126.23465711658719,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -4974.0207044835015,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.026951852000000005
+      },
+      "tRSAccrualDays": {
+        "value": 7
+      },
+      "financingCurrentResetSpread": {
+        "value": -94.48147999999999
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "329180 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HD HYUNDAI HEAVY ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 537.0
+      },
+      "nativeNetAverageCost": {
+        "value": 463335.4073940819,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 451500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 160910.75612070854,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 1044.3903183631212,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 360.79590522979083,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -1804.6277753421834,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": -0.05735
+      },
+      "tRSAccrualDays": {
+        "value": 1
+      },
+      "financingCurrentResetSpread": {
+        "value": -937.5
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "339770 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "KYOCHON F&B ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 7988.0
+      },
+      "nativeNetAverageCost": {
+        "value": 4065.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 4160.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 22053.85028902885,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 1590.4218958434267,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -81.88737136189229,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 2166.590671929187,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "347850 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "D&D PHARMATECH ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 559.0
+      },
+      "nativeNetAverageCost": {
+        "value": 67800.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 74900.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 27787.31989620181,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -59.70932241526316,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 2754.5766956398174,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 17
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "352820 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HYBE ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -415.0
+      },
+      "nativeNetAverageCost": {
+        "value": 299000.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 289500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -79735.12878541516,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -253.5224354081911,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 276.38668342094115,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 2049.2804879493506,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 6
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "353200 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "DAEDUCKELEC ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -1268.0
+      },
+      "nativeNetAverageCost": {
+        "value": 78408.02596203155,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 88000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -74055.09799106698,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -355.0641438308435,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 42.08279744149786,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -8741.300193029374,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 2
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "356860 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "TLB ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 219.0
+      },
+      "nativeNetAverageCost": {
+        "value": 62800.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 72100.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 10479.303410606795,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -30.19957406398862,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 1386.9054963512597,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "356860 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "TLB ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 91.0
+      },
+      "nativeNetAverageCost": {
+        "value": 62800.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 72100.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 4354.4137459599015,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -2.5700344780707383,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 586.2727116762105,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 2
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "356860 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "TLB ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -1733.0
+      },
+      "nativeNetAverageCost": {
+        "value": 62800.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 72100.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -82925.26397525833,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 159.11979055692882,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -11054.77558400757,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 6
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "358570 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "GI INNOVATION ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -10258.0
+      },
+      "nativeNetAverageCost": {
+        "value": 12630.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 13030.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -88707.46032904823,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 163.40901986221752,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -3175.9052671274244,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.03634723694
+      },
+      "tRSAccrualDays": {
+        "value": 2
+      },
+      "financingCurrentResetSpread": {
+        "value": -0.5276306
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "402340 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SK SQUARE ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -76.0
+      },
+      "nativeNetAverageCost": {
+        "value": 478684.002631579,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 501000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -25269.948300005974,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 19.7476806229688,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -1172.4382128444902,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.03485
+      },
+      "tRSAccrualDays": {
+        "value": 6
+      },
+      "financingCurrentResetSpread": {
+        "value": -15.5
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "439260 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "DAEHAN SHIPBLDG ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -1473.0
+      },
+      "nativeNetAverageCost": {
+        "value": 85947.77349622335,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 90000.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -87982.90382739238,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 158.56892935588803,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -4289.1326469703035,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 8
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "443060 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HD MARINE SOL ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -414.0
+      },
+      "nativeNetAverageCost": {
+        "value": 179600.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 187600.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -51544.960412007145,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": -508.30584628045426,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 173.62399905037455,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -2886.3664931654544,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "443060 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HD MARINE SOL ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -176.0
+      },
+      "nativeNetAverageCost": {
+        "value": 179600.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 187600.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -21912.83341186777,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 33.62123850871467,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -1051.1529104879664,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 13
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "443060 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HD MARINE SOL ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -2534.0
+      },
+      "nativeNetAverageCost": {
+        "value": 180865.1401893315,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 187600.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -315494.99923677807,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 82.1906939690125,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -12802.996627341641,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 7
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "443060 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "HD MARINE SOL ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 2627.0
+      },
+      "nativeNetAverageCost": {
+        "value": 179600.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 187600.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 327073.93961918546,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 1493.4246766261608,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -996.297013966042,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 16688.61453433221,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 21
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "454910 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "DOOSAN ROBOTICS ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -1255.0
+      },
+      "nativeNetAverageCost": {
+        "value": 79500.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 84600.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -70463.97260364887,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 215.92157277092974,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -4506.392079015025,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 16
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "475560 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "THE BORN KOREA ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -3361.0
+      },
+      "nativeNetAverageCost": {
+        "value": 21150.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 22050.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -49184.71299534767,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 180.87716242049646,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -2164.7199659095304,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 28
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "476830 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "RZNOMICS ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 456.0
+      },
+      "nativeNetAverageCost": {
+        "value": 197600.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 226500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 68546.62622696231,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -115.77067224092389,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 9058.86803458328,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 15
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "484590 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "SAMYANG COMTECH ORD"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 5033.0
+      },
+      "nativeNetAverageCost": {
+        "value": 11610.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 12060.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 40283.50710460124,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -54.01847859362613,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 1726.986393930938,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Equity +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 2
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "950160 KS Equity"
+      },
+      "positionInstrumentDescription": {
+        "value": "KOLON TISSUEGENE KDR"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": 430.0
+      },
+      "nativeNetAverageCost": {
+        "value": 106700.0,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "fairValue": {
+        "value": 108500.0,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookNetLeverageContribution": {
+        "value": 30963.58435594019,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": -10.656411410491273,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": 582.0102658564989,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea ADR +55bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Fed Funds Effective Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 55.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0419
+      },
+      "tRSAccrualDays": {
+        "value": 3
+      },
+      "financingCurrentResetSpread": {
+        "value": 55.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "KMSJ6 Index"
+      },
+      "positionInstrumentDescription": {
+        "value": "M-KOSPI APR26"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -3.0
+      },
+      "nativeNetAverageCost": {
+        "value": 746.8200069999999,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Decimal4"
+      },
+      "fairValue": {
+        "value": 811.02002,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Decimal4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -80737.60627036642,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -6923.9007924713915,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Index Futures +0bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Zero Pct Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 0.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0
+      },
+      "tRSAccrualDays": {
+        "value": 0
+      },
+      "financingCurrentResetSpread": {
+        "value": 0.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "KMSJ6 Index"
+      },
+      "positionInstrumentDescription": {
+        "value": "M-KOSPI APR26"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -53.0
+      },
+      "nativeNetAverageCost": {
+        "value": 746.820007,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Decimal4"
+      },
+      "fairValue": {
+        "value": 811.02002,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Decimal4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -1426364.3774431401,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -122322.24733366125,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Index Futures +0bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Zero Pct Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 0.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0
+      },
+      "tRSAccrualDays": {
+        "value": 0
+      },
+      "financingCurrentResetSpread": {
+        "value": 0.0
+      }
+    },
+    {
+      "positionBBYellow": {
+        "value": "KSTM6 Index"
+      },
+      "positionInstrumentDescription": {
+        "value": "KQ150 JUN26"
+      },
+      "custodianName": {
+        "value": "Morgan Stanley"
+      },
+      "notionalQuantity": {
+        "value": -4.0
+      },
+      "nativeNetAverageCost": {
+        "value": 1834.5999759999997,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Decimal4"
+      },
+      "fairValue": {
+        "value": 1934.800049,
+        "currency": "KRW",
+        "source": "Internal",
+        "quoteType": "Price",
+        "quotationFormat": "Decimal4"
+      },
+      "bookNetLeverageContribution": {
+        "value": -51362.85030893899,
+        "currency": "USD",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "bookUnrealizedFeesAndCommissions": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookNetAccruedDividends": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTRSAccruedInterest": {
+        "value": 0.0,
+        "currency": "USD"
+      },
+      "bookTotalNPV": {
+        "value": -3008.986895558395,
+        "currency": "USD"
+      },
+      "tRSDescription": {
+        "value": "MS Flat South Korea Index Futures +0bps"
+      },
+      "tRSFloatingRateIndex": {
+        "value": "Zero Pct Rate"
+      },
+      "tRSFloatingRateSpread": {
+        "value": 0.0
+      },
+      "tRSCurrentResetRate": {
+        "value": 0.0
+      },
+      "tRSAccrualDays": {
+        "value": 0
+      },
+      "financingCurrentResetSpread": {
+        "value": 0.0
+      }
+    }
+  ]
+}
