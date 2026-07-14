@@ -286,6 +286,49 @@ def GoldmanSachs_trade_report_download():
     print("GoldmanSachs Trade report download complete")
 
 
+def gs_pbs_sma_trade_report_download():
+    swap_dir = Path("D:/PythonProjects/ljt1105/Dunamis_Workflow/data/input/QRT/Swap")
+    cash_dir = Path("D:/PythonProjects/ljt1105/Dunamis_Workflow/data/input/QRT/Cash")
+    swap_dir.mkdir(parents=True, exist_ok=True)
+    cash_dir.mkdir(parents=True, exist_ok=True)
+    outlook = win32com.client.Dispatch("outlook.application").GetNamespace("MAPI")
+    inbox = outlook.GetDefaultFolder(6).Folders("GS PBS (SMA)")
+    messages = inbox.Items
+
+    for message in messages:
+        if message.Unread:
+
+            attachments = message.Attachments
+
+            # 발신자 정보(이름/이메일 주소)로 synthetics/cash 여부를 판단합니다.
+            sender_info = ""
+            for attr in ("SenderName", "SenderEmailAddress"):
+                try:
+                    sender_info += str(getattr(message, attr, "")) + " "
+                except Exception:
+                    pass
+            sender_info = sender_info.lower()
+
+            if "synthetics" in sender_info:
+                target_folder = swap_dir
+            elif "cash" in sender_info:
+                target_folder = cash_dir
+            else:
+                print(f"발신자를 확인할 수 없어 건너뜁니다: {message.Subject}")
+                continue
+
+            for attachment in attachments:
+                attachment.SaveAsFile(target_folder / str(attachment))
+
+                if message.Unread:
+                    message.Unread = False
+
+            # 압축해제 함수 호출
+            extract_attachments(target_folder, attachments)
+
+    print("GS PBS (SMA) Trade report download complete")
+
+
 def hmc_trade_report_download():
     output_dir = Path("Z:/02.펀드/003.매매보고서 대사/HMC")
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -621,6 +664,8 @@ def trade_report_download():
         clsa_trade_report_download()
         print("===================================================")
         GoldmanSachs_trade_report_download()
+        print("===================================================")
+        gs_pbs_sma_trade_report_download()
         print("===================================================")
         hmc_trade_report_download()
         print("===================================================")
