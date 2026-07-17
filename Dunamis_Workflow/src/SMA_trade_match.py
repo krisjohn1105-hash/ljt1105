@@ -24,8 +24,16 @@ CASH_DIR = BASE_DIR.parent / 'data' / 'input' / 'QRT' / 'Cash'
 EOD_TRADE_PATH = BASE_DIR / 'EOD_Trade.json'
 RESULT_DIR = Path('Z:/02.펀드/019. 일간매매내역/SMA_recon_result')
 
-# GS PBS 거래를 ENF 전체 블로터에서 걸러내기 위한 counterPartyName 식별 키워드
-GS_COUNTERPARTY_KEYWORDS = ['goldman', 'gsil']
+# 계좌 구분 기준 (소문자 비교, 정규식)
+# 1순위: fundName — 'Prelude SMA' -> Prelude, 'QSMA' -> Qube
+# 2순위(폴백): fund가 아직 배정 전(예: 'Preallocation')이면 counterPartyName으로 구분
+#   - Prelude: 'MS Equity Algo', 'MS Future Algo', 'MS Equity HT', 'Morgan Stanley ...' 등
+#   - Qube(GS PBS): 'GS Equity Algo', 'GS Equity HT', 'Goldman ...', 'GSIL ...' 등
+ACCOUNTS = {
+    'Prelude': {'fund': r'prelude', 'counterparty': r'^ms\s|morgan stanley'},
+    'Qube': {'fund': r'qsma', 'counterparty': r'^gs\s|goldman|gsil'},
+}
+ALL_FUND_PATTERN = '|'.join(a['fund'] for a in ACCOUNTS.values())
 
 # 대사 키/비교 변수 (모든 소스 공통 스키마)
 KEY_COLS = ['rIC', 'tradeTransactionType', 'settleCurrency']
@@ -93,22 +101,36 @@ def finalize_match_frame(df):
     return df
 
 
-def preprocess_enf(enf_df, target_date_str, source_label, counterparty_keywords=None):
+def account_membership_mask(df, account):
+    """
+    ENF 블로터에서 해당 계좌(account) 소속 거래를 판별하는 불리언 마스크를 반환합니다.
+    1) fundName이 계좌의 fund 패턴에 매칭되면 해당 계좌
+    2) fundName이 어느 계좌의 fund 패턴에도 매칭되지 않으면(배정 전 등)
+       counterPartyName 패턴으로 폴백하여 구분
+    """
+    idx = df.index
+    fund = df['fundName.value'].astype(str).str.lower() if 'fundName.value' in df.columns else pd.Series('', index=idx)
+    cp = df['counterPartyName.value'].astype(str).str.lower() if 'counterPartyName.value' in df.columns else pd.Series('', index=idx)
+
+    fund_known = fund.str.contains(ALL_FUND_PATTERN, regex=True)
+    fund_match = fund.str.contains(ACCOUNTS[account]['fund'], regex=True)
+    cp_match = cp.str.contains(ACCOUNTS[account]['counterparty'], regex=True)
+
+    return fund_match | (~fund_known & cp_match)
+
+
+def preprocess_enf(enf_df, target_date_str, source_label, account=None):
     """
     ENF EOD 블로터를 대사 공통 스키마로 전처리합니다.
-    counterparty_keywords가 주어지면 counterPartyName에 해당 키워드가 포함된 거래만 남깁니다.
+    account('Prelude'/'Qube')가 주어지면 해당 계좌 소속 거래만 남깁니다.
     """
     if enf_df.empty:
         return finalize_match_frame(enf_df)
 
     df = enf_df.copy()
 
-    if counterparty_keywords:
-        if 'counterPartyName.value' in df.columns:
-            pattern = '|'.join(counterparty_keywords)
-            df = df[df['counterPartyName.value'].astype(str).str.lower().str.contains(pattern, regex=True)]
-        else:
-            print(f"[경고] counterPartyName.value 칼럼이 없어 {source_label} 거래 필터링을 수행하지 못했습니다.")
+    if account:
+        df = df[account_membership_mask(df, account)]
 
     if 'tradeDate.value' in df.columns:
         trade_dates = pd.to_datetime(df['tradeDate.value']).dt.strftime('%Y-%m-%d')
@@ -135,28 +157,30 @@ COMPARE_COL_KOR = {'notionalQuantity': '체결수량', 'tradingNotionalNetProcee
 KEY_COL_KOR = {'rIC': '종목코드', 'tradeTransactionType': '매매구분', 'settleCurrency': '결제통화'}
 
 
-def reconcile_trades(enf_df, other_df, other_label, account_label):
-    """
-    ENF 데이터와 상대측(other_df) 데이터를 KEY_COLS 기준으로 대조하여
-    '모든 거래'가 포함된 전체 대사 리포트를 반환합니다.
+# 통합 대사 키: 계좌(Prelude/Qube) + 종목/매매구분/결제통화
+RECON_KEYS = ['계좌'] + KEY_COLS
 
-    각 키(종목/매매구분/통화)에 대해 양측의 체결수량/체결금액과 차이를 모두 표기하며,
+
+def reconcile_trades(enf_df, broker_df):
+    """
+    ENF 전체 거래와 브로커(Prelude MS recap + Qube GS PBS) 전체 거래를
+    계좌 + 종목/매매구분/결제통화 기준으로 통합 대사합니다.
+
+    각 키에 대해 양측의 체결수량/체결금액과 차이를 모두 표기하며,
     한쪽에만 존재하는 거래는 없는 쪽을 NaN으로 두고 '사유'에 누락 사실을 기록합니다.
     (차이 계산 시에는 누락 측을 0으로 간주합니다.)
-    account_label은 해당 거래가 속한 계좌명(Prelude/QRT)으로 '계좌' 컬럼에 표기됩니다.
     """
-    print("[작업 시작] 대사(Reconciliation) 수행 시작")
+    print("[작업 시작] 통합 대사(Reconciliation) 수행 시작")
 
-    enf_grouped = enf_df.groupby(KEY_COLS, as_index=False)[COMPARE_COLS].sum()
-    other_grouped = other_df.groupby(KEY_COLS, as_index=False)[COMPARE_COLS].sum()
+    enf_grouped = enf_df.groupby(RECON_KEYS, as_index=False)[COMPARE_COLS].sum()
+    broker_grouped = broker_df.groupby(RECON_KEYS, as_index=False)[COMPARE_COLS].sum()
 
     merged = enf_grouped.merge(
-        other_grouped, on=KEY_COLS, how='outer',
+        broker_grouped, on=RECON_KEYS, how='outer',
         suffixes=('_enf', '_oth'), indicator=True, sort=True,
     )
 
-    report = merged[KEY_COLS].rename(columns=KEY_COL_KOR)
-    report.insert(0, '계좌', account_label)
+    report = merged[RECON_KEYS].rename(columns=KEY_COL_KOR)
     report['매매구분'] = report['매매구분'].replace({'Buy': '매수', 'Sell': '매도'})
 
     for col, kor in COMPARE_COL_KOR.items():
@@ -165,16 +189,16 @@ def reconcile_trades(enf_df, other_df, other_label, account_label):
         v_enf = pd.to_numeric(merged[f'{col}_enf'], errors='coerce').round(2)
         v_oth = pd.to_numeric(merged[f'{col}_oth'], errors='coerce').round(2)
         report[f'{kor}_ENF'] = v_enf
-        report[f'{kor}_{other_label}'] = v_oth
+        report[f'{kor}_브로커'] = v_oth
         # 차이 계산 시 누락 측은 0으로 간주
         report[f'{kor}_차이'] = (v_enf.fillna(0) - v_oth.fillna(0)).round(2)
 
     # 사유 판정: 누락 > 오차 범위(TOLERANCE) 초과 차이 > 일치
     def build_reason(row_merge, qty_diff, amt_diff):
         if row_merge == 'left_only':
-            return f"ENF에만 존재 ({other_label} 누락)"
+            return "ENF에만 존재 (브로커 누락)"
         if row_merge == 'right_only':
-            return f"{other_label}에만 존재 (ENF 누락)"
+            return "브로커에만 존재 (ENF 누락)"
         diffs = []
         if abs(qty_diff) >= TOLERANCE:
             diffs.append("수량 불일치")
@@ -187,18 +211,21 @@ def reconcile_trades(enf_df, other_df, other_label, account_label):
         for m, q, a in zip(merged['_merge'], report['체결수량_차이'], report['체결금액_차이'])
     ]
 
-    print("[작업 완료] 대사 수행 완료")
+    # 미분류 계좌 거래는 비교할 브로커 파일이 없으므로 사유를 별도 표기
+    report.loc[report['계좌'].astype(str).str.startswith('미분류'), '사유'] = '계좌 미분류 (확인 필요)'
+
+    print("[작업 완료] 통합 대사 수행 완료")
     return report
 
 
-def print_reconciliation_report(section_title, report, other_label):
-    print("\n" + "=" * 20 + f" {section_title} 대사 결과 " + "=" * 20)
+def print_reconciliation_report(report):
+    print("\n" + "=" * 20 + " SMA 통합 대사 결과 " + "=" * 20)
 
     if report.empty:
         print("\n대사 대상 거래가 없습니다.")
         return
 
-    # 전체 대사 결과 (모든 거래의 차이 내역)
+    # 전체 대사 결과 (Prelude + Qube 모든 거래의 차이 내역)
     print("대사 결과:")
     print(tabulate(
         report[['계좌', '종목코드', '매매구분', '결제통화', '체결수량_차이', '체결금액_차이']],
@@ -220,10 +247,10 @@ def print_reconciliation_report(section_title, report, other_label):
             "구분": row['매매구분'],
             "결제통화": row['결제통화'],
             "ENF수량": fmt(row['체결수량_ENF']),
-            f"{other_label}수량": fmt(row[f'체결수량_{other_label}']),
+            "브로커수량": fmt(row['체결수량_브로커']),
             "수량차이": fmt(row['체결수량_차이']),
             "ENF금액": fmt(row['체결금액_ENF']),
-            f"{other_label}금액": fmt(row[f'체결금액_{other_label}']),
+            "브로커금액": fmt(row['체결금액_브로커']),
             "금액차이": fmt(row['체결금액_차이']),
             "사유": row['사유'],
         } for _, row in diff_df.iterrows()]
@@ -296,8 +323,8 @@ def preprocess_ms(ms_df, file_label, required_cols):
     return ms_df.rename(columns=ms_rename)
 
 
-def run_prelude_reconciliation(enf_raw_df, today_str):
-    """Prelude(MS) 거래 대사를 수행합니다."""
+def prepare_prelude_frames(enf_raw_df, today_str):
+    """Prelude(MS) 계좌의 ENF/브로커 데이터를 대사 공통 스키마로 준비합니다."""
     ms_df = load_pre_trade_excel(PRELUDE_DATA_DIR, 'Pre allocation Korea Stocks', today_str)
     ms_futures = load_pre_trade_excel(PRELUDE_DATA_DIR, 'Pre allocation Korea Futures', today_str)
 
@@ -317,7 +344,7 @@ def run_prelude_reconciliation(enf_raw_df, today_str):
             target_date_str = datetime.today().strftime('%Y-%m-%d')
     print(f"[정보] Prelude 대사 대상 일자 설정: {target_date_str}")
 
-    enf_df = preprocess_enf(enf_raw_df, target_date_str, 'Prelude')
+    enf_df = preprocess_enf(enf_raw_df, target_date_str, 'Prelude', account='Prelude')
 
     ms_combined = pd.concat([
         preprocess_ms(ms_df, 'Pre allocation Korea Stocks',
@@ -328,7 +355,9 @@ def run_prelude_reconciliation(enf_raw_df, today_str):
     ms_combined = finalize_match_frame(ms_combined)
 
     print("[작업 완료] Prelude 데이터 전처리 완료")
-    return reconcile_trades(enf_df, ms_combined, 'MS', account_label='Prelude')
+    enf_df['계좌'] = 'Prelude'
+    ms_combined['계좌'] = 'Prelude'
+    return enf_df, ms_combined
 
 
 # ==================================================================================
@@ -446,8 +475,8 @@ def preprocess_cash(cash_df):
     return finalize_match_frame(out)
 
 
-def run_gs_pbs_reconciliation(enf_raw_df, today_dt):
-    """GS PBS(Synthetics Swap + Cash) 거래 대사를 수행합니다."""
+def prepare_qube_frames(enf_raw_df, today_dt):
+    """Qube(GS PBS Swap + Cash) 계좌의 ENF/브로커 데이터를 대사 공통 스키마로 준비합니다."""
     swap_path = load_gs_file(SWAP_DIR, today_dt, '스왑')
     cash_path = load_gs_file(CASH_DIR, today_dt, 'Cash')
 
@@ -455,17 +484,18 @@ def run_gs_pbs_reconciliation(enf_raw_df, today_dt):
     cash_df = parse_cash_execution_report(cash_path) if cash_path else pd.DataFrame()
 
     enf_df = preprocess_enf(
-        enf_raw_df, today_dt.strftime('%Y-%m-%d'), 'GS PBS',
-        counterparty_keywords=GS_COUNTERPARTY_KEYWORDS,
+        enf_raw_df, today_dt.strftime('%Y-%m-%d'), 'GS PBS', account='Qube',
     )
     swap_norm = preprocess_swap(swap_df)
     cash_norm = preprocess_cash(cash_df)
     gs_df = pd.concat([swap_norm, cash_norm], ignore_index=True)
 
-    print(f"[정보] GS PBS 필터링 후 ENF 거래 건수: {len(enf_df)}")
+    print(f"[정보] Qube(GS PBS) 필터링 후 ENF 거래 건수: {len(enf_df)}")
     print(f"[정보] Swap 거래 건수: {len(swap_norm)}, Cash 거래 건수: {len(cash_norm)}")
 
-    return reconcile_trades(enf_df, gs_df, 'GS', account_label='QRT')
+    enf_df['계좌'] = 'Qube'
+    gs_df['계좌'] = 'Qube'
+    return enf_df, gs_df
 
 
 # ==================================================================================
@@ -492,23 +522,38 @@ def main():
 
     today_dt = datetime.today()
 
-    # 2. Prelude(MS) 대사
-    print("\n" + "-" * 20 + " Prelude(MS) 대사 시작 " + "-" * 20)
-    report_ms = run_prelude_reconciliation(enf_raw_df, today_dt.strftime('%m%d%y'))
+    # 어느 계좌(Prelude/Qube)에도 분류되지 않는 거래 파악 (예: NH 등 기타 브로커)
+    # 제외하지 않고 계좌 '미분류'로 리포트에 포함시켜 거래가 누락되지 않게 합니다.
+    assigned = pd.Series(False, index=enf_raw_df.index)
+    for account in ACCOUNTS:
+        assigned |= account_membership_mask(enf_raw_df, account)
+    unassigned_raw = enf_raw_df[~assigned]
+    if not unassigned_raw.empty:
+        detail_cols = [c for c in ['fundName.value', 'counterPartyName.value'] if c in unassigned_raw.columns]
+        print("[경고] Prelude/Qube 어느 계좌에도 분류되지 않는 거래가 있습니다. 계좌 '미분류'로 리포트에 포함합니다:")
+        print(unassigned_raw[detail_cols].drop_duplicates().to_string(index=False))
 
-    # 3. GS PBS(SMA Swap/Cash) 대사
-    print("\n" + "-" * 20 + " GS PBS(SMA) 대사 시작 " + "-" * 20)
-    report_gs = run_gs_pbs_reconciliation(enf_raw_df, today_dt)
+    # 2. 계좌별 데이터 준비 (Prelude: MS recap / Qube: GS PBS Swap+Cash)
+    print("\n" + "-" * 20 + " Prelude(MS) 데이터 준비 " + "-" * 20)
+    prelude_enf, prelude_broker = prepare_prelude_frames(enf_raw_df, today_dt.strftime('%m%d%y'))
+
+    print("\n" + "-" * 20 + " Qube(GS PBS) 데이터 준비 " + "-" * 20)
+    qube_enf, qube_broker = prepare_qube_frames(enf_raw_df, today_dt)
+
+    # 3. 통합 대사: ENF 전체 vs 브로커(Prelude + Qube) 전체
+    # 미분류 거래(NH 등)도 ENF 측에 포함시켜 리포트에서 확인 가능하게 함
+    unassigned_enf = preprocess_enf(unassigned_raw, today_dt.strftime('%Y-%m-%d'), '미분류')
+    unassigned_enf['계좌'] = '미분류'
+
+    enf_all = pd.concat([prelude_enf, qube_enf, unassigned_enf], ignore_index=True)
+    broker_all = pd.concat([prelude_broker, qube_broker], ignore_index=True)
+    report = reconcile_trades(enf_all, broker_all)
 
     # 4. 결과 리포트 출력
-    print_reconciliation_report("Prelude(MS)", report_ms, 'MS')
-    print_reconciliation_report("GS PBS(SMA)", report_gs, 'GS')
+    print_reconciliation_report(report)
 
     # 5. 결과 엑셀 저장
-    save_results_to_excel({
-        'Prelude_대사': report_ms,
-        'GSPBS_대사': report_gs,
-    }, today_dt)
+    save_results_to_excel({'SMA_대사': report}, today_dt)
 
     # 6. 검토 필요 리스트 출력 (공통)
     if REVIEW_LIST:
