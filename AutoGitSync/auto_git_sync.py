@@ -73,10 +73,15 @@ class GitSyncManager:
 
     def _run_git_command(self, args: list[str]) -> Tuple[bool, str, str]:
         """
-        Git 명령어를 실행하고 결과를 반환하는 안전한 실행 함수 (예외 처리 포함)
+        Git 명령어를 실행하고 결과를 반환하는 안전한 실행 함수 (CMD 창 팝업 방지 및 예외 처리 포함)
         """
         cmd = ["git"] + args
         try:
+            # Windows에서 하위 프로세스 콘솔 창(CMD 깜빡임) 방지 플래그 설정
+            creation_flags = 0
+            if sys.platform == "win32":
+                creation_flags = subprocess.CREATE_NO_WINDOW
+
             result = subprocess.run(
                 cmd,
                 cwd=str(self.repo_dir),
@@ -84,6 +89,7 @@ class GitSyncManager:
                 text=True,
                 encoding="utf-8",
                 errors="replace",
+                creationflags=creation_flags,
                 check=False
             )
             is_success = (result.returncode == 0)
@@ -229,22 +235,17 @@ class GitSyncManager:
 
     def register_windows_task(self, interval_minutes: int = 30) -> bool:
         """
-        Windows 작업 스케줄러에 30분 주기 자동 동기화 작업을 등록하는 함수
+        Windows 작업 스케줄러에 30분 주기 자동 동기화 작업을 등록하는 함수 (CMD 창 완전 은닉)
         """
         task_name = "AutoGitSync_ljt1105"
-        script_path = Path(__file__).resolve()
-        # pythonw.exe를 사용하여 콘솔창 없이 조용히 백그라운드 실행
-        python_exe = sys.executable
-        pythonw_exe = Path(python_exe).parent / "pythonw.exe"
-        if not pythonw_exe.exists():
-            pythonw_exe = Path(python_exe)
+        vbs_path = Path(__file__).resolve().parent / "silent_run.vbs"
 
-        action_cmd = f'"{pythonw_exe}" "{script_path}" --once'
+        # wscript.exe를 사용하여 CMD 창이나 콘솔 팝업이 일절 뜨지 않도록 완전 백그라운드 실행
+        action_cmd = f'wscript.exe //B //Nologo "{vbs_path}"'
 
-        self.logger.info(f"[작업 스케줄러 등록 시작] 작업 이름: {task_name}, 실행 주기: {interval_minutes}분")
+        self.logger.info(f"[작업 스케줄러 등록 시작] 작업 이름: {task_name}, 실행 주기: {interval_minutes}분 (무음 모드)")
 
-        # schtasks 명령어로 등록 (30분마다 반복 실행, PC 부팅/로그온 시에도 동작)
-        # /SC MINUTE /MO 30 /TN <task_name> /TR <action_cmd> /F
+        # schtasks 명령어로 등록 (30분마다 반복 실행, 창 팝업 없음)
         cmd = [
             "schtasks", "/Create",
             "/TN", task_name,
@@ -254,11 +255,13 @@ class GitSyncManager:
             "/F"
         ]
 
+        creation_flags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
+
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+            result = subprocess.run(cmd, capture_output=True, text=True, creationflags=creation_flags, check=False)
             if result.returncode == 0:
-                self.logger.info(f"[작업 스케줄러 등록 성공] 작업 '{task_name}'이 {interval_minutes}분 주기로 성공적으로 등록되었습니다.")
-                print(f"\n[성공] Windows 작업 스케줄러에 '{task_name}'이(가) 등록되었습니다. (매 {interval_minutes}분마다 자동 실행)")
+                self.logger.info(f"[작업 스케줄러 등록 성공] 작업 '{task_name}'이 {interval_minutes}분 주기로 등록되었습니다. (CMD 창 팝업 없음)")
+                print(f"\n[성공] Windows 작업 스케줄러에 '{task_name}'이(가) 등록되었습니다. (30분 주기, CMD 창 없이 완전 백그라운드 실행)")
                 return True
             else:
                 self.logger.error(f"[작업 스케줄러 등록 실패] stderr: {result.stderr}")
@@ -276,8 +279,9 @@ class GitSyncManager:
         self.logger.info(f"[작업 스케줄러 삭제 시작] 작업 이름: {task_name}")
 
         cmd = ["schtasks", "/Delete", "/TN", task_name, "/F"]
+        creation_flags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+            result = subprocess.run(cmd, capture_output=True, text=True, creationflags=creation_flags, check=False)
             if result.returncode == 0:
                 self.logger.info(f"[작업 스케줄러 삭제 성공] 작업 '{task_name}'이 정상적으로 제거되었습니다.")
                 print(f"\n[성공] 작업 '{task_name}'이(가) 스케줄러에서 삭제되었습니다.")
