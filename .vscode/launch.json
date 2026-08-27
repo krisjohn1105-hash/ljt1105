@@ -1,0 +1,41 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "수기운용지시서 생성 (최신 폴더)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/ManualOrderSheet/run.py",
+      "cwd": "${workspaceFolder}/ManualOrderSheet",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "수기운용지시서 생성 (날짜 입력)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/ManualOrderSheet/run.py",
+      "args": ["${input:orderDate}"],
+      "cwd": "${workspaceFolder}/ManualOrderSheet",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "수기운용지시서 템플릿 재생성",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "src.build_template",
+      "cwd": "${workspaceFolder}/ManualOrderSheet",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ],
+  "inputs": [
+    {
+      "id": "orderDate",
+      "type": "promptString",
+      "description": "지급일 폴더명 (예: 20260828)",
+      "default": "20260828"
+    }
+  ]
+}

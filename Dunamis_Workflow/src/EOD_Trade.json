@@ -8,211 +8,19 @@
         "value": true
       },
       "tradeId": {
-        "value": 1319626021
+        "value": 1391089801
       },
       "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Sell Short"
-      },
-      "notionalQuantity": {
-        "value": -19.0
-      },
-      "tradePrice": {
-        "value": 1885000.0,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "Long SS Short SKH"
-      },
-      "instrumentDescription": {
-        "value": "SK HYNIX ORD"
-      },
-      "bBYellow": {
-        "value": "000660 KS Equity"
-      },
-      "rIC": {
-        "value": "000660.KS"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__YW"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -19.34,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": -48.36,
-        "currency": "USD"
-      },
-      "netTradePrice": {
-        "value": 1269.027864431303,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": 24111.529424194756,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319626979
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
+        "value": "Samsung Equity HT"
       },
       "tradeTransactionType": {
         "value": "Sell"
       },
       "notionalQuantity": {
-        "value": -2427.0
+        "value": -12883.0
       },
       "tradePrice": {
-        "value": 57062.420445,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "LongHPSP,HAESUNGShortOPENEDGE,HIGEN"
-      },
-      "instrumentDescription": {
-        "value": "HAESUNG DS ORD"
-      },
-      "bBYellow": {
-        "value": "195870 KS Equity"
-      },
-      "rIC": {
-        "value": "195870.KS"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__YW"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -74.8,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": -186.99,
-        "currency": "USD"
-      },
-      "netTradePrice": {
-        "value": 38.415807516108146,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": 93235.1648415945,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319627104
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Sell Short"
-      },
-      "notionalQuantity": {
-        "value": -45.0
-      },
-      "tradePrice": {
-        "value": 137935.555556,
+        "value": 11672.561128,
         "currency": "KRW",
         "quoteType": "Price",
         "quotationFormat": "Price4"
@@ -221,1167 +29,22 @@
         "value": null
       },
       "instrumentDescription": {
-        "value": "DAEDUCKELEC ORD"
+        "value": "TMC ORD"
       },
       "bBYellow": {
-        "value": "353200 KS Equity"
+        "value": "217590 KS Equity"
       },
       "rIC": {
-        "value": "353200.KS"
+        "value": "217590.KS"
       },
       "instrumentSubtype": {
         "value": "Equity"
       },
       "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
+        "value": "2026-08-26T05:00:00.000+00:00"
       },
       "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__YW"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -3.35,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": -8.38,
-        "currency": "USD"
-      },
-      "netTradePrice": {
-        "value": 92.8616408453335,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": 4178.773838040008,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319627008
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Buy to Cover"
-      },
-      "notionalQuantity": {
-        "value": 3874.0
-      },
-      "tradePrice": {
-        "value": 28981.139516,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "LongHPSP,HAESUNGShortOPENEDGE,HIGEN"
-      },
-      "instrumentDescription": {
-        "value": "YEST ORD"
-      },
-      "bBYellow": {
-        "value": "122640 KS Equity"
-      },
-      "rIC": {
-        "value": "122640.KQ"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__YW"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -60.64,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": null
-      },
-      "netTradePrice": {
-        "value": 19.58124350403633,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": -75857.73733463675,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319930703
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Sell Short"
-      },
-      "notionalQuantity": {
-        "value": -342.0
-      },
-      "tradePrice": {
-        "value": 422618.421053,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": null
-      },
-      "instrumentDescription": {
-        "value": "HYUNDAI MOTOR ORD"
-      },
-      "bBYellow": {
-        "value": "005380 KS Equity"
-      },
-      "rIC": {
-        "value": "005380.KS"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__YW"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -78.06,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": -195.16,
-        "currency": "USD"
-      },
-      "netTradePrice": {
-        "value": 284.5169776902379,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": 97304.80637006137,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319794606
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Buy"
-      },
-      "notionalQuantity": {
-        "value": 83.0
-      },
-      "tradePrice": {
-        "value": 160539.759036,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "KdefenseBasket"
-      },
-      "instrumentDescription": {
-        "value": "HYUNDAI-ROTEM ORD"
-      },
-      "bBYellow": {
-        "value": "064350 KS Equity"
-      },
-      "rIC": {
-        "value": "064350.KS"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__YW"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -7.2,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": null
-      },
-      "netTradePrice": {
-        "value": 108.46948230657215,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": -9002.967031445489,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319729548
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Buy"
-      },
-      "notionalQuantity": {
-        "value": 219.0
-      },
-      "tradePrice": {
-        "value": 111828.853621,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "LongDBShortIPS,Hanmi"
-      },
-      "instrumentDescription": {
-        "value": "DB HITEK ORD"
-      },
-      "bBYellow": {
-        "value": "000990 KS Equity"
-      },
-      "rIC": {
-        "value": "000990.KS"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__YW"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -13.23,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": null
-      },
-      "netTradePrice": {
-        "value": 75.55770281837226,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": -16547.136917223525,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319671111
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Buy to Cover"
-      },
-      "notionalQuantity": {
-        "value": 305.0
-      },
-      "tradePrice": {
-        "value": 104674.90659,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "LongKOLONTG,DDPHARMShortLIGACHEM,ALTEO"
-      },
-      "instrumentDescription": {
-        "value": "LIGA CHEM BIO ORD"
-      },
-      "bBYellow": {
-        "value": "141080 KS Equity"
-      },
-      "rIC": {
-        "value": "141080.KQ"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__HJ"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -17.24,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": null
-      },
-      "netTradePrice": {
-        "value": 70.72408235634474,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": -21570.84511868515,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1320101240
-      },
-      "counterPartyName": {
-        "value": "MS Future Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Buy"
-      },
-      "notionalQuantity": {
-        "value": 1.0
-      },
-      "tradePrice": {
-        "value": 1080.28,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Decimal4"
-      },
-      "tradeDealId": {
-        "value": "Hedge"
-      },
-      "instrumentDescription": {
-        "value": "M-KOSPI AUG26"
-      },
-      "bBYellow": {
-        "value": "KMSQ6 Index"
-      },
-      "rIC": {
-        "value": "MKS2Q6"
-      },
-      "instrumentSubtype": {
-        "value": "Index Future"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__WK"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006767960475110825
-      },
-      "grossTradeCommisions": {
-        "value": -21.93,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": null
-      },
-      "netTradePrice": {
-        "value": 0.7315678342052722,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": -36578.39171026361,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319636538
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Sell"
-      },
-      "notionalQuantity": {
-        "value": -88.0
-      },
-      "tradePrice": {
-        "value": 5780.0,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "Tender SKD&D"
-      },
-      "instrumentDescription": {
-        "value": "SKD&D ORD"
-      },
-      "bBYellow": {
-        "value": "210980 KS Equity"
-      },
-      "rIC": {
-        "value": "210980.KS"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": null
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -0.27,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": -0.69,
-        "currency": "USD"
-      },
-      "netTradePrice": {
-        "value": 3.8912533011569623,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": 342.4302905018127,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319620598
-      },
-      "counterPartyName": {
-        "value": "MS Future Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Buy"
-      },
-      "notionalQuantity": {
-        "value": 4.0
-      },
-      "tradePrice": {
-        "value": 1101.28,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Decimal4"
-      },
-      "tradeDealId": {
-        "value": "Hedge"
-      },
-      "instrumentDescription": {
-        "value": "M-KOSPI AUG26"
-      },
-      "bBYellow": {
-        "value": "KMSQ6 Index"
-      },
-      "rIC": {
-        "value": "MKS2Q6"
-      },
-      "instrumentSubtype": {
-        "value": "Index Future"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__WK"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006767960475110825
-      },
-      "grossTradeCommisions": {
-        "value": -89.44,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": null
-      },
-      "netTradePrice": {
-        "value": 0.7457891512030049,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": -149157.830240601,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319626933
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Sell Short"
-      },
-      "notionalQuantity": {
-        "value": -391.0
-      },
-      "tradePrice": {
-        "value": 74085.16624,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": null
-      },
-      "instrumentDescription": {
-        "value": "LEENO IND ORD"
-      },
-      "bBYellow": {
-        "value": "058470 KS Equity"
-      },
-      "rIC": {
-        "value": "058470.KQ"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__YW"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -15.65,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": -39.11,
-        "currency": "USD"
-      },
-      "netTradePrice": {
-        "value": 49.87592627327261,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": 19501.48717284959,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319620600
-      },
-      "counterPartyName": {
-        "value": "MS Future Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Sell"
-      },
-      "notionalQuantity": {
-        "value": -2.0
-      },
-      "tradePrice": {
-        "value": 1427.0,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Decimal4"
-      },
-      "tradeDealId": {
-        "value": "BlockKXHitech"
-      },
-      "instrumentDescription": {
-        "value": "KQ150 SEP26"
-      },
-      "bBYellow": {
-        "value": "KSTU6 Index"
-      },
-      "rIC": {
-        "value": "KQ150U6"
-      },
-      "instrumentSubtype": {
-        "value": "Index Future"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__WK"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006774838250736764
-      },
-      "grossTradeCommisions": {
-        "value": -11.6,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": null
-      },
-      "netTradePrice": {
-        "value": 0.9661894183801362,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": 19323.788367602723,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319627406
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Sell"
-      },
-      "notionalQuantity": {
-        "value": -7091.0
-      },
-      "tradePrice": {
-        "value": 2102.110422,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "Long Monayongpyong"
-      },
-      "instrumentDescription": {
-        "value": "MONAYONGPYONG ORD"
-      },
-      "bBYellow": {
-        "value": "070960 KS Equity"
-      },
-      "rIC": {
-        "value": "070960.KS"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__YW"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -8.05,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": -20.13,
-        "currency": "USD"
-      },
-      "netTradePrice": {
-        "value": 1.4151913865684087,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": 10035.122122156585,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319626927
-      },
-      "counterPartyName": {
-        "value": "NH Investment Equity HT"
-      },
-      "tradeTransactionType": {
-        "value": "Sell"
-      },
-      "notionalQuantity": {
-        "value": -24192.0
-      },
-      "tradePrice": {
-        "value": 1212.313947,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "BlockKXHitech"
-      },
-      "instrumentDescription": {
-        "value": "KX HITECH ORD"
-      },
-      "bBYellow": {
-        "value": "052900 KS Equity"
-      },
-      "rIC": {
-        "value": "052900.KQ"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
+        "value": "2026-08-28T05:00:00.000+00:00"
       },
       "fundName": {
         "value": "Preallocation"
@@ -1402,22 +65,22 @@
         "value": 1.0
       },
       "grossTradeCommisions": {
-        "value": -14660.0,
+        "value": -150378.0,
         "currency": "KRW"
       },
       "grossFees": {
         "value": null
       },
       "grossTaxes": {
-        "value": -57906.0,
+        "value": -298988.0,
         "currency": "KRW"
       },
       "netTradePrice": {
-        "value": 1209.3143603597885,
+        "value": 11637.680587753162,
         "currency": "KRW"
       },
       "tradingNotionalNetProceeds": {
-        "value": 29255733.0,
+        "value": 149928239.0,
         "currency": "KRW"
       },
       "orderTradeReason": {
@@ -1431,6 +94,9 @@
       },
       "reportedTradeFilename": {
         "value": null
+      },
+      "orderStatus": {
+        "value": "Cancelled"
       }
     },
     {
@@ -1441,19 +107,19 @@
         "value": true
       },
       "tradeId": {
-        "value": 1319930237
+        "value": 1391102498
       },
       "counterPartyName": {
-        "value": "MS Equity Algo"
+        "value": "GS Equity Algo"
       },
       "tradeTransactionType": {
-        "value": "Buy"
+        "value": "Sell Short"
       },
       "notionalQuantity": {
-        "value": 805.0
+        "value": -6383.0
       },
       "tradePrice": {
-        "value": 179073.718689,
+        "value": 4450.425349,
         "currency": "KRW",
         "quoteType": "Price",
         "quotationFormat": "Price4"
@@ -1462,22 +128,22 @@
         "value": null
       },
       "instrumentDescription": {
-        "value": "LG ELECTRONICS ORD"
+        "value": "AJ NETWORKS ORD"
       },
       "bBYellow": {
-        "value": "066570 KS Equity"
+        "value": "095570 KS Equity"
       },
       "rIC": {
-        "value": "066570.KS"
+        "value": "095570.KS"
       },
       "instrumentSubtype": {
         "value": "Equity"
       },
       "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
+        "value": "2026-08-26T05:00:00.000+00:00"
       },
       "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
+        "value": "2026-08-28T05:00:00.000+00:00"
       },
       "fundName": {
         "value": "Preallocation"
@@ -1486,7 +152,7 @@
         "value": "Bulk"
       },
       "bookName": {
-        "value": "Long Short__YW"
+        "value": "Long Short__WK"
       },
       "tradeCurrency": {
         "value": "KRW"
@@ -1495,24 +161,25 @@
         "value": "USD"
       },
       "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
+        "value": 0.0007216569242981886
       },
       "grossTradeCommisions": {
-        "value": -77.86,
+        "value": -8.2,
         "currency": "USD"
       },
       "grossFees": {
         "value": null
       },
       "grossTaxes": {
-        "value": null
+        "value": -41.0,
+        "currency": "USD"
       },
       "netTradePrice": {
-        "value": 120.99200258610405,
+        "value": 3.2039722948712805,
         "currency": "USD"
       },
       "tradingNotionalNetProceeds": {
-        "value": -97398.56208181377,
+        "value": 20450.955158163382,
         "currency": "USD"
       },
       "orderTradeReason": {
@@ -1526,6 +193,9 @@
       },
       "reportedTradeFilename": {
         "value": null
+      },
+      "orderStatus": {
+        "value": "Done For Day"
       }
     },
     {
@@ -1536,7 +206,106 @@
         "value": true
       },
       "tradeId": {
-        "value": 1319650321
+        "value": 1391107584
+      },
+      "counterPartyName": {
+        "value": "GS Equity Algo"
+      },
+      "tradeTransactionType": {
+        "value": "Sell Short"
+      },
+      "notionalQuantity": {
+        "value": -6684.0
+      },
+      "tradePrice": {
+        "value": 4816.938211,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "tradeDealId": {
+        "value": null
+      },
+      "instrumentDescription": {
+        "value": "ORIENTAL PRE ENG ORD"
+      },
+      "bBYellow": {
+        "value": "014940 KS Equity"
+      },
+      "rIC": {
+        "value": "014940.KQ"
+      },
+      "instrumentSubtype": {
+        "value": "Equity"
+      },
+      "tradeDate": {
+        "value": "2026-08-26T05:00:00.000+00:00"
+      },
+      "settleDate": {
+        "value": "2026-08-28T05:00:00.000+00:00"
+      },
+      "fundName": {
+        "value": "Preallocation"
+      },
+      "custodianAccountDisplayName": {
+        "value": "Bulk"
+      },
+      "bookName": {
+        "value": "ECM_Private Block_WK"
+      },
+      "tradeCurrency": {
+        "value": "KRW"
+      },
+      "settleCurrency": {
+        "value": "USD"
+      },
+      "actualTradeToSettleFXRate": {
+        "value": 0.0007216569242981886
+      },
+      "grossTradeCommisions": {
+        "value": -9.29,
+        "currency": "USD"
+      },
+      "grossFees": {
+        "value": null
+      },
+      "grossTaxes": {
+        "value": -46.47,
+        "currency": "USD"
+      },
+      "netTradePrice": {
+        "value": 3.4678345038906633,
+        "currency": "USD"
+      },
+      "tradingNotionalNetProceeds": {
+        "value": 23179.0058240052,
+        "currency": "USD"
+      },
+      "orderTradeReason": {
+        "value": null
+      },
+      "notes": {
+        "value": null
+      },
+      "tradeExternalReference": {
+        "value": null
+      },
+      "reportedTradeFilename": {
+        "value": null
+      },
+      "orderStatus": {
+        "value": "Done For Day"
+      }
+    },
+    {
+      "tradeBookingStatus": {
+        "value": "Open"
+      },
+      "allocatedTrade": {
+        "value": true
+      },
+      "tradeId": {
+        "value": 1391093256
       },
       "counterPartyName": {
         "value": "MS Equity Algo"
@@ -1545,10 +314,10 @@
         "value": "Sell Short"
       },
       "notionalQuantity": {
-        "value": -114.0
+        "value": -5467.0
       },
       "tradePrice": {
-        "value": 250127.192982,
+        "value": 8274.293031,
         "currency": "KRW",
         "quoteType": "Price",
         "quotationFormat": "Price4"
@@ -1557,22 +326,22 @@
         "value": null
       },
       "instrumentDescription": {
-        "value": "HANMI SEMICON ORD"
+        "value": "GI INNOVATION ORD"
       },
       "bBYellow": {
-        "value": "042700 KS Equity"
+        "value": "358570 KS Equity"
       },
       "rIC": {
-        "value": "042700.KS"
+        "value": "358570.KQ"
       },
       "instrumentSubtype": {
         "value": "Equity"
       },
       "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
+        "value": "2026-08-26T05:00:00.000+00:00"
       },
       "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
+        "value": "2026-08-28T05:00:00.000+00:00"
       },
       "fundName": {
         "value": "Preallocation"
@@ -1581,7 +350,7 @@
         "value": "Bulk"
       },
       "bookName": {
-        "value": "Long Short__YW"
+        "value": "Long Short__WK"
       },
       "tradeCurrency": {
         "value": "KRW"
@@ -1590,25 +359,25 @@
         "value": "USD"
       },
       "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
+        "value": 0.0007217402601151897
       },
       "grossTradeCommisions": {
-        "value": -15.4,
+        "value": -26.12,
         "currency": "USD"
       },
       "grossFees": {
         "value": null
       },
       "grossTaxes": {
-        "value": -38.5,
+        "value": -65.3,
         "currency": "USD"
       },
       "netTradePrice": {
-        "value": 168.3917129975787,
+        "value": 5.955168253374892,
         "currency": "USD"
       },
       "tradingNotionalNetProceeds": {
-        "value": 19196.655281723968,
+        "value": 32556.904841200543,
         "currency": "USD"
       },
       "orderTradeReason": {
@@ -1622,6 +391,9 @@
       },
       "reportedTradeFilename": {
         "value": null
+      },
+      "orderStatus": {
+        "value": "Done For Day"
       }
     },
     {
@@ -1632,102 +404,7 @@
         "value": true
       },
       "tradeId": {
-        "value": 1319653937
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Buy to Cover"
-      },
-      "notionalQuantity": {
-        "value": 393.0
-      },
-      "tradePrice": {
-        "value": 348167.178008,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "Long Samyang Short Nongshim"
-      },
-      "instrumentDescription": {
-        "value": "NONG SHIM ORD"
-      },
-      "bBYellow": {
-        "value": "004370 KS Equity"
-      },
-      "rIC": {
-        "value": "004370.KS"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__YW"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -73.9,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": null
-      },
-      "netTradePrice": {
-        "value": 235.24078607139288,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": -92449.62892605738,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1320126030
+        "value": 1391081912
       },
       "counterPartyName": {
         "value": "MS Future Algo"
@@ -1736,10 +413,10 @@
         "value": "Buy"
       },
       "notionalQuantity": {
-        "value": 14.0
+        "value": 2.0
       },
       "tradePrice": {
-        "value": 1371.057143,
+        "value": 1447.65,
         "currency": "KRW",
         "quoteType": "Price",
         "quotationFormat": "Decimal4"
@@ -1760,10 +437,108 @@
         "value": "Index Future"
       },
       "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
+        "value": "2026-08-26T05:00:00.000+00:00"
       },
       "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
+        "value": "2026-08-28T05:00:00.000+00:00"
+      },
+      "fundName": {
+        "value": "Preallocation"
+      },
+      "custodianAccountDisplayName": {
+        "value": "Bulk"
+      },
+      "bookName": {
+        "value": "ECM_Private Block_WK"
+      },
+      "tradeCurrency": {
+        "value": "KRW"
+      },
+      "settleCurrency": {
+        "value": "USD"
+      },
+      "actualTradeToSettleFXRate": {
+        "value": 0.0007223345853799479
+      },
+      "grossTradeCommisions": {
+        "value": -12.55,
+        "currency": "USD"
+      },
+      "grossFees": {
+        "value": null
+      },
+      "grossTaxes": {
+        "value": null
+      },
+      "netTradePrice": {
+        "value": 1.0463151625252816,
+        "currency": "USD"
+      },
+      "tradingNotionalNetProceeds": {
+        "value": -20926.30325050563,
+        "currency": "USD"
+      },
+      "orderTradeReason": {
+        "value": null
+      },
+      "notes": {
+        "value": null
+      },
+      "tradeExternalReference": {
+        "value": null
+      },
+      "reportedTradeFilename": {
+        "value": null
+      },
+      "orderStatus": {
+        "value": "Done For Day"
+      }
+    },
+    {
+      "tradeBookingStatus": {
+        "value": "Open"
+      },
+      "allocatedTrade": {
+        "value": true
+      },
+      "tradeId": {
+        "value": 1391100193
+      },
+      "counterPartyName": {
+        "value": "MS Equity Algo"
+      },
+      "tradeTransactionType": {
+        "value": "Sell Short"
+      },
+      "notionalQuantity": {
+        "value": -7789.0
+      },
+      "tradePrice": {
+        "value": 4457.561304,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "tradeDealId": {
+        "value": null
+      },
+      "instrumentDescription": {
+        "value": "AJ NETWORKS ORD"
+      },
+      "bBYellow": {
+        "value": "095570 KS Equity"
+      },
+      "rIC": {
+        "value": "095570.KS"
+      },
+      "instrumentSubtype": {
+        "value": "Equity"
+      },
+      "tradeDate": {
+        "value": "2026-08-26T05:00:00.000+00:00"
+      },
+      "settleDate": {
+        "value": "2026-08-28T05:00:00.000+00:00"
       },
       "fundName": {
         "value": "Preallocation"
@@ -1781,24 +556,25 @@
         "value": "USD"
       },
       "actualTradeToSettleFXRate": {
-        "value": 0.0006774838250736764
+        "value": 0.0007217402601151897
       },
       "grossTradeCommisions": {
-        "value": -78.03,
+        "value": -20.05,
         "currency": "USD"
       },
       "grossFees": {
         "value": null
       },
       "grossTaxes": {
-        "value": null
+        "value": -50.12,
+        "currency": "USD"
       },
       "netTradePrice": {
-        "value": 0.9294263947770836,
+        "value": 3.2081925963815543,
         "currency": "USD"
       },
       "tradingNotionalNetProceeds": {
-        "value": -130119.69526879171,
+        "value": 24988.612133215927,
         "currency": "USD"
       },
       "orderTradeReason": {
@@ -1812,6 +588,9 @@
       },
       "reportedTradeFilename": {
         "value": null
+      },
+      "orderStatus": {
+        "value": "Done For Day"
       }
     },
     {
@@ -1822,139 +601,43 @@
         "value": true
       },
       "tradeId": {
-        "value": 1319670486
+        "value": 1391568669
       },
       "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Sell"
-      },
-      "notionalQuantity": {
-        "value": -877.0
-      },
-      "tradePrice": {
-        "value": 69298.867757,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "LongKOLONTG,DDPHARMShortLIGACHEM,ALTEO"
-      },
-      "instrumentDescription": {
-        "value": "D&D PHARMATECH ORD"
-      },
-      "bBYellow": {
-        "value": "347850 KS Equity"
-      },
-      "rIC": {
-        "value": "347850.KQ"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__HJ"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -32.82,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": -82.06,
-        "currency": "USD"
-      },
-      "netTradePrice": {
-        "value": 46.653685416725565,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": 40915.28211046833,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319729206
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
+        "value": "MS Future Algo"
       },
       "tradeTransactionType": {
         "value": "Buy"
       },
       "notionalQuantity": {
-        "value": 110.0
+        "value": 2.0
       },
       "tradePrice": {
-        "value": 257044.001564,
+        "value": 1430.25,
         "currency": "KRW",
         "quoteType": "Price",
-        "quotationFormat": "Price4"
+        "quotationFormat": "Decimal4"
       },
       "tradeDealId": {
-        "value": "Long SS Short SKH"
+        "value": "BlockKXHitech"
       },
       "instrumentDescription": {
-        "value": "SAMSUNG ELECTR ORD"
+        "value": "KQ150 SEP26"
       },
       "bBYellow": {
-        "value": "005930 KS Equity"
+        "value": "KSTU6 Index"
       },
       "rIC": {
-        "value": "005930.KS"
+        "value": "KQ150U6"
       },
       "instrumentSubtype": {
-        "value": "Equity"
+        "value": "Index Future"
       },
       "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
+        "value": "2026-08-26T05:00:00.000+00:00"
       },
       "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
+        "value": "2026-08-28T05:00:00.000+00:00"
       },
       "fundName": {
         "value": "Preallocation"
@@ -1963,7 +646,7 @@
         "value": "Bulk"
       },
       "bookName": {
-        "value": "Long Short__YW"
+        "value": null
       },
       "tradeCurrency": {
         "value": "KRW"
@@ -1972,10 +655,10 @@
         "value": "USD"
       },
       "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
+        "value": 0.0007223345853799479
       },
       "grossTradeCommisions": {
-        "value": -15.27,
+        "value": -12.4,
         "currency": "USD"
       },
       "grossFees": {
@@ -1985,11 +668,11 @@
         "value": null
       },
       "netTradePrice": {
-        "value": 173.67297666092,
+        "value": 1.0337390407396705,
         "currency": "USD"
       },
       "tradingNotionalNetProceeds": {
-        "value": -19104.0274327012,
+        "value": -20674.780814793412,
         "currency": "USD"
       },
       "orderTradeReason": {
@@ -2003,6 +686,9 @@
       },
       "reportedTradeFilename": {
         "value": null
+      },
+      "orderStatus": {
+        "value": "Done For Day"
       }
     },
     {
@@ -2013,138 +699,43 @@
         "value": true
       },
       "tradeId": {
-        "value": 1319649201
+        "value": 1391089793
       },
       "counterPartyName": {
-        "value": "MS Equity Algo"
-      },
-      "tradeTransactionType": {
-        "value": "Buy to Cover"
-      },
-      "notionalQuantity": {
-        "value": 3508.0
-      },
-      "tradePrice": {
-        "value": 10328.013373,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "LongHPSP,HAESUNGShortOPENEDGE,HIGEN"
-      },
-      "instrumentDescription": {
-        "value": "OPENEDGES TECH ORD"
-      },
-      "bBYellow": {
-        "value": "394280 KS Equity"
-      },
-      "rIC": {
-        "value": "394280.KQ"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Long Short__YW"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -19.57,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": null
-      },
-      "netTradePrice": {
-        "value": 6.978171301681995,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": -24479.424926300435,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319626951
-      },
-      "counterPartyName": {
-        "value": "MS Equity Algo"
+        "value": "Samsung Equity HT"
       },
       "tradeTransactionType": {
         "value": "Sell"
       },
       "notionalQuantity": {
-        "value": -2363.0
+        "value": -2573.0
       },
       "tradePrice": {
-        "value": 44187.261955,
+        "value": 11673.23941,
         "currency": "KRW",
         "quoteType": "Price",
         "quotationFormat": "Price4"
       },
       "tradeDealId": {
-        "value": "LongHPSP,HAESUNGShortOPENEDGE,HIGEN"
+        "value": null
       },
       "instrumentDescription": {
-        "value": "HPSP ORD"
+        "value": "TMC ORD"
       },
       "bBYellow": {
-        "value": "403870 KS Equity"
+        "value": "217590 KS Equity"
       },
       "rIC": {
-        "value": "403870.KQ"
+        "value": "217590.KS"
       },
       "instrumentSubtype": {
         "value": "Equity"
       },
       "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
+        "value": "2026-08-26T05:00:00.000+00:00"
       },
       "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
+        "value": "2026-08-28T05:00:00.000+00:00"
       },
       "fundName": {
         "value": "Preallocation"
@@ -2153,103 +744,7 @@
         "value": "Bulk"
       },
       "bookName": {
-        "value": "Long Short__YW"
-      },
-      "tradeCurrency": {
-        "value": "KRW"
-      },
-      "settleCurrency": {
-        "value": "USD"
-      },
-      "actualTradeToSettleFXRate": {
-        "value": 0.0006751146007034694
-      },
-      "grossTradeCommisions": {
-        "value": -56.39,
-        "currency": "USD"
-      },
-      "grossFees": {
-        "value": null
-      },
-      "grossTaxes": {
-        "value": -140.98,
-        "currency": "USD"
-      },
-      "netTradePrice": {
-        "value": 29.747940531073315,
-        "currency": "USD"
-      },
-      "tradingNotionalNetProceeds": {
-        "value": 70294.38347492625,
-        "currency": "USD"
-      },
-      "orderTradeReason": {
-        "value": null
-      },
-      "notes": {
-        "value": null
-      },
-      "tradeExternalReference": {
-        "value": null
-      },
-      "reportedTradeFilename": {
-        "value": null
-      }
-    },
-    {
-      "tradeBookingStatus": {
-        "value": "Open"
-      },
-      "allocatedTrade": {
-        "value": true
-      },
-      "tradeId": {
-        "value": 1319654932
-      },
-      "counterPartyName": {
-        "value": "MS Equity HT"
-      },
-      "tradeTransactionType": {
-        "value": "Sell"
-      },
-      "notionalQuantity": {
-        "value": -521.0
-      },
-      "tradePrice": {
-        "value": 5817.178503,
-        "currency": "KRW",
-        "quoteType": "Price",
-        "quotationFormat": "Price4"
-      },
-      "tradeDealId": {
-        "value": "Tender SKD&D"
-      },
-      "instrumentDescription": {
-        "value": "SKD&D ORD"
-      },
-      "bBYellow": {
-        "value": "210980 KS Equity"
-      },
-      "rIC": {
-        "value": "210980.KS"
-      },
-      "instrumentSubtype": {
-        "value": "Equity"
-      },
-      "tradeDate": {
-        "value": "2026-07-16T05:00:00.000+00:00"
-      },
-      "settleDate": {
-        "value": "2026-07-21T05:00:00.000+00:00"
-      },
-      "fundName": {
-        "value": "Preallocation"
-      },
-      "custodianAccountDisplayName": {
-        "value": "Bulk"
-      },
-      "bookName": {
-        "value": "Event Driven_Putback_WK"
+        "value": "ECM_Private Block_WK"
       },
       "tradeCurrency": {
         "value": "KRW"
@@ -2261,22 +756,22 @@
         "value": 1.0
       },
       "grossTradeCommisions": {
-        "value": -6062.0,
+        "value": -30035.0,
         "currency": "KRW"
       },
       "grossFees": {
         "value": null
       },
       "grossTaxes": {
-        "value": -6047.0,
+        "value": -58992.0,
         "currency": "KRW"
       },
       "netTradePrice": {
-        "value": 5793.936660389635,
+        "value": 11638.638943618345,
         "currency": "KRW"
       },
       "tradingNotionalNetProceeds": {
-        "value": 3018641.000063,
+        "value": 29946218.0,
         "currency": "KRW"
       },
       "orderTradeReason": {
@@ -2290,6 +785,206 @@
       },
       "reportedTradeFilename": {
         "value": null
+      },
+      "orderStatus": {
+        "value": "Cancelled"
+      }
+    },
+    {
+      "tradeBookingStatus": {
+        "value": "Open"
+      },
+      "allocatedTrade": {
+        "value": true
+      },
+      "tradeId": {
+        "value": 1391089086
+      },
+      "counterPartyName": {
+        "value": "KIS Equity HT"
+      },
+      "tradeTransactionType": {
+        "value": "Buy"
+      },
+      "notionalQuantity": {
+        "value": 307.0
+      },
+      "tradePrice": {
+        "value": 220682.410424,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "tradeDealId": {
+        "value": null
+      },
+      "instrumentDescription": {
+        "value": "NAVER ORD"
+      },
+      "bBYellow": {
+        "value": "035420 KS Equity"
+      },
+      "rIC": {
+        "value": "035420.KS"
+      },
+      "instrumentSubtype": {
+        "value": "Equity"
+      },
+      "tradeDate": {
+        "value": "2026-08-26T05:00:00.000+00:00"
+      },
+      "settleDate": {
+        "value": "2026-08-28T05:00:00.000+00:00"
+      },
+      "fundName": {
+        "value": "Preallocation"
+      },
+      "custodianAccountDisplayName": {
+        "value": "Bulk"
+      },
+      "bookName": {
+        "value": "Long Short__WK"
+      },
+      "tradeCurrency": {
+        "value": "KRW"
+      },
+      "settleCurrency": {
+        "value": "KRW"
+      },
+      "actualTradeToSettleFXRate": {
+        "value": 1.0
+      },
+      "grossTradeCommisions": {
+        "value": -67740.0,
+        "currency": "KRW"
+      },
+      "grossFees": {
+        "value": null
+      },
+      "grossTaxes": {
+        "value": null
+      },
+      "netTradePrice": {
+        "value": 220903.06188979806,
+        "currency": "KRW"
+      },
+      "tradingNotionalNetProceeds": {
+        "value": -67817240.0,
+        "currency": "KRW"
+      },
+      "orderTradeReason": {
+        "value": null
+      },
+      "notes": {
+        "value": null
+      },
+      "tradeExternalReference": {
+        "value": null
+      },
+      "reportedTradeFilename": {
+        "value": null
+      },
+      "orderStatus": {
+        "value": "Done For Day"
+      }
+    },
+    {
+      "tradeBookingStatus": {
+        "value": "Open"
+      },
+      "allocatedTrade": {
+        "value": true
+      },
+      "tradeId": {
+        "value": 1391093827
+      },
+      "counterPartyName": {
+        "value": "MS Equity Algo"
+      },
+      "tradeTransactionType": {
+        "value": "Sell Short"
+      },
+      "notionalQuantity": {
+        "value": -1596.0
+      },
+      "tradePrice": {
+        "value": 36226.503759,
+        "currency": "KRW",
+        "quoteType": "Price",
+        "quotationFormat": "Price4"
+      },
+      "tradeDealId": {
+        "value": null
+      },
+      "instrumentDescription": {
+        "value": "KAKAO ORD"
+      },
+      "bBYellow": {
+        "value": "035720 KS Equity"
+      },
+      "rIC": {
+        "value": "035720.KS"
+      },
+      "instrumentSubtype": {
+        "value": "Equity"
+      },
+      "tradeDate": {
+        "value": "2026-08-26T05:00:00.000+00:00"
+      },
+      "settleDate": {
+        "value": "2026-08-28T05:00:00.000+00:00"
+      },
+      "fundName": {
+        "value": "Preallocation"
+      },
+      "custodianAccountDisplayName": {
+        "value": "Bulk"
+      },
+      "bookName": {
+        "value": "Long Short__WK"
+      },
+      "tradeCurrency": {
+        "value": "KRW"
+      },
+      "settleCurrency": {
+        "value": "USD"
+      },
+      "actualTradeToSettleFXRate": {
+        "value": 0.0007217402601151897
+      },
+      "grossTradeCommisions": {
+        "value": -33.38,
+        "currency": "USD"
+      },
+      "grossFees": {
+        "value": null
+      },
+      "grossTaxes": {
+        "value": -83.46,
+        "currency": "USD"
+      },
+      "netTradePrice": {
+        "value": 26.07291822603443,
+        "currency": "USD"
+      },
+      "tradingNotionalNetProceeds": {
+        "value": 41612.37748875096,
+        "currency": "USD"
+      },
+      "orderTradeReason": {
+        "value": null
+      },
+      "notes": {
+        "value": null
+      },
+      "tradeExternalReference": {
+        "value": null
+      },
+      "reportedTradeFilename": {
+        "value": null
+      },
+      "orderStatus": {
+        "value": "Done For Day"
       }
     }
   ]

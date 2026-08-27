@@ -1,6 +1,8 @@
 SSTRS/__pycache__/
-SSTRS_test/__pycache__/classify.cpython-39.pyc
-SSTRS_test/__pycache__/copy.cpython-39.pyc
-SSTRS_test/__pycache__/download.cpython-39.pyc
-SSTRS/__pycache__/classify.cpython-39.pyc
-SSTRS/__pycache__/copy.cpython-39.pyc
+SSTRS_test/__pycache__/
+**/__pycache__/
+*.pyc
+
+# AutoGitSync Logs
+AutoGitSync/logs/
+

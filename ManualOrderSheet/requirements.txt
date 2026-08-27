@@ -1,0 +1,6 @@
+pandas>=2.0
+xlrd>=2.0          # .xls (구형 엑셀) 읽기
+openpyxl>=3.1      # .xlsx 읽기
+python-docx>=1.1   # .docx 생성
+pymupdf>=1.24      # PDF 이미지화
+pywin32>=306       # Word 로 docx -> PDF 변환 (Windows + Word 필요)
