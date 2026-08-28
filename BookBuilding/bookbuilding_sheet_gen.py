@@ -7,6 +7,9 @@
   서식 / 수식 / 병합 / 메모 / 열너비가 100% 유지된다.
 - 종목 정보(종목명, 종목코드, 희망공모가 밴드, 기관배정 최대수량)는 웹에서 채운다.
 - 자산총액 3개월평균 / 확약기간 / 참여수량 / 단가 는 공백으로 남긴다.
+- 설정금액(D열) / 순자산 전일·3개월(O·P열) 은 템플릿 값을 그대로 두고 직접 수정한다.
+- 시트명 주관사는 국내기관 수요예측을 접수하는 대표주관사를 쓴다.
+- 같은 종목이 재수요예측을 하면 날짜가 다르므로 시트를 새로 만든다.
 
 사용법:
     python bookbuilding_sheet_gen.py --dry-run     # 생성 대상만 확인
@@ -81,6 +84,14 @@ BROKER_ABBR = {
     "케이비증권": "KB",
 }
 
+# 인수회사 역할 우선순위 — 국내기관 수요예측은 대표주관사가 접수한다.
+# 38.co.kr 은 '접수 창구'를 따로 표기하지 않으므로 이 순위를 대용으로 쓴다.
+ROLE_RANK = {"대표주관": 0, "대표": 1, "공동주관": 2, "공동": 3, "인수": 4}
+
+# 예외적으로 대표주관사가 아닌 곳이 국내기관 접수를 받는 종목은 여기에 적는다.
+#   예) "빅웨이브로보틱스": "미래에셋증권"
+BROKER_OVERRIDE: dict[str, str] = {}
+
 # 종목 정보 입력 셀 (템플릿 레이아웃 기준)
 CELL_STOCK_NAME = "C5"   # 종목명
 CELL_STOCK_CODE = "D5"   # 종목코드
@@ -96,6 +107,8 @@ BLANK_IF_LITERAL = ["E9:E13", "E18:E19", "E24:E28"]
 
 INVALID_SHEET_CHARS = "[]:*?/\\'"
 MAX_SHEET_NAME = 31
+
+_WARNED_BROKERS: set[str] = set()
 
 
 # ──────────────────────────────────────────────────────────────────────────
@@ -156,18 +169,41 @@ class Deal:
     code: str | None = None
     total_shares: int | None = None
     inst_qty_max: int | None = None
+    underwriters: list[tuple[str, str]] = field(default_factory=list)  # (회사, 역할)
+
+    @property
+    def lead_broker(self) -> str | None:
+        """국내기관 수요예측 접수 주관사 = 대표주관사."""
+        if (ov := BROKER_OVERRIDE.get(self.clean_name)):
+            return ov
+        if self.underwriters:
+            return min(self.underwriters,
+                       key=lambda x: ROLE_RANK.get(x[1], 9))[0]
+        return self.brokers[0] if self.brokers else None
+
+    @property
+    def lead_role(self) -> str:
+        if BROKER_OVERRIDE.get(self.clean_name):
+            return "수동지정"
+        lead = self.lead_broker
+        for name, role in self.underwriters:
+            if name == lead:
+                return role
+        return "단독" if len(self.brokers) <= 1 else "목록순"
 
     @property
     def broker_abbr(self) -> str:
-        if not self.brokers:
+        raw = self.lead_broker
+        if not raw:
             return "NA"
-        raw = self.brokers[0]
         if BROKER_ABBR.get(raw):
             return BROKER_ABBR[raw]
         # 미등록 주관사: '○○투자증권' / '○○증권' 에서 접미사만 떼고 사용
         guess = re.sub(r"(투자)?증권$|금융투자$", "", raw).strip()
-        print(f"  [주의] 주관사 약칭 미등록: {raw!r} -> {guess!r} "
-              f"(BROKER_ABBR 에 추가하세요)")
+        if raw not in _WARNED_BROKERS:
+            _WARNED_BROKERS.add(raw)
+            print(f"  [주의] 주관사 약칭 미등록: {raw!r} -> {guess!r} "
+                  f"(BROKER_ABBR 에 추가하세요)")
         return guess or raw
 
     @property
@@ -195,7 +231,8 @@ class Deal:
                 else f"{self.price_min:,}~{self.price_max:,}")
         inst = "-" if self.inst_qty_max is None else f"{self.inst_qty_max:,}"
         return (f"{self.sheet_name():<32} 공모가 {band:>17} / "
-                f"코드 {self.code or '-':<8} / 기관배정 {inst:>11}")
+                f"코드 {self.code or '-':<8} / 기관배정 {inst:>11} / "
+                f"주관 {self.lead_broker}({self.lead_role})")
 
 
 def _parse_range(text: str) -> tuple[int | None, int | None]:
@@ -271,6 +308,22 @@ def fetch_deals(session: requests.Session) -> list[Deal]:
     return deals
 
 
+def _parse_underwriters(text: str) -> list[tuple[str, str]]:
+    """상세 페이지의 '인수회사 | 주식수 | 청약한도 | 기타' 표를 (회사, 역할)로 파싱.
+
+    공동주관 딜에만 이 표가 있고, 단독주관이면 빈 리스트가 돌아온다.
+    """
+    m = re.search(
+        r"인수회사\s*\|\s*주식수\s*\|\s*청약한도\s*\|\s*기타\s*\|(.*?)\|\s*주요일정", text)
+    if not m:
+        return []
+    parts = [p.strip() for p in m.group(1).split("|")]
+    if not parts or len(parts) % 4:
+        print(f"  [주의] 인수회사 표 형식이 예상과 다릅니다: {parts}")
+        return []
+    return [(parts[i], parts[i + 3]) for i in range(0, len(parts), 4)]
+
+
 def enrich_detail(session: requests.Session, deal: Deal) -> None:
     """상세 페이지에서 종목코드 / 총공모주식수 / 기관배정물량을 채운다."""
     if not deal.href:
@@ -282,6 +335,8 @@ def enrich_detail(session: requests.Session, deal: Deal) -> None:
         return
 
     text = re.sub(r"\s+", " ", soup.get_text("|", strip=True))
+
+    deal.underwriters = _parse_underwriters(text)
 
     m = re.search(r"종목코드\s*\|\s*([0-9A-Za-z]+)", text)
     if m:
@@ -447,8 +502,7 @@ def main(argv: list[str] | None = None) -> int:
             continue
         dup = [n for n in have if deal.clean_name in n]
         if dup:
-            print(f"  [주의] 같은 종목의 다른 날짜 시트가 있습니다: {dup} "
-                  f"-> {name} 를 새로 만듭니다")
+            print(f"  * 재수요예측: 기존 {dup} 와 별도로 {name} 를 만듭니다")
         todo.append(deal)
 
     if not todo:
