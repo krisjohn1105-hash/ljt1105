@@ -10,6 +10,7 @@
 - 설정금액(D열) / 순자산 전일·3개월(O·P열) 은 템플릿 값을 그대로 두고 직접 수정한다.
 - 시트명 주관사는 국내기관 수요예측을 접수하는 대표주관사를 쓴다.
 - 같은 종목이 재수요예측을 하면 날짜가 다르므로 시트를 새로 만든다.
+- 실행할 때마다 BACKUP_DIR 에 '원본파일명_YYYYMMDD.xlsx' 로 백업한다.
 
 사용법:
     python bookbuilding_sheet_gen.py --dry-run     # 생성 대상만 확인
@@ -40,7 +41,10 @@ urllib3.disable_warnings()
 # CONFIG
 # ──────────────────────────────────────────────────────────────────────────
 
-DEFAULT_XLSX = r"Z:\02.펀드\001.수요예측\test\01_수요예측_사전수량배분(2026).xlsx"
+DEFAULT_XLSX = r"Z:\02.펀드\001.수요예측\01_수요예측_사전수량배분(2026).xlsx"
+
+# 실행할 때마다 '원본파일명_YYYYMMDD.xlsx' 로 여기에 백업한다.
+BACKUP_DIR = r"Z:\02.펀드\001.수요예측\Backup"
 
 LIST_URL = "https://www.38.co.kr/html/fund/?o=r"
 DETAIL_URL = "https://www.38.co.kr/html/fund/{href}"
@@ -397,15 +401,30 @@ def _clear_literals(ws, ref: str) -> None:
         _clear(ws, cell.Address)
 
 
+def make_backup(xlsx: Path, overwrite: bool) -> Path | None:
+    """BACKUP_DIR 에 '원본파일명_YYYYMMDD.xlsx' 로 백업한다."""
+    bak_dir = Path(BACKUP_DIR)
+    bak_dir.mkdir(parents=True, exist_ok=True)
+    stamp = dt.date.today().strftime("%Y%m%d")
+    bak = bak_dir / f"{xlsx.stem}_{stamp}{xlsx.suffix}"
+
+    if bak.exists() and not overwrite:
+        # 같은 날 두 번째 실행. 덮어쓰면 '변경 전 원본'이 사라지므로 기존 것을 지킨다.
+        print(f"백업 유지: {bak.name} (오늘자 백업이 이미 있어 덮어쓰지 않음. "
+              f"교체하려면 --overwrite-backup)")
+        return bak
+
+    shutil.copy2(xlsx, bak)
+    print(f"백업 생성: {bak}")
+    return bak
+
+
 def create_sheets(xlsx: Path, deals: list[Deal], template_name: str | None,
-                  backup: bool) -> list[str]:
+                  backup: bool, overwrite_backup: bool = False) -> list[str]:
     import win32com.client as win32
 
     if backup:
-        stamp = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
-        bak = xlsx.with_name(f"{xlsx.stem}_backup_{stamp}{xlsx.suffix}")
-        shutil.copy2(xlsx, bak)
-        print(f"백업 생성: {bak.name}")
+        make_backup(xlsx, overwrite_backup)
 
     excel = win32.DispatchEx("Excel.Application")
     excel.Visible = False
@@ -474,6 +493,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--dry-run", action="store_true", help="생성 대상만 출력")
     ap.add_argument("--no-backup", action="store_true",
                     help="백업 파일을 만들지 않음")
+    ap.add_argument("--overwrite-backup", action="store_true",
+                    help="같은 날짜 백업이 이미 있어도 덮어씀")
     args = ap.parse_args(argv)
 
     xlsx = Path(args.file)
@@ -517,7 +538,9 @@ def main(argv: list[str] | None = None) -> int:
         print("\n--dry-run: 엑셀 파일은 변경하지 않았습니다.")
         return 0
 
-    created = create_sheets(xlsx, todo, args.template, backup=not args.no_backup)
+    created = create_sheets(xlsx, todo, args.template,
+                            backup=not args.no_backup,
+                            overwrite_backup=args.overwrite_backup)
     print(f"\n완료: {len(created)}개 시트 생성 → {xlsx}")
     print("공백으로 남긴 항목: 자산총액 3개월평균 / 확약기간 / 참여수량 / 단가")
     return 0
