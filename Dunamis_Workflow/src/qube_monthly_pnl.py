@@ -98,6 +98,48 @@ def load_ric_map(path):
     return mapping
 
 
+def load_cost_basis(path):
+    """무상입고(FREC) 종목의 취득원가를 주입한다 — {symbol: {...}}.
+
+    GS 는 IPO 청약분을 대가 0 의 FREE RECEIVE 로 입고시키므로 취득원가가 리포트에
+    전혀 없다. 그대로 두면 매도대금 전액이 손익으로 잡히므로 청약내역에서 원가를
+    받아 차감한다.
+
+    JSON 형식 (금액은 음수 = 취득원가 지출)
+        {"KQ950260": {"cost_local": -302751360, "ccy": "KRW",
+                      "note": "공모가 x 배정수량 + 수수료"},
+         "KQ417030": {"cost_usd": -95000}}
+    """
+    if not path:
+        return {}
+    try:
+        raw = json.loads(Path(path).read_text(encoding='utf-8'))
+    except Exception as exc:
+        warn(f'취득원가 파일을 읽지 못했습니다 ({path}): {exc}')
+        return {}
+    basis = {}
+    for symbol, spec in raw.items():
+        if isinstance(spec, (int, float)):
+            spec = {'cost_usd': float(spec)}
+        basis[str(symbol).strip()] = spec
+    return basis
+
+
+def resolve_cost(spec, fx_on_date, me_fx):
+    """원가 스펙을 Base(USD) 금액으로 환산."""
+    if 'cost_usd' in spec:
+        return float(spec['cost_usd'])
+    amount = float(spec.get('cost_local', 0.0))
+    currency = str(spec.get('ccy', '')).strip().upper()
+    if not currency or currency == BASE_CCY:
+        return amount
+    rate = (fx_on_date or {}).get(currency) or (me_fx or {}).get(currency)
+    if not rate:
+        warn(f'{currency} 환율을 찾지 못해 취득원가 {amount:,.0f} 를 환산하지 못했습니다.')
+        return 0.0
+    return amount * rate
+
+
 def bloomberg_ticker(ric, gs_code, ric_map, is_index=False):
     """Bloomberg 티커 결정. Qube 매핑표 우선, 없으면 GS 코드에 접미사를 붙인다.
 
@@ -177,7 +219,7 @@ def load_swap_settlements(root, month_start, month_end):
     밖(익월 예정분)인 행은 제외한다.
     """
     files = collect_files(root, 'swap_settle')
-    per_contract = defaultdict(lambda: {'equity': 0.0, 'dividend': 0.0})
+    per_contract = defaultdict(lambda: {'equity': 0.0, 'dividend': 0.0, 'financing': 0.0})
     financing_total = 0.0
     if not files:
         warn('스왑 결제(MTD SynSettle) 리포트가 없어 당월 결제분을 반영하지 못했습니다.')
@@ -200,7 +242,9 @@ def load_swap_settlements(root, month_start, month_end):
                  '(Settlement FX Rate 확인 필요).')
         per_contract[contract]['equity'] += num(cell(row, idx, 'Equity Leg')) * fx
         per_contract[contract]['dividend'] += num(cell(row, idx, 'Dividend Leg')) * fx
-        financing_total += num(cell(row, idx, 'Financing Leg')) * fx
+        leg = num(cell(row, idx, 'Financing Leg')) * fx
+        per_contract[contract]['financing'] += leg
+        financing_total += leg
     return per_contract, financing_total, path
 
 
@@ -252,18 +296,30 @@ def load_cash_snapshots(root):
 
 
 def load_cash_trades_month(root, fx_by_date, month_start, month_end):
-    """{symbol: 매매순대금(Base)} — 당월 현물 매매. 커미션/세금 포함(Qube 기준)."""
+    """당월 현물 매매 집계. 커미션/세금 포함(Qube 기준).
+
+    반환 (per_symbol, transfers, meta)
+        meta : {symbol: {'name','ric','bbg','ccy'}} — 월말 포지션에 없는 종목
+               (당월 중 전량 매도/무상입고 후 매도)의 표시 정보를 보완하는 데 쓴다
+    """
     per_symbol = defaultdict(float)
-    transfers = []
+    transfers, meta = [], {}
     trades = base.load_cash_trades(root, fx_by_date)
     for bdate, bag in trades.items():
         if not (month_start <= bdate <= month_end):
             continue
         for record in bag['rows']:
             per_symbol[record['symbol']] += record['net_base']
+            if record['name']:
+                meta.setdefault(record['symbol'], {
+                    'name': record['name'],
+                    'ric': record.get('ric', ''),
+                    'bbg': record.get('bbg', ''),
+                    'ccy': record.get('ccy', ''),
+                })
         for record in bag['transfers']:
             transfers.append((bdate, record))
-    return per_symbol, transfers
+    return per_symbol, transfers, meta
 
 
 def load_dividends_month(root, month_start, month_end):
@@ -273,7 +329,7 @@ def load_dividends_month(root, month_start, month_end):
     for ex_date, amount in by_date.items():
         if month_start <= ex_date <= month_end:
             total += amount
-            items.extend((ex_date, n, a) for n, a in detail.get(ex_date, []))
+            items.extend((ex_date, n, a, r) for n, a, r in detail.get(ex_date, []))
     return total, items
 
 
@@ -354,7 +410,7 @@ def load_broker_interest(root, month_end):
 # --------------------------------------------------------------------------- #
 # 월별 손익 조립
 # --------------------------------------------------------------------------- #
-def build_monthly(root, prev_root, ric_map):
+def build_monthly(root, prev_root, ric_map, cost_basis=None):
     swap_snaps = load_swap_snapshots(root)
     cash_snaps, fx_by_date = load_cash_snapshots(root)
 
@@ -363,6 +419,15 @@ def build_monthly(root, prev_root, ric_map):
         raise SystemExit(f'{root} 에서 포지션 리포트를 찾지 못했습니다.')
     month_end = max(dates)
     month_start = dt.date(month_end.year, month_end.month, 1)
+
+    # 월 마지막 영업일(주말 제외) 리포트가 아직 없으면 MTD 가 월말 기준이 아니다.
+    last_day = (dt.date(month_end.year + (month_end.month == 12),
+                        month_end.month % 12 + 1, 1) - dt.timedelta(days=1))
+    while last_day.weekday() >= 5:
+        last_day -= dt.timedelta(days=1)
+    if month_end < last_day:
+        warn(f'월 마지막 영업일({last_day}) 리포트가 없어 MTD 를 {month_end} 까지만 '
+             '집계했습니다 — 제출 전 해당일 리포트를 받아 재실행하세요.')
 
     # ---- 월초 기준선 (전월말 스냅샷) ----
     cash_base, cash_base_date = {}, None
@@ -394,27 +459,46 @@ def build_monthly(root, prev_root, ric_map):
     swap_end = swap_snaps.get(month_end, {})
 
     # ---- 당월 거래/배당/결제 ----
-    trades, transfers = load_cash_trades_month(root, fx_by_date, month_start, month_end)
+    trades, transfers, trade_meta = load_cash_trades_month(
+        root, fx_by_date, month_start, month_end)
+    me_fx = fx_by_date.get(month_end, {})
+    krw_per_usd = (1.0 / me_fx['KRW']) if me_fx.get('KRW') else None
     dividend_total, dividend_items = load_dividends_month(root, month_start, month_end)
     settle_by_contract, settle_financing, settle_path = load_swap_settlements(
         root, month_start, month_end)
 
-    me_fx = fx_by_date.get(month_end, {})
-    krw_per_usd = (1.0 / me_fx['KRW']) if me_fx.get('KRW') else None
-
+    # ---- 무상입고 종목의 취득원가 주입 (없으면 매도대금 전액이 손익이 됨) ----
+    cost_basis = cost_basis or {}
+    cost_adjust, missing_cost = defaultdict(float), {}
     for bdate, record in transfers:
-        warn(f"{bdate}: 대가 없는 현물 수량이동 {record['symbol']} {record['qty']:,.0f}주"
-             f"({record['mnemonic']}) — 매입원가가 없어 해당 종목 P&L 이 왜곡될 수 있습니다.")
+        symbol = record['symbol']
+        spec = cost_basis.get(symbol)
+        if spec:
+            amount = resolve_cost(spec, fx_by_date.get(bdate), me_fx)
+            cost_adjust[symbol] += amount
+        else:
+            missing_cost[symbol] = (bdate, record['qty'], record['mnemonic'],
+                                    record['name'])
+    for symbol, (bdate, qty, mnemonic, name) in missing_cost.items():
+        warn(f'{bdate}: {symbol} {name} {qty:,.0f}주 무상입고({mnemonic}) — '
+             '취득원가가 GS 리포트에 없습니다. --cost-basis 로 청약원가를 넣지 않으면 '
+             '매도대금 전액이 손익으로 계상됩니다.')
+    for symbol, amount in cost_adjust.items():
+        warn(f'{symbol}: 취득원가 {amount:,.2f} USD 를 손익에서 차감했습니다 (--cost-basis).')
 
     rows = []
 
     # ---- Equity (현물) ----
     for symbol in sorted(set(cash_base) | set(cash_end) | set(trades)):
         was, now = cash_base.get(symbol, {}), cash_end.get(symbol, {})
-        pnl = (now.get('mv', 0.0) - was.get('mv', 0.0)) + trades.get(symbol, 0.0)
+        adjust = cost_adjust.get(symbol, 0.0)
+        pnl = ((now.get('mv', 0.0) - was.get('mv', 0.0)) + trades.get(symbol, 0.0)
+               + adjust)
         if abs(pnl) < 0.005 and not now.get('qty') and not was.get('qty'):
             continue
-        meta = now or was
+        meta = now or was or {}
+        if not meta.get('name'):        # 월말/기준선 스냅샷에 없는 종목은 거래에서 보완
+            meta = {**trade_meta.get(symbol, {}), **{k: v for k, v in meta.items() if v}}
         rows.append({
             'Type': TYPE_EQUITY,
             'Description': meta.get('name', symbol),
@@ -426,9 +510,10 @@ def build_monthly(root, prev_root, ric_map):
             '$ MTD P&L': pnl,
             '_ric': meta.get('ric', ''),
             '_isin': meta.get('isin', ''),
-            '_equity': pnl,
+            '_equity': pnl - adjust,
             '_dividend': 0.0,
             '_financing': 0.0,
+            '_cost_adj': adjust,
             '_key': symbol,
         })
 
@@ -444,20 +529,26 @@ def build_monthly(root, prev_root, ric_map):
             '$ MTD P&L': dividend_total,
             '_ric': '', '_isin': '',
             '_equity': 0.0, '_dividend': dividend_total, '_financing': 0.0,
-            '_key': 'PHYS_DIV',
+            '_cost_adj': 0.0, '_key': 'PHYS_DIV',
         })
 
     # ---- Equity Swap (개별주식 + 지수/개별주식 선물 스왑) ----
     swap_financing = 0.0
     for contract in sorted(set(swap_base) | set(swap_end)):
         was, now = swap_base.get(contract, {}), swap_end.get(contract, {})
-        settled = settle_by_contract.get(contract, {'equity': 0.0, 'dividend': 0.0})
+        settled = settle_by_contract.get(
+            contract, {'equity': 0.0, 'dividend': 0.0, 'financing': 0.0})
         equity_pnl = (now.get('equity', 0.0) - was.get('equity', 0.0)) + settled['equity']
         dividend_pnl = (now.get('dividend', 0.0) - was.get('dividend', 0.0)) + settled['dividend']
-        financing_pnl = now.get('financing', 0.0) - was.get('financing', 0.0)
+        # financing 은 종목 P&L 에서 빼되(Qube 기준) Detail 시트 대조를 위해 계약별로 기록
+        financing_pnl = (now.get('financing', 0.0) - was.get('financing', 0.0)
+                         + settled['financing'])
         swap_financing += financing_pnl
         pnl = equity_pnl + dividend_pnl                     # Qube 기준: financing 제외
-        if abs(pnl) < 0.005 and not now.get('qty') and not was.get('qty'):
+        # 당월 중 전량 종결된 계약은 종목 P&L 이 0 이라도 financing 이 남아있어
+        # Detail 시트가 이자 계정라인과 대조되도록 행을 유지한다.
+        if (abs(pnl) < 0.005 and abs(financing_pnl) < 0.005
+                and not now.get('qty') and not was.get('qty')):
             continue
         meta = now or was
         is_index = meta.get('multiplier', 1.0) != 1.0
@@ -476,9 +567,9 @@ def build_monthly(root, prev_root, ric_map):
             '_equity': equity_pnl,
             '_dividend': dividend_pnl,
             '_financing': financing_pnl,
+            '_cost_adj': 0.0,
             '_key': contract,
         })
-    swap_financing += settle_financing
 
     # ---- FX (Cross Rate) ----
     fx_pnl, fx_by_ccy, _ = load_fx_pnl(root, month_start, month_end)
@@ -492,7 +583,7 @@ def build_monthly(root, prev_root, ric_map):
         '$ MTD P&L': fx_pnl,
         '_ric': 'KRWUSD=R', '_isin': '',
         '_equity': fx_pnl, '_dividend': 0.0, '_financing': 0.0,
-        '_key': 'FX',
+        '_cost_adj': 0.0, '_key': 'FX',
     })
 
     # ---- 이자 (Qube 기준: 종목별 배분 없이 계정 단위 1줄) ----
@@ -509,7 +600,7 @@ def build_monthly(root, prev_root, ric_map):
             '$ MTD P&L': amount,
             '_ric': '', '_isin': '',
             '_equity': 0.0, '_dividend': 0.0, '_financing': amount,
-            '_key': label,
+            '_cost_adj': 0.0, '_key': label,
         })
 
     meta = {
@@ -523,6 +614,8 @@ def build_monthly(root, prev_root, ric_map):
         'fx_by_ccy': fx_by_ccy,
         'settle_path': settle_path,
         'transfers': transfers,
+        'missing_cost': missing_cost,
+        'cost_adjust': dict(cost_adjust),
     }
     return pd.DataFrame(rows), meta
 
@@ -545,8 +638,10 @@ def write_excel(out_path, frame, meta, expenses, root):
     expense_total = float(sum(expenses.values()))
 
     # ---- Manager P&L (Qube 제출 시트) ----
+    # financing 만 남은 종결 계약(P&L=0)은 이자 계정라인에 이미 포함되므로 제출표에서 제외
     blocks = []
-    for _, row in pd.concat([positions, interest]).iterrows():
+    visible = positions[positions['$ MTD P&L'].abs() >= 0.005]
+    for _, row in pd.concat([visible, interest]).iterrows():
         blocks.append([row['Type'], row['Description'], row['Bloomberg Ticker'],
                        row['EOM quantity / positions'], row['ME price'],
                        row['ME FX'], row['$ MTD P&L']])
@@ -584,6 +679,7 @@ def write_excel(out_path, frame, meta, expenses, root):
         'Equity P&L': frame['_equity'],
         'Dividend P&L': frame['_dividend'],
         'Financing': frame['_financing'],
+        '무상입고 취득원가': frame['_cost_adj'],
         '$ MTD P&L': frame['$ MTD P&L'],
     })
 
@@ -630,8 +726,9 @@ def write_excel(out_path, frame, meta, expenses, root):
          'Asset Servicing(AR=303179), Custody Cash Balances(AR=302239), '
          'Interest MTD Accrual(AR=302415)'),
     ]
-    for ex_date, name, amount in meta['dividend_items']:
-        notes.append((f'현물 배당 ex-date {ex_date}', f'{name} {amount:,.2f}'))
+    for ex_date, name, amount, ric in meta['dividend_items']:
+        notes.append((f'현물 배당 ex-date {ex_date}',
+                      f'{name} ({ric}) {amount:,.2f}'))
     for currency, amount in meta['fx_by_ccy'].items():
         notes.append((f'FX 손익 내역 {currency}', f'{amount:,.2f}'))
     for message in WARNINGS + base.WARNINGS:
@@ -721,6 +818,8 @@ def main():
                         help='Qube 대사파일 경로 (Ric_Ticker 시트를 티커 매핑에 사용)')
     parser.add_argument('--expenses', default=None,
                         help='월별 비용 JSON (예: {"Other Data costs": -3150})')
+    parser.add_argument('--cost-basis', default=None,
+                        help='무상입고(IPO 청약) 종목의 취득원가 JSON')
     parser.add_argument('-o', '--output', default=None, help='출력 엑셀 경로')
     args = parser.parse_args()
 
@@ -738,7 +837,8 @@ def main():
         expenses = json.loads(Path(args.expenses).read_text(encoding='utf-8'))
 
     ric_map = load_ric_map(args.ric_map)
-    frame, meta = build_monthly(root, prev_root, ric_map)
+    cost_basis = load_cost_basis(args.cost_basis)
+    frame, meta = build_monthly(root, prev_root, ric_map, cost_basis)
 
     output = Path(args.output) if args.output else \
         root / f"Dunamis - Manager's P&L {root.name}.xlsx"
@@ -756,6 +856,19 @@ def main():
     if expenses:
         print(f"  {'Expenses':<14} {'':>5}  {expense_total:>16,.2f}")
         print(f"  {'TOTAL':<14} {'':>5}  {subtotal + expense_total:>16,.2f}")
+
+    if meta['missing_cost']:
+        template = output.with_name(f'cost_basis_template_{root.name}.json')
+        sample = {
+            symbol: {'cost_local': 0, 'ccy': 'KRW',
+                     'note': f'{name} {qty:,.0f}주 {bdate} 무상입고 — '
+                             '공모가 x 배정수량 + 수수료를 음수로 입력'}
+            for symbol, (bdate, qty, _mnem, name) in meta['missing_cost'].items()
+        }
+        template.write_text(json.dumps(sample, ensure_ascii=False, indent=2),
+                            encoding='utf-8')
+        print(f'\n취득원가 미입력 종목이 있어 템플릿을 만들었습니다: {template}')
+        print('  값을 채운 뒤 --cost-basis 로 지정해 재실행하세요.')
 
     messages = WARNINGS + base.WARNINGS
     if messages:

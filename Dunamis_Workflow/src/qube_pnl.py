@@ -187,6 +187,7 @@ def load_cash_positions(root):
                 bag = detail.setdefault(symbol, {
                     'symbol': symbol,
                     'name': str(row[idx['Product Description']]).strip(),
+                    'ric': str(row[idx['RIC Code']]).strip() if 'RIC Code' in idx else '',
                     'qty': 0.0,
                     'mv': 0.0,
                 })
@@ -258,6 +259,11 @@ def load_cash_trades(root, fx_by_date=None):
             record = {
                 'symbol': str(row[idx['Symbol']]).strip(),
                 'name': str(row[idx['Product Description']]).strip(),
+                'ric': str(row[idx['RIC Code']]).strip() if 'RIC Code' in idx else '',
+                'bbg': (str(row[idx['Bloomberg Ticker']]).strip()
+                        if 'Bloomberg Ticker' in idx else ''),
+                'ccy': str(row[idx['Issue Currency']]).strip().upper()
+                       if 'Issue Currency' in idx else '',
                 'mnemonic': mnemonic,
                 'qty': num(row[idx['Trade Quantity']]),
                 'net_base': net_base,
@@ -280,7 +286,12 @@ def load_cash_trades(root, fx_by_date=None):
 
 
 def load_physical_dividends(root):
-    """현물 현금배당을 ex-date 기준으로 집계. Announcement Id로 중복 제거."""
+    """현물 현금배당을 ex-date 기준으로 집계. Announcement Id로 중복 제거.
+
+    반환 (by_date, detail)
+        by_date : {ex_date: 합계}
+        detail  : {ex_date: [(종목명, 금액, RIC)]}  — RIC 로 종목별 손익에 귀속시킨다
+    """
     events = {}
     for _, path in sorted(collect_files(root, 'asset_serv').items()):
         _, idx, rows, datemode = read_report(
@@ -297,12 +308,13 @@ def load_physical_dividends(root):
             if not key or ex_date is None:
                 continue
             events[key] = (ex_date, num(row[idx['Net Amount (Base)']]),
-                           str(row[idx['Underlyer Description']]).strip())
+                           str(row[idx['Underlyer Description']]).strip(),
+                           str(row[idx['RIC']]).strip() if 'RIC' in idx else '')
 
     by_date, detail = defaultdict(float), defaultdict(list)
-    for ex_date, amount, name in events.values():
+    for ex_date, amount, name, ric in events.values():
         by_date[ex_date] += amount
-        detail[ex_date].append((name, amount))
+        detail[ex_date].append((name, amount, ric))
     return dict(by_date), dict(detail)
 
 
@@ -501,11 +513,26 @@ def build_pnl(root):
         for record in cash_trd.get(date, {}).get('rows', []):
             trades[record['symbol']] += record['net_base']
 
+        # 당일 ex-date 배당을 RIC 로 종목에 귀속. 못 찾으면 별도 행으로 남긴다.
+        div_by_symbol, div_unmatched = defaultdict(float), []
+        ric_to_symbol = {}
+        for source in (cur_rows, prev_rows):
+            for sym, rec in source.items():
+                if rec.get('ric'):
+                    ric_to_symbol.setdefault(rec['ric'], sym)
+        for name, amount, ric in div_detail.get(date, []):
+            symbol = ric_to_symbol.get(ric)
+            if symbol:
+                div_by_symbol[symbol] += amount
+            else:
+                div_unmatched.append((name, amount))
+
         cash_symbol_pnl = {}
         if not first:
-            for symbol in sorted(set(prev_rows) | set(cur_rows) | set(trades)):
+            for symbol in sorted(set(prev_rows) | set(cur_rows) | set(trades) | set(div_by_symbol)):
                 was, now = prev_rows.get(symbol, {}), cur_rows.get(symbol, {})
-                pnl = (now.get('mv', 0.0) - was.get('mv', 0.0)) + trades.get(symbol, 0.0)
+                pnl = ((now.get('mv', 0.0) - was.get('mv', 0.0)) + trades.get(symbol, 0.0)
+                       + div_by_symbol.get(symbol, 0.0))
                 cash_symbol_pnl[symbol] = pnl
                 if abs(pnl) < 0.005 and not now.get('qty') and not was.get('qty'):
                     continue
@@ -515,6 +542,14 @@ def build_pnl(root):
                     '전일수량': was.get('qty', 0.0), '당일수량': now.get('qty', 0.0),
                     '전일평가액': was.get('mv', 0.0), '당일평가액': now.get('mv', 0.0),
                     '매매순대금': trades.get(symbol, 0.0), '일간손익': pnl,
+                })
+            for name, amount in div_unmatched:
+                instrument.append({
+                    '기준일': date, 'Breakdown': 'Cash Equity',
+                    '종목코드': '(배당-미매칭)', '종목명': name,
+                    '전일수량': 0.0, '당일수량': 0.0,
+                    '전일평가액': 0.0, '당일평가액': 0.0,
+                    '매매순대금': 0.0, '일간손익': amount,
                 })
 
         # ---------------- 구성요소 상세 ----------------
@@ -602,7 +637,7 @@ def build_notes(summary, dates, div_detail, root):
         rows.append(('Futures via Swap', '해당 기간 선물/지수 스왑 계약 없음 → 전 구간 0'))
     for ex_date, items in sorted(div_detail.items()):
         rows.append((f'현물 현금배당 ex-date {ex_date}',
-                     ', '.join(f'{n} {a:,.2f}' for n, a in items)))
+                     ', '.join(f'{n}({r}) {a:,.2f}' for n, a, r in items)))
     for message in WARNINGS:
         rows.append(('확인 필요', message))
     return pd.DataFrame(rows, columns=['구분', '내용'])
