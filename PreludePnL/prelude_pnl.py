@@ -108,8 +108,13 @@ PRODUCT_TYPE_DESC_TO_BUCKET = {
     "FX SPOT TRADES": "FX",
 }
 
-# 외부 자금이동(입출금)으로 볼 카테고리 - 기본값 없음. --external-category 로 추가.
-DEFAULT_EXTERNAL_CATEGORIES: Tuple[str, ...] = ()
+# 외부 자금이동(입출금)으로 볼 카테고리.
+# 'Wires' = FUNDS PAID OR RECEIVED (펀드 외부로의 송금) -> 손익이 아니므로 제외한다.
+DEFAULT_EXTERNAL_CATEGORIES: Tuple[str, ...] = ("Wires",)
+
+# 직전 리포트일과의 간격이 이 일수를 넘으면 그 사이의 거래내역을 알 수 없으므로
+# 해당 행의 손익을 산출하지 않는다(월말 스냅샷만 있는 구간 등).
+DEFAULT_MAX_GAP_DAYS = 5
 
 # 잔고 마커 행(손익계산에서 제외)
 BALANCE_MARKER_CATEGORIES = {"STARTING CASH BALANCE", "ENDING CASH BALANCE"}
@@ -145,6 +150,18 @@ class SourceFile:
     @property
     def ext(self) -> str:
         return os.path.splitext(self.filename)[1].lower()
+
+
+def long_path(p: str) -> str:
+    r"""Windows 260자 경로 제한 우회(\\?\ 접두어). 그 외 OS에서는 그대로 반환."""
+    if os.name != "nt":
+        return p
+    p = os.path.abspath(p)
+    if p.startswith("\\\\?\\"):
+        return p
+    if p.startswith("\\\\"):
+        return "\\\\?\\UNC\\" + p[2:]
+    return "\\\\?\\" + p
 
 
 def parse_filename(path: str) -> SourceFile:
@@ -187,7 +204,7 @@ _COUNT_RE = re.compile(r"^\s*count\s*=", re.IGNORECASE)
 
 def read_report(path: str) -> pd.DataFrame:
     """Prelude CSV를 읽는다. 선두 preamble 행과 말미 'Count=' 푸터 행을 제거한다."""
-    with open(path, "r", encoding="utf-8-sig", errors="replace", newline="") as fh:
+    with open(long_path(path), "r", encoding="utf-8-sig", errors="replace", newline="") as fh:
         rows = list(csv.reader(fh))
     if not rows:
         return pd.DataFrame()
@@ -358,7 +375,8 @@ def _bucket_of_activity(row) -> str:
 # ---------------------------------------------------------------------------
 
 def compute_pnl(positions: pd.DataFrame, activity: pd.DataFrame,
-                external_categories: Sequence[str] = ()) -> Dict[str, pd.DataFrame]:
+                external_categories: Sequence[str] = (),
+                max_gap_days: int = DEFAULT_MAX_GAP_DAYS) -> Dict[str, pd.DataFrame]:
     """자산군별 일일손익/누적손익을 계산한다."""
     if positions.empty:
         raise SystemExit("MAC001X(Global Positions Extract) 파일이 없어 손익을 계산할 수 없습니다.")
@@ -393,20 +411,33 @@ def compute_pnl(positions: pd.DataFrame, activity: pd.DataFrame,
                 flow[c] = 0.0
         flow = flow[mv.columns]
 
-    d_mv = mv.diff()
-    d_mv.iloc[0] = 0.0  # 첫 기준일은 직전 평가액이 없으므로 손익 산출 제외
+    # ---- 산출 가능 구간 판정
+    idx = list(mv.index)
+    prev_date = pd.Series([None] + idx[:-1], index=idx)
+    gap_days = pd.Series(
+        [float("nan")] + [(idx[i] - idx[i - 1]).days for i in range(1, len(idx))], index=idx)
+    # 첫 기준일 + 직전 리포트일과 간격이 큰 행은 그 사이 거래내역을 알 수 없어 손익 산출 불가
+    computable = pd.Series([False] + [g <= max_gap_days for g in gap_days.iloc[1:]], index=idx)
 
-    pnl = pd.DataFrame(index=mv.index, columns=mv.columns, dtype=float)
+    d_mv = mv.diff()
+
+    pnl = pd.DataFrame(0.0, index=mv.index, columns=mv.columns, dtype=float)
     other_buckets = [c for c in mv.columns if c != "Cash"]
     for b in other_buckets:
         pnl[b] = d_mv[b] + flow[b]
     if "Cash" in mv.columns:
         pnl["Cash"] = d_mv["Cash"] - flow[other_buckets].sum(axis=1) - ext
-    pnl.iloc[0] = 0.0
+    pnl = pnl.where(computable, 0.0)
+
+    note = pd.Series("", index=idx)
+    note.iloc[0] = "기초일(직전 평가액 없음) - 손익 산출 제외"
+    note[(~computable) & (note == "")] = "직전 리포트일과 간격이 커서 손익 산출 제외(월말 스냅샷 등)"
 
     total_mv = mv.sum(axis=1)
     daily = pd.DataFrame(index=mv.index)
     daily.index.name = "기준일"
+    daily["직전 기준일"] = prev_date
+    daily["경과일수"] = gap_days
     for b in mv.columns:
         daily[f"{BUCKET_KR.get(b, b)} 일일손익"] = pnl[b]
     daily["합계 일일손익"] = pnl.sum(axis=1)
@@ -415,8 +446,11 @@ def compute_pnl(positions: pd.DataFrame, activity: pd.DataFrame,
     daily["합계 누적손익"] = pnl.sum(axis=1).cumsum()
     daily["총평가액(NAV)"] = total_mv
     daily["전일 총평가액"] = total_mv.shift()
-    daily["외부 자금이동"] = ext
-    daily["일일수익률(%)"] = (daily["합계 일일손익"] / daily["전일 총평가액"].replace(0, pd.NA) * 100).astype(float)
+    daily["외부 자금이동"] = ext.where(computable, 0.0)
+    daily["일일수익률(%)"] = (daily["합계 일일손익"] /
+                          daily["전일 총평가액"].replace(0, pd.NA) * 100).astype(float)
+    daily.loc[~computable, "일일수익률(%)"] = float("nan")
+    daily["비고"] = note
 
     # ---- 자산군별 상세(long)
     rows = []
@@ -432,26 +466,43 @@ def compute_pnl(positions: pd.DataFrame, activity: pd.DataFrame,
                 "현금흐름(매매/정산)": flow[b].iloc[i],
                 "일일손익": pnl[b].iloc[i],
                 "누적손익": pnl[b].cumsum().iloc[i],
+                "비고": note.iloc[i],
             })
     detail = pd.DataFrame(rows)
+
+    # ---- 월별 요약
+    m = pd.DataFrame({"기준일": idx})
+    m["연월"] = [f"{d:%Y-%m}" for d in idx]
+    for b in mv.columns:
+        m[BUCKET_KR.get(b, b)] = pnl[b].values
+    m["합계"] = pnl.sum(axis=1).values
+    monthly = m.drop(columns="기준일").groupby("연월", as_index=False).sum()
+    nav_last = pd.DataFrame({"연월": m["연월"], "NAV": total_mv.values}).groupby(
+        "연월", as_index=False).last()
+    monthly = monthly.merge(nav_last, on="연월", how="left")
+    monthly["누적손익"] = monthly["합계"].cumsum()
 
     # ---- 검증
     recon = pd.DataFrame(index=mv.index)
     recon.index.name = "기준일"
-    recon["총평가액 증감"] = total_mv.diff()
-    recon["외부 자금이동"] = ext
+    recon["손익 산출 여부"] = computable
+    recon["총평가액 증감"] = total_mv.diff().where(computable)
+    recon["외부 자금이동"] = ext.where(computable, 0.0)
     recon["자산군 손익 합계"] = pnl.sum(axis=1)
     recon["차이(검증)"] = recon["총평가액 증감"] - recon["외부 자금이동"] - recon["자산군 손익 합계"]
     recon["일일수익률(%)"] = daily["일일수익률(%)"]
     recon["이상치(±3% 초과)"] = recon["일일수익률(%)"].abs() > 3
+    recon["비고"] = note
 
     return {
         "daily": daily.reset_index(),
+        "monthly": monthly,
         "detail": detail,
         "recon": recon.reset_index(),
         "mv": mv,
         "flow": flow,
         "pnl": pnl,
+        "computable": computable,
     }
 
 
@@ -467,48 +518,72 @@ def _security_key(df: pd.DataFrame) -> pd.Series:
     return key.where(key != "", name)
 
 
+def _name_table(*frames: pd.DataFrame) -> pd.DataFrame:
+    """종목키 -> 대표 종목명/코드/통화 (비어있지 않은 값 중 최빈값)."""
+    parts = []
+    for df in frames:
+        if df is None or df.empty:
+            continue
+        cols = [c for c in ("종목키", "종목명", "종목코드", "발행통화") if c in df.columns]
+        parts.append(df[cols])
+    if not parts:
+        return pd.DataFrame(columns=["종목키", "종목명", "종목코드", "발행통화"])
+    allrows = pd.concat(parts, ignore_index=True, sort=False)
+    for c in ("종목명", "종목코드", "발행통화"):
+        if c not in allrows.columns:
+            allrows[c] = ""
+        allrows[c] = allrows[c].astype(str).str.strip()
+
+    def best(s: pd.Series) -> str:
+        s = s[(s != "") & (s.str.lower() != "nan")]
+        # 스왑 파이낸싱 레그의 'FEDEF-1D' 같은 지수명은 종목코드로 부적절
+        s = s[~s.str.upper().str.startswith(("FEDEF", "NONE"))]
+        return s.mode().iloc[0] if len(s) else ""
+
+    return (allrows.groupby("종목키", as_index=False)
+            .agg(종목명=("종목명", best), 종목코드=("종목코드", best), 발행통화=("발행통화", best)))
+
+
 def compute_security_pnl(positions: pd.DataFrame, activity: pd.DataFrame,
-                         bucket: str) -> pd.DataFrame:
+                         bucket: str, computable: Optional[pd.Series] = None) -> pd.DataFrame:
     """종목 단위 일일손익 = Δ평가액 + 현금흐름."""
     pos = positions[positions["버킷"] == bucket].copy()
-    if pos.empty:
+    act = (activity[(activity["버킷"] == bucket) & activity["현금원장"]].copy()
+           if not activity.empty else pd.DataFrame())
+    if pos.empty and act.empty:
         return pd.DataFrame()
-    pos["종목키"] = _security_key(pos)
-
-    mv = (pos.groupby(["기준일", "종목키"], as_index=False)
-          .agg(평가액=("평가액_USD", "sum"), 수량=("수량", "sum"),
-               종목명=("종목명", "first"), 종목코드=("종목코드", "first"),
-               발행통화=("발행통화", "first")))
-
-    if not activity.empty:
-        act = activity[(activity["버킷"] == bucket) & activity["현금원장"]].copy()
-    else:
-        act = pd.DataFrame()
+    if not pos.empty:
+        pos["종목키"] = _security_key(pos)
     if not act.empty:
         act["종목키"] = _security_key(act)
-        fl = (act.groupby(["기준일", "종목키"], as_index=False)
-              .agg(현금흐름=("정산금액_USD", "sum"), 매매수량=("수량", "sum")))
-    else:
-        fl = pd.DataFrame(columns=["기준일", "종목키", "현금흐름", "매매수량"])
+
+    mv = (pos.groupby(["기준일", "종목키"], as_index=False)
+          .agg(평가액=("평가액_USD", "sum"), 수량=("수량", "sum"))
+          if not pos.empty else pd.DataFrame(columns=["기준일", "종목키", "평가액", "수량"]))
+    fl = (act.groupby(["기준일", "종목키"], as_index=False)
+          .agg(현금흐름=("정산금액_USD", "sum"), 매매수량=("수량", "sum"))
+          if not act.empty else pd.DataFrame(columns=["기준일", "종목키", "현금흐름", "매매수량"]))
 
     dates = sorted(set(positions["기준일"].unique()))
     keys = sorted(set(mv["종목키"]) | set(fl["종목키"]))
+    if not keys:
+        return pd.DataFrame()
     grid = pd.MultiIndex.from_product([dates, keys], names=["기준일", "종목키"]).to_frame(index=False)
 
     out = (grid.merge(mv, on=["기준일", "종목키"], how="left")
                .merge(fl, on=["기준일", "종목키"], how="left"))
-    out[["평가액", "현금흐름", "수량", "매매수량"]] = out[["평가액", "현금흐름", "수량", "매매수량"]].fillna(0.0)
-    out = out.sort_values(["종목키", "기준일"])
-    names = (mv.dropna(subset=["종목명"]).groupby("종목키")
-             .agg(종목명=("종목명", "last"), 종목코드=("종목코드", "last"), 발행통화=("발행통화", "last")))
-    out = out.drop(columns=["종목명", "종목코드", "발행통화"]).merge(
-        names, on="종목키", how="left")
+    for c in ("평가액", "현금흐름", "수량", "매매수량"):
+        out[c] = pd.to_numeric(out[c], errors="coerce").fillna(0.0)
+    out = out.merge(_name_table(pos, act), on="종목키", how="left")
     out = out.sort_values(["종목키", "기준일"])
 
     out["전일평가액"] = out.groupby("종목키")["평가액"].shift()
-    first_date = dates[0] if dates else None
     out["일일손익"] = (out["평가액"] - out["전일평가액"].fillna(out["평가액"])) + out["현금흐름"]
-    out.loc[out["기준일"] == first_date, "일일손익"] = 0.0
+    if computable is not None:
+        bad = set(computable.index[~computable.astype(bool)])
+        out.loc[out["기준일"].isin(bad), "일일손익"] = 0.0
+    elif dates:
+        out.loc[out["기준일"] == dates[0], "일일손익"] = 0.0
     out["누적손익"] = out.groupby("종목키")["일일손익"].cumsum()
 
     out = out[(out["평가액"] != 0) | (out["현금흐름"] != 0) | (out["일일손익"] != 0)]
@@ -517,7 +592,8 @@ def compute_security_pnl(positions: pd.DataFrame, activity: pd.DataFrame,
     return out[[c for c in cols if c in out.columns]].sort_values(["기준일", "종목명"])
 
 
-def compute_swap_detail(swap_mtm: pd.DataFrame, swap_reset: pd.DataFrame) -> pd.DataFrame:
+def compute_swap_detail(swap_mtm: pd.DataFrame, swap_reset: pd.DataFrame,
+                        computable: Optional[pd.Series] = None) -> pd.DataFrame:
     """EQSWAP36X(MTM) + EQSWAP18SX(리셋/언와인드)로 스왑 종목별 손익을 별도 산출(교차검증용)."""
     if swap_mtm.empty:
         return pd.DataFrame()
@@ -557,7 +633,10 @@ def compute_swap_detail(swap_mtm: pd.DataFrame, swap_reset: pd.DataFrame) -> pd.
     out["전일MTM"] = out.groupby(["스왑번호", "종목"])["MTM_USD"].shift()
     dates = sorted(out["기준일"].dropna().unique())
     out["일일손익"] = (out["MTM_USD"] - out["전일MTM"].fillna(out["MTM_USD"])) + out["실현손익"]
-    if dates:
+    if computable is not None:
+        bad = set(computable.index[~computable.astype(bool)])
+        out.loc[out["기준일"].isin(bad), "일일손익"] = 0.0
+    elif dates:
         out.loc[out["기준일"] == dates[0], "일일손익"] = 0.0
     out["누적손익"] = out.groupby(["스왑번호", "종목"])["일일손익"].cumsum()
     return out.sort_values(["기준일", "종목명"])
@@ -567,21 +646,24 @@ def compute_swap_detail(swap_mtm: pd.DataFrame, swap_reset: pd.DataFrame) -> pd.
 # 5) 현금잔고 / 결제
 # ---------------------------------------------------------------------------
 
+# CASH005X 컬럼 -> (구간명, 해당 결제일이 들어있는 컬럼)
+# 'Prior Day' 컬럼이 리포트 기준일(D) 자체이고, 이후 컬럼이 D+1 .. D+4 이다.
 CASH_FORECAST_COLS = [
-    ("Prior Day Settlements", "전일"),
-    ("Current Day Settlements", "당일"),
-    ("Projected Settlement Day 1", "D+1"),
-    ("Projected Settlement Day 2", "D+2"),
-    ("Projected Settlement Day 3", "D+3"),
-    ("Future Settlements", "향후(전체)"),
+    ("Prior Day Settlements", "D+0(기준일)", "Prior Day"),
+    ("Current Day Settlements", "D+1", "Current Date"),
+    ("Projected Settlement Day 1", "D+2", "Projected Settlement Date1"),
+    ("Projected Settlement Day 2", "D+3", "Settlement Date2"),
+    ("Projected Settlement Day 3", "D+4", "Settlement Date3"),
+    ("Future Settlements", "이후전체", None),
 ]
+FUTURE_BUCKETS = ["D+1", "D+2", "D+3", "D+4"]
 STARTING_ROW = "Starting Balance"
 ENDING_ROW = "Ending Balance"
 TPB_ROW = "Total Projected Balance"
 
 
 def build_cash_schedule(raw: pd.DataFrame) -> pd.DataFrame:
-    """CASH005X를 long 형태(기준일/통화/카테고리/결제일버킷/금액)로 정리."""
+    """CASH005X를 long 형태(기준일/통화/카테고리/결제구간/결제일/금액)로 정리."""
     if raw.empty:
         return pd.DataFrame()
     df = raw.copy()
@@ -589,104 +671,105 @@ def build_cash_schedule(raw: pd.DataFrame) -> pd.DataFrame:
     df["통화"] = df.get("Settlement Currency", "")
     df["카테고리"] = df.get("Transaction Category", "").astype(str).str.strip()
     df["잔고유형"] = df.get("Balance Type", "")
-    date_cols = {
-        "전일": "Prior Day", "당일": "Current Date", "D+1": "Projected Settlement Date1",
-        "D+2": "Settlement Date2", "D+3": "Settlement Date3", "향후(전체)": "Settlement Date3",
-    }
     recs = []
-    for src, bucket in CASH_FORECAST_COLS:
+    for src, bucket, datecol in CASH_FORECAST_COLS:
         if src not in df.columns:
             continue
         part = df[["기준일", "통화", "카테고리", "잔고유형"]].copy()
         part["결제구간"] = bucket
-        part["결제일"] = to_date(df[date_cols[bucket]]) if date_cols[bucket] in df.columns else None
+        part["결제일"] = to_date(df[datecol]) if datecol and datecol in df.columns else None
         part["금액"] = to_num(df[src])
         recs.append(part)
     if not recs:
         return pd.DataFrame()
     out = pd.concat(recs, ignore_index=True)
-    order = {b: i for i, (_, b) in enumerate(CASH_FORECAST_COLS)}
+    order = {b: i for i, (_, b, _d) in enumerate(CASH_FORECAST_COLS)}
     out["_o"] = out["결제구간"].map(order)
-    return out.sort_values(["기준일", "통화", "_o", "카테고리"]).drop(columns="_o")
+    out["구분"] = "현금흐름"
+    is_bal = (out["카테고리"].isin([STARTING_ROW, ENDING_ROW, TPB_ROW])
+              | out["카테고리"].str.startswith("(")
+              | out["카테고리"].str.contains("Net Projected Balance", na=False)
+              | out["카테고리"].str.contains("Collateral Cash Balance", na=False))
+    out.loc[is_bal, "구분"] = "잔고"
+    out = out[out["금액"] != 0]
+    cols = ["기준일", "통화", "구분", "카테고리", "잔고유형", "결제구간", "결제일", "금액"]
+    return out.sort_values(["기준일", "통화", "_o", "구분", "카테고리"])[cols]
 
 
 def build_cash_balance(positions: pd.DataFrame, cash_raw: pd.DataFrame) -> pd.DataFrame:
-    """기준일 x 통화별 현재잔고 / 결제필요현금 / 결제후잔고."""
-    rows = []
-
-    # (a) MAC001X 현금 포지션: 매매기준 / 결제기준 잔고
+    """기준일 x 통화별: 현재 현금잔고 / 결제에 필요한 현금 / 결제 후 현금."""
+    # (a) MAC001X 현금 포지션: 매매기준(현재) / 결제기준(결제완료) 잔고
     pos_cash = positions[positions["상품유형"].astype(str).str.upper() == "CASH"].copy()
     if not pos_cash.empty:
-        g = (pos_cash.groupby(["기준일", "발행통화"], as_index=False)
-             .agg(매매기준잔고=("수량", "sum"),
-                  결제기준잔고=("SD잔고_발행통화", "sum"),
-                  매매기준잔고_USD=("평가액_USD", "sum"),
-                  결제기준잔고_USD=("SD잔고_USD", "sum")))
-        rows.append(g.rename(columns={"발행통화": "통화"}))
+        base = (pos_cash.groupby(["기준일", "발행통화"], as_index=False)
+                .agg(**{"현재잔고(매매기준)": ("수량", "sum"),
+                        "현재잔고(결제기준)": ("SD잔고_발행통화", "sum"),
+                        "현재잔고_USD": ("평가액_USD", "sum"),
+                        "현재잔고(결제기준)_USD": ("SD잔고_USD", "sum")})
+                .rename(columns={"발행통화": "통화"}))
+    else:
+        base = pd.DataFrame(columns=["기준일", "통화", "현재잔고(매매기준)", "현재잔고(결제기준)",
+                                     "현재잔고_USD", "현재잔고(결제기준)_USD"])
 
-    base = pd.concat(rows, ignore_index=True) if rows else pd.DataFrame(
-        columns=["기준일", "통화", "매매기준잔고", "결제기준잔고", "매매기준잔고_USD", "결제기준잔고_USD"])
-
-    # (b) CASH005X: 결제 스케줄
-    if not cash_raw.empty:
+    # (b) CASH005X: 향후 결제 스케줄
+    if cash_raw is not None and not cash_raw.empty:
         cf = cash_raw.copy()
         cf["기준일"] = cf["_기준일"]
         cf["통화"] = cf.get("Settlement Currency", "")
         cf["카테고리"] = cf.get("Transaction Category", "").astype(str).str.strip()
         cf["잔고유형"] = cf.get("Balance Type", "").astype(str).str.strip()
-        cf = cf[cf["잔고유형"].isin(["", "PB"])]
+        cf = cf[cf["잔고유형"].isin(["", "PB"])].copy()
 
-        amt = {b: to_num(cf[src]) if src in cf.columns else 0.0
-               for src, b in CASH_FORECAST_COLS}
-        for b, v in amt.items():
-            cf[f"금액_{b}"] = v
+        for src, bucket, _dc in CASH_FORECAST_COLS:
+            cf[f"금액_{bucket}"] = to_num(cf[src]) if src in cf.columns else 0.0
 
-        flows = cf[~cf["카테고리"].isin([STARTING_ROW, ENDING_ROW, TPB_ROW])
-                   & ~cf["카테고리"].str.startswith("(")
-                   & ~cf["카테고리"].str.contains("Net Projected Balance", na=False)]
-        fut_cols = ["금액_당일", "금액_D+1", "금액_D+2", "금액_D+3"]
-        flows = flows.assign(_순액=flows[fut_cols].sum(axis=1),
-                             _유출=flows[fut_cols].clip(upper=0).sum(axis=1),
-                             _유입=flows[fut_cols].clip(lower=0).sum(axis=1),
-                             _향후=flows["금액_향후(전체)"])
+        is_balance_row = (cf["카테고리"].isin([STARTING_ROW, ENDING_ROW, TPB_ROW])
+                          | cf["카테고리"].str.startswith("(")
+                          | cf["카테고리"].str.contains("Net Projected Balance", na=False))
+        flows = cf[~is_balance_row].copy()
+        fut = [f"금액_{b}" for b in FUTURE_BUCKETS]
+        flows["_순액"] = flows[fut].sum(axis=1)
+        flows["_유출"] = flows[fut].clip(upper=0).sum(axis=1)
+        flows["_유입"] = flows[fut].clip(lower=0).sum(axis=1)
+        flows["_이후"] = flows["금액_이후전체"]
         sched = (flows.groupby(["기준일", "통화"], as_index=False)
-                 .agg(결제예정_순액=("_순액", "sum"),
-                      결제필요현금_유출=("_유출", "sum"),
-                      결제예정_유입=("_유입", "sum"),
-                      향후결제_순액=("_향후", "sum")))
+                 .agg(**{"결제예정 수취(D+1~D+4)": ("_유입", "sum"),
+                         "결제필요현금(D+1~D+4)": ("_유출", "sum"),
+                         "결제예정 순액(D+1~D+4)": ("_순액", "sum"),
+                         "미도래 결제 순액(D+5 이후)": ("_이후", "sum")}))
 
         ends = cf[cf["카테고리"] == ENDING_ROW]
         if not ends.empty:
             endg = (ends.groupby(["기준일", "통화"], as_index=False)
-                    .agg(당일말잔고=("금액_전일", "sum"),
-                         D1말잔고=("금액_당일", "sum"),
-                         D2말잔고=("금액_D+1", "sum"),
-                         D3말잔고=("금액_D+2", "sum"),
-                         결제후잔고=("금액_향후(전체)", "sum")))
+                    .agg(**{"기준일 결제후잔고": ("금액_D+0(기준일)", "sum"),
+                            "D+1 예상잔고": ("금액_D+1", "sum"),
+                            "D+2 예상잔고": ("금액_D+2", "sum"),
+                            "D+3 예상잔고": ("금액_D+3", "sum"),
+                            "D+4 예상잔고": ("금액_D+4", "sum"),
+                            "전체 결제후 잔고": ("금액_이후전체", "sum")}))
             sched = sched.merge(endg, on=["기준일", "통화"], how="outer")
 
         base = base.merge(sched, on=["기준일", "통화"], how="outer")
 
-    # USD 환산율(발행통화 -> USD)
-    if not positions.empty:
-        fx = (positions[positions["상품유형"].astype(str).str.upper() == "CASH"]
-              .groupby(["기준일", "발행통화"], as_index=False)["FX_USD환산"].max()
+    # USD 환산율(발행통화 -> USD, 나누기 기준)
+    if not pos_cash.empty:
+        fx = (pos_cash.groupby(["기준일", "발행통화"], as_index=False)["FX_USD환산"].max()
               .rename(columns={"발행통화": "통화", "FX_USD환산": "USD환산율(나누기)"}))
         base = base.merge(fx, on=["기준일", "통화"], how="left")
         rate = base["USD환산율(나누기)"].replace(0, pd.NA)
-        for col, new in [("결제필요현금_유출", "결제필요현금_유출_USD"),
-                         ("결제예정_순액", "결제예정_순액_USD"),
-                         ("결제후잔고", "결제후잔고_USD")]:
+        for col in ["결제필요현금(D+1~D+4)", "결제예정 순액(D+1~D+4)", "전체 결제후 잔고"]:
             if col in base.columns:
-                base[new] = (base[col] / rate).astype(float)
+                base[f"{col}_USD"] = (base[col] / rate).astype(float)
 
     order = ["기준일", "통화",
-             "매매기준잔고", "결제기준잔고", "매매기준잔고_USD", "결제기준잔고_USD",
-             "결제예정_유입", "결제필요현금_유출", "결제예정_순액", "향후결제_순액",
-             "당일말잔고", "D1말잔고", "D2말잔고", "D3말잔고", "결제후잔고",
-             "USD환산율(나누기)", "결제필요현금_유출_USD", "결제예정_순액_USD", "결제후잔고_USD"]
+             "현재잔고(매매기준)", "현재잔고(결제기준)", "현재잔고_USD", "현재잔고(결제기준)_USD",
+             "결제예정 수취(D+1~D+4)", "결제필요현금(D+1~D+4)", "결제예정 순액(D+1~D+4)",
+             "미도래 결제 순액(D+5 이후)",
+             "기준일 결제후잔고", "D+1 예상잔고", "D+2 예상잔고", "D+3 예상잔고", "D+4 예상잔고",
+             "전체 결제후 잔고", "USD환산율(나누기)",
+             "결제필요현금(D+1~D+4)_USD", "결제예정 순액(D+1~D+4)_USD", "전체 결제후 잔고_USD"]
     base = base[[c for c in order if c in base.columns]]
-    return base.sort_values(["기준일", "통화"])
+    return base.sort_values(["기준일", "통화"]).reset_index(drop=True)
 
 
 # ---------------------------------------------------------------------------
@@ -718,6 +801,43 @@ def _autofit(ws, df: pd.DataFrame, wb, start_row: int = 0):
     ws.freeze_panes(start_row + 1, 0)
     if len(df):
         ws.autofilter(start_row, 0, start_row + len(df), len(df.columns) - 1)
+
+
+def _add_summary_chart(wb, ws_summary, daily: pd.DataFrame, sheet_name: str, anchor: str):
+    """요약 시트에 누적손익/NAV 추이 차트를 추가한다."""
+    if daily is None or len(daily) < 2:
+        return
+    cols = list(daily.columns)
+    try:
+        c_date = cols.index("기준일")
+        c_cum = cols.index("합계 누적손익")
+        c_nav = cols.index("총평가액(NAV)")
+    except ValueError:
+        return
+    n = len(daily)
+    chart = wb.add_chart({"type": "line"})
+    chart.add_series({
+        "name": "합계 누적손익 (USD)",
+        "categories": [sheet_name, 1, c_date, n, c_date],
+        "values": [sheet_name, 1, c_cum, n, c_cum],
+        "line": {"color": "#1F3864", "width": 2.0},
+    })
+    chart2 = wb.add_chart({"type": "line"})
+    chart2.add_series({
+        "name": "총평가액 NAV (USD)",
+        "categories": [sheet_name, 1, c_date, n, c_date],
+        "values": [sheet_name, 1, c_nav, n, c_nav],
+        "line": {"color": "#C00000", "width": 1.25, "dash_type": "dash"},
+        "y2_axis": True,
+    })
+    chart.combine(chart2)
+    chart.set_title({"name": "누적손익 및 NAV 추이"})
+    chart.set_x_axis({"num_font": {"rotation": -45}})
+    chart.set_y_axis({"name": "누적손익 (USD)", "num_format": "#,##0"})
+    chart2.set_y2_axis({"name": "NAV (USD)", "num_format": "#,##0"})
+    chart.set_size({"width": 900, "height": 380})
+    chart.set_legend({"position": "bottom"})
+    ws_summary.insert_chart(anchor, chart)
 
 
 def write_excel(path: str, sheets: List[Tuple[str, pd.DataFrame]], meta: List[Tuple[str, str]]):
@@ -756,6 +876,8 @@ def write_excel(path: str, sheets: List[Tuple[str, pd.DataFrame]], meta: List[Tu
             for i, col in enumerate(df.columns):
                 ws2.write(0, i, str(col), hdr)
             _autofit(ws2, df, wb)
+            if name.endswith("일일손익"):
+                _add_summary_chart(wb, ws, df, name[:31], f"A{len(meta) + 5}")
 
 
 # ---------------------------------------------------------------------------
@@ -804,9 +926,9 @@ def organize_files(files: Sequence[SourceFile], root: str, layout: str = "report
         else:
             status = "예정" if dry_run else "완료"
             if not dry_run:
-                os.makedirs(dest_dir, exist_ok=True)
                 try:
-                    op(f.path, dest)
+                    os.makedirs(long_path(dest_dir), exist_ok=True)
+                    op(long_path(f.path), long_path(dest))
                 except Exception as exc:  # pragma: no cover
                     status = f"실패: {exc}"
 
@@ -836,8 +958,14 @@ def main(argv=None):
                     help="산출 엑셀 경로 (기본: <src>/_output/Prelude_PnL_<날짜범위>.xlsx)")
     ap.add_argument("--from-date", default=None, help="시작 기준일 YYYY-MM-DD")
     ap.add_argument("--to-date", default=None, help="종료 기준일 YYYY-MM-DD")
-    ap.add_argument("--external-category", action="append", default=list(DEFAULT_EXTERNAL_CATEGORIES),
-                    help="외부 자금이동(입출금)으로 간주할 거래 카테고리. 여러 번 지정 가능")
+    ap.add_argument("--external-category", action="append", default=None,
+                    help=f"외부 자금이동(입출금)으로 간주할 거래 카테고리. 여러 번 지정 가능 "
+                         f"(기본: {', '.join(DEFAULT_EXTERNAL_CATEGORIES)})")
+    ap.add_argument("--no-external", action="store_true",
+                    help="외부 자금이동 분류를 사용하지 않음(모든 현금흐름을 손익에 포함)")
+    ap.add_argument("--max-gap-days", type=int, default=DEFAULT_MAX_GAP_DAYS,
+                    help=f"직전 리포트일과의 간격이 이 일수를 넘으면 손익 산출에서 제외 "
+                         f"(기본: {DEFAULT_MAX_GAP_DAYS})")
     ap.add_argument("--organize", action="store_true", help="원본 파일을 리포트별 폴더로 정리")
     ap.add_argument("--layout", default="report",
                     choices=["report", "report-year", "report-month", "date-report"],
@@ -846,6 +974,17 @@ def main(argv=None):
     ap.add_argument("--dry-run", action="store_true", help="정리 시 실제로 옮기지 않고 계획만 출력")
     ap.add_argument("--no-excel", action="store_true", help="엑셀 생성 없이 정리만 수행")
     args = ap.parse_args(argv)
+
+    if args.no_external:
+        args.external_category = []
+    elif args.external_category is None:
+        args.external_category = list(DEFAULT_EXTERNAL_CATEGORIES)
+
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
 
     src = os.path.abspath(args.src)
     if not os.path.isdir(src):
@@ -906,12 +1045,15 @@ def main(argv=None):
         raw_int = clip_raw(raw_int)
 
         print("[4/6] 손익 계산")
-        res = compute_pnl(positions, activity, external_categories=args.external_category)
+        res = compute_pnl(positions, activity,
+                          external_categories=args.external_category,
+                          max_gap_days=args.max_gap_days)
+        computable = res["computable"]
 
-        swap_sec = compute_security_pnl(positions, activity, "Swap")
-        cash_sec = compute_security_pnl(positions, activity, "Cash Equity")
-        fx_sec = compute_security_pnl(positions, activity, "FX")
-        swap_detail = compute_swap_detail(raw_swap, raw_reset)
+        swap_sec = compute_security_pnl(positions, activity, "Swap", computable)
+        cash_sec = compute_security_pnl(positions, activity, "Cash Equity", computable)
+        fx_sec = compute_security_pnl(positions, activity, "FX", computable)
+        swap_detail = compute_swap_detail(raw_swap, raw_reset, computable)
 
         print("[5/6] 현금/결제 정리")
         cash_bal = build_cash_balance(positions, raw_cash)
@@ -958,7 +1100,11 @@ def main(argv=None):
                 "대변잔액": to_num(it.get("Net Credit Balance", pd.Series(dtype=str))),
                 "대변이율": to_num(it.get("Credit Rate", pd.Series(dtype=str))),
                 "대변이자": to_num(it.get("Credit Interest", pd.Series(dtype=str))),
-            }).drop_duplicates().sort_values(["통화", "이자기산일"])
+            })
+            # SW1003MX는 MTD 누적이라 파일 간 중복이 발생한다. 계좌/통화/기산일 기준 최신본만 남긴다.
+            interest = (interest.sort_values("기준일(파일)")
+                        .drop_duplicates(subset=["계좌", "통화", "이자기산일"], keep="last")
+                        .sort_values(["통화", "계좌", "이자기산일"]))
 
         dates = sorted(positions["기준일"].unique())
         tag = f"{dates[0]:%Y%m%d}_{dates[-1]:%Y%m%d}" if dates else "all"
@@ -974,34 +1120,47 @@ def main(argv=None):
             return ""
 
         acct = " / ".join(x for x in [first_val("Main Account Number"), first_val("Main Account Name")] if x)
+        excluded = [str(d) for d in computable.index[~computable.astype(bool)]]
+        cash_last = cash_bal[cash_bal["기준일"] == cash_bal["기준일"].max()] if len(cash_bal) else pd.DataFrame()
+        cash_txt = " | ".join(
+            f"{r['통화']} 현재 {r.get('현재잔고(매매기준)', 0):,.0f}"
+            f" / 결제필요 {r.get('결제필요현금(D+1~D+4)', 0):,.0f}"
+            f" / 결제후 {r.get('전체 결제후 잔고', 0):,.0f}"
+            for _, r in cash_last.iterrows()) if len(cash_last) else "-"
+
         meta = [
             ("생성일시", dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
             ("원본 폴더", src),
             ("계좌", acct),
-            ("기준일 범위", f"{dates[0]} ~ {dates[-1]} ({len(dates)}영업일)" if dates else "-"),
+            ("기준일 범위", f"{dates[0]} ~ {dates[-1]} ({len(dates)}개 기준일)" if dates else "-"),
             ("사용 리포트", ", ".join(sorted({f.code for f in files if f.code}))),
             ("기준통화", "USD (Client Base CCY)"),
             ("총평가액(NAV, 최종일)", f"{last['총평가액(NAV)']:,.2f}" if last is not None else "-"),
-            ("누적손익(기간 전체)", f"{last['합계 누적손익']:,.2f}" if last is not None else "-"),
+            ("누적손익(산출구간 합계)", f"{last['합계 누적손익']:,.2f}" if last is not None else "-"),
             ("최종일 일일손익", f"{last['합계 일일손익']:,.2f}" if last is not None else "-"),
+            ("최종일 현금(통화별)", cash_txt),
             ("손익 산식", "일일손익 = Δ평가액 + 귀속 현금흐름 (현금 자산군은 잔여항)"),
             ("검증", "Σ자산군 손익 = Δ총평가액 − 외부 자금이동 (09_검증 시트 참조)"),
+            ("외부 자금이동 분류", ", ".join(args.external_category) or "(없음)"),
+            (f"손익 산출 제외일(간격>{args.max_gap_days}일)",
+             ", ".join(excluded) if excluded else "없음"),
         ]
 
         sheets = [
             ("01_일일손익", daily),
-            ("02_자산군별상세", res["detail"]),
-            ("03_Swap손익", swap_sec),
-            ("04_현물주식손익", cash_sec),
-            ("05_FX손익", fx_sec),
-            ("06_현금잔고", cash_bal),
-            ("07_결제스케줄", cash_sched),
-            ("08_거래내역", trades),
-            ("09_검증", res["recon"]),
-            ("10_Swap상세(MTM)", swap_detail),
-            ("11_포지션(최종일)", pos_snapshot),
-            ("12_이자내역", interest),
-            ("13_파일목록", inventory),
+            ("02_월별손익", res["monthly"]),
+            ("03_자산군별상세", res["detail"]),
+            ("04_Swap손익", swap_sec),
+            ("05_현물주식손익", cash_sec),
+            ("06_FX손익", fx_sec),
+            ("07_현금잔고", cash_bal),
+            ("08_결제스케줄", cash_sched),
+            ("09_거래내역", trades),
+            ("10_검증", res["recon"]),
+            ("11_Swap상세(MTM)", swap_detail),
+            ("12_포지션(최종일)", pos_snapshot),
+            ("13_이자내역", interest),
+            ("14_파일목록", inventory),
         ]
 
         print(f"[6/6] 엑셀 작성: {excel_path}")
