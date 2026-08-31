@@ -1,0 +1,769 @@
+"""Qube-RT(QSMA) 월별 Manager's P&L 리포트 생성 — Qube 제출 양식/기준.
+
+Qube 요구사항 (Edward Hougasian, Qube Fund Controller / 2026-08-05, 08-25 메일)
+    - 계정 단위가 아니라 security/ticker 단위로 분해할 것
+    - KRWUSD 환율은 런던 16:00 스냅 (Refinitiv). Citco는 자체 월말 환율로
+      KRW 종가를 USD로 환산함
+    - 실현손익(Realised P&L)은 trade date 기준 인식
+    - 커미션은 instrument P&L 에 포함 (매매파일에 포함돼 있거나 체결가에 내재된 경우)
+    - 스왑 financing 은 종목별로 쪼개지 않고 통화/계정 단위 1줄로 계상
+    - 이자는 계정 성격별로 구분: Int Exp/Inc Broker(GS PB 계좌) vs
+      Int Exp/Inc Equity Swaps(스왑 계좌)
+    - 월별 비용(Part B)도 같은 표에 포함 가능
+
+Citco(공식 장부) P&L 구성 — 2026년 7월 대사표에서 검증한 항등식
+    Gross P&L = OTE Change + P&S           (미실현 증감 + 실현)
+    P&L       = Gross P&L + Dividends      (배당은 종목 P&L 에 포함)
+    FA P&L    = P&L
+    financing/이자는 종목 P&L 에서 제외되고 GL 계정 단위로 별도 계상
+    지수선물/개별주식선물 스왑도 Type = 'Equity Swap' 로 분류
+    FX 손익은 Type = 'Cross Rate', ticker 'KRWUSD CURNCY'
+
+출력 양식 (QSMA - Manager's P&L example.xlsx)
+    Type | Description | Bloomberg Ticker | EOM quantity / positions
+         | ME price | ME FX | $ MTD P&L
+
+사용법
+    python qube_monthly_pnl.py [월폴더] [--prev 전월폴더] [--ric-map 대사파일.xlsx]
+                               [--expenses expenses.json] [-o 출력.xlsx]
+"""
+
+import argparse
+import datetime as dt
+import json
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+import pandas as pd
+
+BASE_DIR = Path(__file__).resolve().parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+import qube_pnl as base                                    # noqa: E402
+from qube_pnl import CASH_ACCT, SWAP_ACCT, acct8, collect_files, num, read_report, to_date  # noqa: E402
+
+# 월별 리포트에서 추가로 쓰는 GS 리포트
+base.REPORT_PATTERNS.update({
+    'cash_bal': '*Custody_Cash_Bal_302239_*.xls',    # Custody Cash Balances (FX 손익용)
+    'int_mtd':  '*Interest_MTD_Acc_302415_*.xls',    # Interest MTD Accrual (PB 계좌 이자)
+})
+
+BASE_CCY = 'USD'
+
+# Citco 분류에 맞춘 Type. 지수/개별주식 선물 스왑도 Citco 는 'Equity Swap' 으로 본다.
+TYPE_EQUITY = 'Equity'
+TYPE_SWAP = 'Equity Swap'
+TYPE_FX = 'Cross Rate'
+TYPE_INTEREST = 'Interest'
+TYPE_EXPENSE = 'Expense'
+
+# Citco GL 계정명 (2026-08-25 메일에서 확인)
+GL_SWAP_INTEREST = 'Int Exp / Inc Equity Swaps'
+GL_BROKER_INTEREST = 'Int Exp / Inc Broker'
+
+WARNINGS = []
+
+
+def cell(row, idx, name, default=''):
+    """리포트마다 컬럼 구성이 조금씩 달라 없는 컬럼은 기본값으로 넘긴다."""
+    pos = idx.get(name)
+    return default if pos is None else row[pos]
+
+
+def warn(message):
+    if message not in WARNINGS:
+        WARNINGS.append(message)
+
+
+# --------------------------------------------------------------------------- #
+# 티커 매핑
+# --------------------------------------------------------------------------- #
+def load_ric_map(path):
+    """Qube 대사파일의 Ric_Ticker 시트 → {RIC: (BloombergCode, InstrumentType)}."""
+    if not path:
+        return {}
+    try:
+        frame = pd.read_excel(path, 'Ric_Ticker')
+    except Exception as exc:
+        warn(f'Ric_Ticker 시트를 읽지 못했습니다 ({path}): {exc}')
+        return {}
+    mapping = {}
+    for _, row in frame.iterrows():
+        ric = str(row.get('Ric', '')).strip()
+        code = str(row.get('BloombergCode', '')).strip()
+        if ric and code and code.lower() != 'nan':
+            mapping[ric] = (code, str(row.get('InstrumentType', '')).strip())
+    return mapping
+
+
+def bloomberg_ticker(ric, gs_code, ric_map, is_index=False):
+    """Bloomberg 티커 결정. Qube 매핑표 우선, 없으면 GS 코드에 접미사를 붙인다.
+
+    GS 는 'Underlyer Bloomberg Code' 를 '005930 KP' / 'KMU6 Index' 형태로 주고
+    Citco 는 '005930 KP Equity' / 'KMU6 INDEX' 를 쓴다. 대사 매칭키는 RIC 이므로
+    티커는 표시용이며, Qube 매핑표가 있으면 그쪽을 따른다.
+    """
+    ric = (ric or '').strip()
+    if ric in ric_map:
+        return ric_map[ric][0]
+    code = (gs_code or '').strip()
+    if not code:
+        return ric
+    upper = code.upper()
+    if upper.endswith(' EQUITY') or upper.endswith(' INDEX') or upper.endswith(' CURNCY'):
+        return code
+    if is_index or upper.endswith(' INDEX'):
+        return code if upper.endswith('INDEX') else f'{code} Index'
+    return f'{code} Equity'
+
+
+# --------------------------------------------------------------------------- #
+# 스왑 (Equity Swap) — 종목별
+# --------------------------------------------------------------------------- #
+def load_swap_snapshots(root):
+    """{기준일: {contract_id: dict}} — 스왑 계약별 스냅샷.
+
+    Unsettled P&L 은 Contract CCY 표기이고 'FX Contract to Base' 는 소수점 6자리로
+    반올림돼 있어(KRW 계약은 오차가 수만 KRW 단위로 커진다) 곱셈 대신
+    항등식에서 역산한다.
+        Total MTM(Base) = Equity MTM(Base) + Total Interest Accrued(Base)
+                          + Dividend Accrued(Base) + Unsettled P&L(Base)
+    """
+    snapshots = {}
+    for bdate, path in sorted(collect_files(root, 'swap_pnv').items()):
+        _, idx, rows, _ = read_report(path, ['Contract ID', 'Total Mark to Market (Base)'])
+        day = {}
+        if idx is None:
+            snapshots[bdate] = day
+            continue
+        for row in rows:
+            contract = str(cell(row, idx, 'Contract ID')).strip()
+            if not contract or acct8(cell(row, idx, 'Account Number')) != SWAP_ACCT:
+                continue
+            total = num(cell(row, idx, 'Total Mark to Market (Base)'))
+            equity_mtm = num(cell(row, idx, 'Equity Mark to Market (Base)'))
+            financing = num(cell(row, idx, 'Total Interest Accrued (Base)'))
+            dividend = num(cell(row, idx, 'Dividend Accrued (Base)'))
+            unsettled = total - equity_mtm - financing - dividend   # 항등식 역산 (환율 오차 없음)
+            multiplier = num(cell(row, idx, 'Multiplier')) or 1.0
+            local_fx = num(cell(row, idx, 'FX Contract to Base')) or 1.0
+            day[contract] = {
+                'name': str(cell(row, idx, 'Underlyer Name')).strip(),
+                'side': str(cell(row, idx, 'Long/Short')).strip(),
+                'qty': num(cell(row, idx, 'Traded Quantity')),
+                'multiplier': multiplier,
+                'price': num(cell(row, idx, 'Current Price (Underlyer)')) or num(cell(row, idx, 'Current Price')),
+                'ccy': str(cell(row, idx, 'Underlyer Currency')).strip().upper(),
+                'fx_contract_base': local_fx,
+                'bbg': str(cell(row, idx, 'Underlyer Bloomberg Code')).strip(),
+                'ric': str(cell(row, idx, 'Underlyer RIC')).strip(),
+                'isin': str(cell(row, idx, 'Underlyer ISIN')).strip(),
+                # 종목 단위 P&L 구성 (Qube 기준: financing 제외)
+                'equity': equity_mtm + unsettled,
+                'dividend': dividend,
+                'financing': financing,
+                'total': total,
+            }
+        snapshots[bdate] = day
+    return snapshots
+
+
+def load_swap_settlements(root, month_start, month_end):
+    """{contract_id: {'equity','dividend'}} 및 financing 합계 — 당월 결제분.
+
+    MTDSynSettle 은 월 누적이므로 최신 파일 1개만 사용한다. 결제일이 당월 범위
+    밖(익월 예정분)인 행은 제외한다.
+    """
+    files = collect_files(root, 'swap_settle')
+    per_contract = defaultdict(lambda: {'equity': 0.0, 'dividend': 0.0})
+    financing_total = 0.0
+    if not files:
+        warn('스왑 결제(MTD SynSettle) 리포트가 없어 당월 결제분을 반영하지 못했습니다.')
+        return per_contract, financing_total, None
+
+    path = files[max(files)]
+    _, idx, rows, datemode = read_report(path, ['Payment Date', 'Total Settlement'])
+    if idx is None:
+        return per_contract, financing_total, path
+
+    for row in rows:
+        pay_date = to_date(cell(row, idx, 'Payment Date'), datemode)
+        if pay_date is None or not (month_start <= pay_date <= month_end):
+            continue
+        contract = str(cell(row, idx, 'Contract ID')).strip()
+        settled_ccy = str(cell(row, idx, 'Settled CCY')).strip().upper()
+        fx = 1.0 if settled_ccy in ('', BASE_CCY) else (num(cell(row, idx, 'Settlement FX Rate')) or 1.0)
+        if settled_ccy not in ('', BASE_CCY) and fx == 1.0:
+            warn(f'스왑 결제 {contract} 의 결제통화가 {settled_ccy} 인데 환율이 1.0 입니다 '
+                 '(Settlement FX Rate 확인 필요).')
+        per_contract[contract]['equity'] += num(cell(row, idx, 'Equity Leg')) * fx
+        per_contract[contract]['dividend'] += num(cell(row, idx, 'Dividend Leg')) * fx
+        financing_total += num(cell(row, idx, 'Financing Leg')) * fx
+    return per_contract, financing_total, path
+
+
+# --------------------------------------------------------------------------- #
+# 현물 (Equity) — 종목별
+# --------------------------------------------------------------------------- #
+def load_cash_snapshots(root):
+    """{기준일: {symbol: dict}} — 현물 주식 스냅샷 + 통화별 정밀 환율."""
+    snapshots, fx_by_date = {}, {}
+    for bdate, path in sorted(collect_files(root, 'custody_pos').items()):
+        _, idx, rows, _ = read_report(
+            path, ['Account Number', 'Product Type', 'Ending Market Value - Base'])
+        day = {}
+        fx_base, fx_local = defaultdict(float), defaultdict(float)
+        if idx is not None:
+            for row in rows:
+                symbol = str(cell(row, idx, 'Symbol')).strip()
+                if not symbol or acct8(cell(row, idx, 'Account Number')) != CASH_ACCT:
+                    continue
+                product = str(cell(row, idx, 'Product Type')).strip().upper()
+                mv = num(cell(row, idx, 'Ending Market Value - Base'))
+                if product != 'EQ':
+                    if product != 'CA' and mv:
+                        warn(f'{bdate}: 현물계좌 미분류 상품(Product Type={product}) '
+                             f'평가액 {mv:,.2f} — 손익에서 제외됨')
+                    continue
+                currency = str(cell(row, idx, 'Ending Local Currency')).strip().upper()
+                local_mv = num(cell(row, idx, 'Ending Market Value - Local'))
+                if currency and local_mv:
+                    fx_base[currency] += mv
+                    fx_local[currency] += local_mv
+                # 같은 종목이 Account Type(01/06) 별로 두 줄로 쪼개져 나오는 날이 있다
+                # (결제 대기 이관). 상계되어 순포지션이 0 인 경우가 있으므로 합산해야 한다.
+                bag = day.setdefault(symbol, {
+                    'name': str(cell(row, idx, 'Product Description')).strip(),
+                    'qty': 0.0,
+                    'mv': 0.0,
+                    'local_price': num(cell(row, idx, 'Ending Local Price')),
+                    'ccy': currency,
+                    'bbg': str(cell(row, idx, 'Bloomberg Ticker')).strip(),
+                    'ric': str(cell(row, idx, 'RIC Code')).strip(),
+                    'isin': str(cell(row, idx, 'ISIN')).strip(),
+                })
+                bag['qty'] += num(cell(row, idx, 'Trade Date Quantity'))
+                bag['mv'] += mv
+        snapshots[bdate] = day
+        fx_by_date[bdate] = {c: fx_base[c] / fx_local[c] for c in fx_local if fx_local[c]}
+    return snapshots, fx_by_date
+
+
+def load_cash_trades_month(root, fx_by_date, month_start, month_end):
+    """{symbol: 매매순대금(Base)} — 당월 현물 매매. 커미션/세금 포함(Qube 기준)."""
+    per_symbol = defaultdict(float)
+    transfers = []
+    trades = base.load_cash_trades(root, fx_by_date)
+    for bdate, bag in trades.items():
+        if not (month_start <= bdate <= month_end):
+            continue
+        for record in bag['rows']:
+            per_symbol[record['symbol']] += record['net_base']
+        for record in bag['transfers']:
+            transfers.append((bdate, record))
+    return per_symbol, transfers
+
+
+def load_dividends_month(root, month_start, month_end):
+    """{symbol 또는 이름: 금액} — 당월 ex-date 현물 현금배당."""
+    by_date, detail = base.load_physical_dividends(root)
+    total, items = 0.0, []
+    for ex_date, amount in by_date.items():
+        if month_start <= ex_date <= month_end:
+            total += amount
+            items.extend((ex_date, n, a) for n, a in detail.get(ex_date, []))
+    return total, items
+
+
+# --------------------------------------------------------------------------- #
+# FX 손익 / PB 이자
+# --------------------------------------------------------------------------- #
+def load_fx_pnl(root, month_start, month_end):
+    """비-USD 현금잔고의 일별 환평가손익 합계 → Citco 'Cross Rate' 대응.
+
+    FX 손익 = Σ_일 Σ_통화  전일잔고(Local) x (당일환율 - 전일환율)
+    일별로 누적하므로 월 중 자금이동이 있어도 자연히 반영된다.
+    """
+    files = collect_files(root, 'cash_bal')
+    if not files:
+        warn('현금잔고(Custody Cash Balances) 리포트가 없어 FX 손익을 산출하지 못했습니다.')
+        return 0.0, {}, None
+
+    daily = {}
+    for bdate, path in sorted(files.items()):
+        _, idx, rows, _ = read_report(path, ['Account Number', 'Currency', 'Trade Date Qty (Local)'])
+        if idx is None:
+            continue
+        balances, rates = defaultdict(float), {}
+        for row in rows:
+            if not str(cell(row, idx, 'Account Number')).strip():
+                continue
+            currency = str(cell(row, idx, 'Currency')).strip().upper()
+            if not currency or currency == BASE_CCY:
+                continue
+            local = num(cell(row, idx, 'Trade Date Qty (Local)'))
+            base_amt = num(cell(row, idx, 'Trade Date Qty (Base)'))
+            balances[currency] += local
+            if local:
+                rates[currency] = base_amt / local      # 정밀 환율 (반올림 컬럼 대신 역산)
+        daily[bdate] = (dict(balances), rates)
+
+    dates = [d for d in sorted(daily) if d <= month_end]
+    total, by_ccy = 0.0, defaultdict(float)
+    for i in range(1, len(dates)):
+        prev, cur = dates[i - 1], dates[i]
+        if cur < month_start:
+            continue
+        prev_bal, prev_rate = daily[prev]
+        _, cur_rate = daily[cur]
+        for currency, balance in prev_bal.items():
+            if currency in prev_rate and currency in cur_rate:
+                amount = balance * (cur_rate[currency] - prev_rate[currency])
+                total += amount
+                by_ccy[currency] += amount
+
+    if dates and dates[0] > month_start:
+        warn(f'현금잔고 리포트가 {dates[0]} 부터만 있어 {month_start}~{dates[0]} 구간의 '
+             'FX 손익이 누락됐습니다.')
+    return total, dict(by_ccy), max(files)
+
+
+def load_broker_interest(root, month_end):
+    """GS PB 계좌 MTD 이자 → Citco 'Int Exp / Inc Broker' 대응."""
+    files = collect_files(root, 'int_mtd')
+    if not files:
+        warn('Interest MTD Accrual 리포트가 없어 PB 계좌 이자를 반영하지 못했습니다.')
+        return 0.0, None
+    usable = [d for d in files if d <= month_end]
+    if not usable:
+        return 0.0, None
+    path = files[max(usable)]
+    _, idx, rows, _ = read_report(path, ['Account Number', 'Debit Interest Base'])
+    if idx is None:
+        return 0.0, path
+    total = 0.0
+    for row in rows:
+        if not str(cell(row, idx, 'Account Number')).strip():
+            continue
+        total += num(cell(row, idx, 'Debit Interest Base')) + num(cell(row, idx, 'Credit Interest Base'))
+    return total, path
+
+
+# --------------------------------------------------------------------------- #
+# 월별 손익 조립
+# --------------------------------------------------------------------------- #
+def build_monthly(root, prev_root, ric_map):
+    swap_snaps = load_swap_snapshots(root)
+    cash_snaps, fx_by_date = load_cash_snapshots(root)
+
+    dates = sorted(set(swap_snaps) | set(cash_snaps))
+    if not dates:
+        raise SystemExit(f'{root} 에서 포지션 리포트를 찾지 못했습니다.')
+    month_end = max(dates)
+    month_start = dt.date(month_end.year, month_end.month, 1)
+
+    # ---- 월초 기준선 (전월말 스냅샷) ----
+    cash_base, cash_base_date = {}, None
+    if prev_root and Path(prev_root).is_dir():
+        prev_cash, _ = load_cash_snapshots(prev_root)
+        if prev_cash:
+            cash_base_date = max(prev_cash)
+            cash_base = prev_cash[cash_base_date]
+        prev_swap = load_swap_snapshots(prev_root)
+        if prev_swap:
+            swap_base_date = max(prev_swap)
+            swap_base = prev_swap[swap_base_date]
+        else:
+            swap_base_date, swap_base = dates[0], swap_snaps.get(dates[0], {})
+            warn(f'전월 폴더({Path(prev_root).name})에 스왑 Position & Valuation 리포트가 없어 '
+                 f'스왑 기준선을 당월 첫 영업일({dates[0]})로 사용했습니다 → '
+                 f'전월말~{dates[0]} 구간의 스왑 손익이 MTD 에서 누락됩니다.')
+    else:
+        cash_base_date, cash_base = dates[0], cash_snaps.get(dates[0], {})
+        swap_base_date, swap_base = dates[0], swap_snaps.get(dates[0], {})
+        warn(f'전월 폴더가 지정되지 않아 기준선을 당월 첫 영업일({dates[0]})로 사용했습니다 → '
+             f'전월말~{dates[0]} 구간 손익이 MTD 에서 누락됩니다.')
+
+    if cash_base_date and cash_base_date >= month_start:
+        warn(f'현물 기준선이 {cash_base_date} (당월) 입니다 — 전월말 스냅샷이 아니므로 '
+             'MTD 현물 손익에 첫 영업일 변동이 빠집니다.')
+
+    cash_end = cash_snaps.get(month_end, {})
+    swap_end = swap_snaps.get(month_end, {})
+
+    # ---- 당월 거래/배당/결제 ----
+    trades, transfers = load_cash_trades_month(root, fx_by_date, month_start, month_end)
+    dividend_total, dividend_items = load_dividends_month(root, month_start, month_end)
+    settle_by_contract, settle_financing, settle_path = load_swap_settlements(
+        root, month_start, month_end)
+
+    me_fx = fx_by_date.get(month_end, {})
+    krw_per_usd = (1.0 / me_fx['KRW']) if me_fx.get('KRW') else None
+
+    for bdate, record in transfers:
+        warn(f"{bdate}: 대가 없는 현물 수량이동 {record['symbol']} {record['qty']:,.0f}주"
+             f"({record['mnemonic']}) — 매입원가가 없어 해당 종목 P&L 이 왜곡될 수 있습니다.")
+
+    rows = []
+
+    # ---- Equity (현물) ----
+    for symbol in sorted(set(cash_base) | set(cash_end) | set(trades)):
+        was, now = cash_base.get(symbol, {}), cash_end.get(symbol, {})
+        pnl = (now.get('mv', 0.0) - was.get('mv', 0.0)) + trades.get(symbol, 0.0)
+        if abs(pnl) < 0.005 and not now.get('qty') and not was.get('qty'):
+            continue
+        meta = now or was
+        rows.append({
+            'Type': TYPE_EQUITY,
+            'Description': meta.get('name', symbol),
+            'Bloomberg Ticker': bloomberg_ticker(meta.get('ric'), meta.get('bbg'), ric_map),
+            'EOM quantity / positions': now.get('qty', 0.0),
+            'ME price': now.get('local_price', 0.0),
+            'ME FX': (1.0 / me_fx[meta.get('ccy', '')]
+                      if me_fx.get(meta.get('ccy', '')) else 1.0),
+            '$ MTD P&L': pnl,
+            '_ric': meta.get('ric', ''),
+            '_isin': meta.get('isin', ''),
+            '_equity': pnl,
+            '_dividend': 0.0,
+            '_financing': 0.0,
+            '_key': symbol,
+        })
+
+    # 현물 현금배당은 종목별 배분 정보가 ex-date 공시에만 있어 Equity 합계에 별도 행으로 둔다
+    if dividend_total:
+        rows.append({
+            'Type': TYPE_EQUITY,
+            'Description': 'Physical equity cash dividends (ex-date basis)',
+            'Bloomberg Ticker': '',
+            'EOM quantity / positions': 0.0,
+            'ME price': 0.0,
+            'ME FX': krw_per_usd or 1.0,
+            '$ MTD P&L': dividend_total,
+            '_ric': '', '_isin': '',
+            '_equity': 0.0, '_dividend': dividend_total, '_financing': 0.0,
+            '_key': 'PHYS_DIV',
+        })
+
+    # ---- Equity Swap (개별주식 + 지수/개별주식 선물 스왑) ----
+    swap_financing = 0.0
+    for contract in sorted(set(swap_base) | set(swap_end)):
+        was, now = swap_base.get(contract, {}), swap_end.get(contract, {})
+        settled = settle_by_contract.get(contract, {'equity': 0.0, 'dividend': 0.0})
+        equity_pnl = (now.get('equity', 0.0) - was.get('equity', 0.0)) + settled['equity']
+        dividend_pnl = (now.get('dividend', 0.0) - was.get('dividend', 0.0)) + settled['dividend']
+        financing_pnl = now.get('financing', 0.0) - was.get('financing', 0.0)
+        swap_financing += financing_pnl
+        pnl = equity_pnl + dividend_pnl                     # Qube 기준: financing 제외
+        if abs(pnl) < 0.005 and not now.get('qty') and not was.get('qty'):
+            continue
+        meta = now or was
+        is_index = meta.get('multiplier', 1.0) != 1.0
+        rows.append({
+            'Type': TYPE_SWAP,
+            'Description': meta.get('name', contract),
+            'Bloomberg Ticker': bloomberg_ticker(meta.get('ric'), meta.get('bbg'),
+                                                 ric_map, is_index),
+            'EOM quantity / positions': now.get('qty', 0.0),
+            'ME price': now.get('price', 0.0),
+            'ME FX': (1.0 / me_fx[meta.get('ccy', '')]
+                      if me_fx.get(meta.get('ccy', '')) else (krw_per_usd or 1.0)),
+            '$ MTD P&L': pnl,
+            '_ric': meta.get('ric', ''),
+            '_isin': meta.get('isin', ''),
+            '_equity': equity_pnl,
+            '_dividend': dividend_pnl,
+            '_financing': financing_pnl,
+            '_key': contract,
+        })
+    swap_financing += settle_financing
+
+    # ---- FX (Cross Rate) ----
+    fx_pnl, fx_by_ccy, _ = load_fx_pnl(root, month_start, month_end)
+    rows.append({
+        'Type': TYPE_FX,
+        'Description': 'KRW [USD] FX CROSS',
+        'Bloomberg Ticker': 'KRWUSD CURNCY',
+        'EOM quantity / positions': 0.0,
+        'ME price': 0.0,
+        'ME FX': krw_per_usd or 1.0,
+        '$ MTD P&L': fx_pnl,
+        '_ric': 'KRWUSD=R', '_isin': '',
+        '_equity': fx_pnl, '_dividend': 0.0, '_financing': 0.0,
+        '_key': 'FX',
+    })
+
+    # ---- 이자 (Qube 기준: 종목별 배분 없이 계정 단위 1줄) ----
+    broker_interest, _ = load_broker_interest(root, month_end)
+    for label, amount in ((GL_SWAP_INTEREST, swap_financing),
+                          (GL_BROKER_INTEREST, broker_interest)):
+        rows.append({
+            'Type': TYPE_INTEREST,
+            'Description': label,
+            'Bloomberg Ticker': '',
+            'EOM quantity / positions': 0.0,
+            'ME price': 0.0,
+            'ME FX': 1.0,
+            '$ MTD P&L': amount,
+            '_ric': '', '_isin': '',
+            '_equity': 0.0, '_dividend': 0.0, '_financing': amount,
+            '_key': label,
+        })
+
+    meta = {
+        'month_start': month_start,
+        'month_end': month_end,
+        'dates': dates,
+        'cash_base_date': cash_base_date,
+        'swap_base_date': swap_base_date,
+        'krw_per_usd': krw_per_usd,
+        'dividend_items': dividend_items,
+        'fx_by_ccy': fx_by_ccy,
+        'settle_path': settle_path,
+        'transfers': transfers,
+    }
+    return pd.DataFrame(rows), meta
+
+
+# --------------------------------------------------------------------------- #
+# 엑셀 출력
+# --------------------------------------------------------------------------- #
+QUBE_COLUMNS = ['Type', 'Description', 'Bloomberg Ticker', 'EOM quantity / positions',
+                'ME price', 'ME FX', '$ MTD P&L']
+
+
+def write_excel(out_path, frame, meta, expenses, root):
+    from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+    from openpyxl.utils import get_column_letter
+
+    month_end = meta['month_end']
+    positions = frame[frame['Type'].isin([TYPE_EQUITY, TYPE_SWAP, TYPE_FX])]
+    interest = frame[frame['Type'] == TYPE_INTEREST]
+    subtotal = float(frame['$ MTD P&L'].sum())
+    expense_total = float(sum(expenses.values()))
+
+    # ---- Manager P&L (Qube 제출 시트) ----
+    blocks = []
+    for _, row in pd.concat([positions, interest]).iterrows():
+        blocks.append([row['Type'], row['Description'], row['Bloomberg Ticker'],
+                       row['EOM quantity / positions'], row['ME price'],
+                       row['ME FX'], row['$ MTD P&L']])
+    blocks.append([None] * 7)
+    blocks.append([None, 'Sub-total', None, None, None, None, subtotal])
+    if expenses:
+        blocks.append([None] * 7)
+        blocks.append([None, 'Monthly expenses', None, None, None, None, None])
+        for label, amount in expenses.items():
+            blocks.append([TYPE_EXPENSE, label, None, None, None, None, amount])
+    blocks.append([None] * 7)
+    blocks.append([None, 'TOTAL', None, None, None, None, subtotal + expense_total])
+    manager = pd.DataFrame(blocks, columns=QUBE_COLUMNS)
+
+    # ---- Reconciliation (Qube Summary 시트에 붙일 형태) ----
+    recon = pd.DataFrame({
+        'Description': frame['Description'],
+        'Bloomberg-Ticker': frame['Bloomberg Ticker'],
+        'Ric': frame['_ric'],
+        'ISIN': frame['_isin'],
+        'Mgr P&L': frame['$ MTD P&L'],
+        'Citco (Admin P&L)': None,
+        'Difference (Mgr to Citco)': None,
+    })
+
+    # ---- Detail (내부 검증용) ----
+    detail = pd.DataFrame({
+        'Type': frame['Type'],
+        'Description': frame['Description'],
+        'Key(Contract/Symbol)': frame['_key'],
+        'Ric': frame['_ric'],
+        'EOM qty': frame['EOM quantity / positions'],
+        'ME price(Local)': frame['ME price'],
+        'ME FX(Local per USD)': frame['ME FX'],
+        'Equity P&L': frame['_equity'],
+        'Dividend P&L': frame['_dividend'],
+        'Financing': frame['_financing'],
+        '$ MTD P&L': frame['$ MTD P&L'],
+    })
+
+    # ---- Basis (산출기준 + Qube 기준 인용 + 경고) ----
+    notes = [
+        ('대상 폴더', str(root)),
+        ('MTD 기간', f"{meta['month_start']} ~ {month_end} (리포트 {len(meta['dates'])}영업일)"),
+        ('통화', f'{BASE_CCY} (Base Currency)'),
+        ('월말 KRW/USD',
+         f"{meta['krw_per_usd']:,.4f}" if meta['krw_per_usd'] else '산출 불가'),
+        ('현물 기준선', f"{meta['cash_base_date']} 스냅샷"),
+        ('스왑 기준선', f"{meta['swap_base_date']} 스냅샷"),
+        ('', ''),
+        ('[Qube 기준] 요구 형식',
+         'security/ticker 단위 분해 (계정 단위 아님) — 2026-08-05 Edward Hougasian'),
+        ('[Qube 기준] 환율',
+         'KRWUSD 는 런던 16:00 스냅(Refinitiv). Citco 는 자체 월말 환율로 KRW 종가를 '
+         'USD 환산 → 본 리포트는 GS 리포트 환율을 역산해 사용하므로 소수 차이 발생 가능'),
+        ('[Qube 기준] 실현손익', 'trade date 기준 인식 (GS 리포트도 trade-date 기반)'),
+        ('[Qube 기준] 커미션', 'instrument P&L 에 포함 — 현물은 Trade Net Amount, '
+                            '스왑은 Net Price 에 내재'),
+        ('[Qube 기준] 스왑 financing',
+         f'종목별 배분 없이 계정 단위 1줄 ({GL_SWAP_INTEREST})'),
+        ('[Qube 기준] 이자 계정 구분',
+         f'{GL_BROKER_INTEREST} = GS PB 계좌 / {GL_SWAP_INTEREST} = 스왑 계좌'),
+        ('', ''),
+        ('[Citco 항등식] 종목 P&L', 'P&L = Gross P&L + Dividends, Gross P&L = OTE Change + P&S'),
+        ('[Citco 분류] 선물',
+         '지수/개별주식 선물 스왑도 Type = Equity Swap (Price Factor = Multiplier)'),
+        ('[Citco 분류] FX', "Type = Cross Rate, ticker 'KRWUSD CURNCY'"),
+        ('', ''),
+        ('산식: Equity',
+         '월말 평가액(Base) - 기준선 평가액(Base) + 당월 매매순대금(Base) + 현금배당(ex-date)'),
+        ('산식: Equity Swap',
+         '(Equity MTM + Unsettled P&L + Dividend Accrued) 증감 + 당월 결제(Equity/Dividend Leg). '
+         'financing 은 제외하고 별도 계정 라인으로 계상'),
+        ('산식: Unsettled P&L(Base)',
+         'Total MTM(Base) - Equity MTM(Base) - Interest(Base) - Dividend(Base) 로 역산 '
+         '(FX Contract to Base 가 6자리 반올림이라 KRW 계약에서 오차가 커짐)'),
+        ('산식: FX', 'Σ_일 Σ_통화 전일 현금잔고(Local) x (당일환율 - 전일환율)'),
+        ('사용 리포트',
+         'Custody Position(AR=301712), Custody Transaction(AR=286534), '
+         'Syn Contract P&V(AR=303172), MTD SynSettle(AR=302553), '
+         'Asset Servicing(AR=303179), Custody Cash Balances(AR=302239), '
+         'Interest MTD Accrual(AR=302415)'),
+    ]
+    for ex_date, name, amount in meta['dividend_items']:
+        notes.append((f'현물 배당 ex-date {ex_date}', f'{name} {amount:,.2f}'))
+    for currency, amount in meta['fx_by_ccy'].items():
+        notes.append((f'FX 손익 내역 {currency}', f'{amount:,.2f}'))
+    for message in WARNINGS + base.WARNINGS:
+        notes.append(('확인 필요', message))
+    basis = pd.DataFrame(notes, columns=['구분', '내용'])
+
+    sheets = {'Manager P&L': manager, 'Reconciliation': recon,
+              'Detail': detail, 'Basis': basis}
+
+    with pd.ExcelWriter(out_path, engine='openpyxl') as writer:
+        for name, sheet in sheets.items():
+            sheet.to_excel(writer, sheet_name=name, index=False)
+
+        book = writer.book
+        head_fill = PatternFill('solid', fgColor='1F3864')
+        head_font = Font(color='FFFFFF', bold=True, size=10)
+        thin = Side(style='thin', color='BFBFBF')
+        money = '#,##0.00;[Red]-#,##0.00'
+
+        for name, sheet in sheets.items():
+            ws = book[name]
+            for cell in ws[1]:
+                cell.fill, cell.font = head_fill, head_font
+                cell.alignment = Alignment(horizontal='center', vertical='center',
+                                           wrap_text=True)
+                cell.border = Border(bottom=thin)
+            ws.row_dimensions[1].height = 30
+            ws.freeze_panes = 'A2'
+            if name != 'Basis':
+                ws.auto_filter.ref = ws.dimensions
+
+            for column in ws.iter_cols(min_row=1):
+                header = str(ws.cell(row=1, column=column[0].column).value or '')
+                letter = get_column_letter(column[0].column)
+                if name == 'Basis':
+                    width, fmt = (26, None) if header == '구분' else (120, None)
+                elif header in ('Description', 'Instrument Description'):
+                    width, fmt = 44, None
+                elif header in ('Type', 'Bloomberg Ticker', 'Ric', 'ISIN',
+                                'Key(Contract/Symbol)'):
+                    width, fmt = 20, None
+                elif 'qty' in header.lower() or 'quantity' in header.lower():
+                    width, fmt = 16, '#,##0;[Red]-#,##0'
+                elif header in ('ME price', 'ME FX', 'ME price(Local)',
+                                'ME FX(Local per USD)'):
+                    width, fmt = 14, '#,##0.0000'
+                else:
+                    width, fmt = max(14, min(len(header) + 2, 24)), money
+                ws.column_dimensions[letter].width = width
+                for cell in column[1:]:
+                    if fmt:
+                        cell.number_format = fmt
+                    if name == 'Basis':
+                        cell.alignment = Alignment(vertical='top', wrap_text=True)
+
+        # Sub-total / TOTAL 행 강조
+        ws = book['Manager P&L']
+        for row in ws.iter_rows(min_row=2):
+            label = str(row[1].value or '')
+            if label in ('Sub-total', 'TOTAL', 'Monthly expenses'):
+                for cell in row:
+                    cell.font = Font(bold=True)
+                    cell.border = Border(top=thin)
+
+    return subtotal, expense_total
+
+
+# --------------------------------------------------------------------------- #
+def guess_prev_root(root):
+    """202608 → 202607 형태의 형제 폴더를 추정."""
+    root = Path(root)
+    if not root.name.isdigit() or len(root.name) != 6:
+        return None
+    year, month = int(root.name[:4]), int(root.name[4:])
+    year, month = (year - 1, 12) if month == 1 else (year, month - 1)
+    candidate = root.parent / f'{year}{month:02d}'
+    return candidate if candidate.is_dir() else None
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Qube 제출용 월별 Manager P&L 생성')
+    parser.add_argument('root', nargs='?', default=str(base.DEFAULT_ROOT),
+                        help=r'월 폴더 (예: ...\Qube-RT\202608)')
+    parser.add_argument('--prev', default=None,
+                        help='전월 폴더 (생략 시 형제 폴더에서 자동 추정)')
+    parser.add_argument('--ric-map', default=None,
+                        help='Qube 대사파일 경로 (Ric_Ticker 시트를 티커 매핑에 사용)')
+    parser.add_argument('--expenses', default=None,
+                        help='월별 비용 JSON (예: {"Other Data costs": -3150})')
+    parser.add_argument('-o', '--output', default=None, help='출력 엑셀 경로')
+    args = parser.parse_args()
+
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8', errors='replace')
+
+    root = Path(args.root)
+    if not root.is_dir():
+        raise SystemExit(f'폴더를 찾을 수 없습니다: {root}')
+    prev_root = Path(args.prev) if args.prev else guess_prev_root(root)
+
+    expenses = {}
+    if args.expenses:
+        expenses = json.loads(Path(args.expenses).read_text(encoding='utf-8'))
+
+    ric_map = load_ric_map(args.ric_map)
+    frame, meta = build_monthly(root, prev_root, ric_map)
+
+    output = Path(args.output) if args.output else \
+        root / f"Dunamis - Manager's P&L {root.name}.xlsx"
+    subtotal, expense_total = write_excel(output, frame, meta, expenses, root)
+
+    print(f"MTD 기간      : {meta['month_start']} ~ {meta['month_end']}")
+    print(f"현물 기준선   : {meta['cash_base_date']}")
+    print(f"스왑 기준선   : {meta['swap_base_date']}")
+    print(f"전월 폴더     : {prev_root if prev_root else '(없음)'}")
+    print()
+    summary = frame.groupby('Type')['$ MTD P&L'].agg(['size', 'sum'])
+    for type_name, row in summary.iterrows():
+        print(f"  {type_name:<14} {int(row['size']):>3}건  {row['sum']:>16,.2f}")
+    print(f"  {'Sub-total':<14} {'':>5}  {subtotal:>16,.2f}")
+    if expenses:
+        print(f"  {'Expenses':<14} {'':>5}  {expense_total:>16,.2f}")
+        print(f"  {'TOTAL':<14} {'':>5}  {subtotal + expense_total:>16,.2f}")
+
+    messages = WARNINGS + base.WARNINGS
+    if messages:
+        print('\n[확인 필요]')
+        for message in messages:
+            print(' -', message)
+    print(f'\n저장 완료: {output}')
+
+
+if __name__ == '__main__':
+    main()

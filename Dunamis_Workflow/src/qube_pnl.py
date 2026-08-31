@@ -169,10 +169,10 @@ def load_cash_positions(root):
         _, idx, rows, _ = read_report(
             path, ['Account Number', 'Product Type', 'Ending Market Value - Base'])
         if idx is None:
-            result[bdate] = {'mv': 0.0, 'rows': [], 'other_mv': 0.0, 'fx': {}}
+            result[bdate] = {'mv': 0.0, 'rows': {}, 'other_mv': 0.0, 'fx': {}}
             continue
 
-        total, other, detail = 0.0, 0.0, []
+        total, other, detail = 0.0, 0.0, {}
         fx_base, fx_local = defaultdict(float), defaultdict(float)
         for row in rows:
             symbol = str(row[idx['Symbol']]).strip() if 'Symbol' in idx else ''
@@ -182,12 +182,16 @@ def load_cash_positions(root):
             mv = num(row[idx['Ending Market Value - Base']])
             if product == 'EQ':
                 total += mv
-                detail.append({
+                # 같은 종목이 Account Type(01/06) 별로 두 줄로 나오는 날이 있어(결제 대기
+                # 이관) 종목별 집계는 합산해야 한다. 덮어쓰면 상계분이 사라져 허위 손익이 생긴다.
+                bag = detail.setdefault(symbol, {
                     'symbol': symbol,
                     'name': str(row[idx['Product Description']]).strip(),
-                    'qty': num(row[idx['Trade Date Quantity']]),
-                    'mv': mv,
+                    'qty': 0.0,
+                    'mv': 0.0,
                 })
+                bag['qty'] += num(row[idx['Trade Date Quantity']])
+                bag['mv'] += mv
                 currency = str(row[idx['Ending Local Currency']]).strip().upper()
                 local_mv = num(row[idx['Ending Market Value - Local']])
                 if currency and local_mv:
@@ -356,24 +360,34 @@ def load_swap_positions(root):
 
 
 def load_swap_settlements(root):
-    """{결제일: {bucket: 결제금액}}. MTD Settlement(월 누적) 중 최신 파일 1개만 사용."""
+    """MTD Settlement(월 누적) 중 최신 파일 1개로 결제금액을 집계.
+
+    반환 (by_bucket, by_contract)
+        by_bucket   : {결제일: {bucket: 금액}}   — 버킷 합계용
+        by_contract : {결제일: {contract: 금액}} — 종목별 배분용
+    두 곳에서 같은 값을 쓰지 않으면 결제일에 버킷 합계와 종목별 합계가 어긋난다.
+    """
     files = collect_files(root, 'swap_settle')
     if not files:
-        return {}
+        return {}, {}
     _, idx, rows, datemode = read_report(files[max(files)],
                                          ['Payment Date', 'Total Settlement'])
     if idx is None:
-        return {}
+        return {}, {}
 
-    by_date = defaultdict(lambda: defaultdict(float))
+    by_bucket = defaultdict(lambda: defaultdict(float))
+    by_contract = defaultdict(lambda: defaultdict(float))
     for row in rows:
         pay_date = to_date(row[idx['Payment Date']], datemode)
         if pay_date is None:
             continue
         name = str(row[idx['Underlyer Desc']]).strip() if 'Underlyer Desc' in idx else ''
         bucket = 'Futures via Swap' if is_futures_swap(name, 0.0) else 'Equity via Swap'
-        by_date[pay_date][bucket] += num(row[idx['Total Settlement']])
-    return {d: dict(v) for d, v in by_date.items()}
+        amount = num(row[idx['Total Settlement']])
+        by_bucket[pay_date][bucket] += amount
+        by_contract[pay_date][str(row[idx['Contract ID']]).strip()] += amount
+    return ({d: dict(v) for d, v in by_bucket.items()},
+            {d: dict(v) for d, v in by_contract.items()})
 
 
 # --------------------------------------------------------------------------- #
@@ -384,7 +398,7 @@ def build_pnl(root):
     cash_trd = load_cash_trades(root, {d: v['fx'] for d, v in cash_pos.items()})
     div_by_date, div_detail = load_physical_dividends(root)
     swap_pos = load_swap_positions(root)
-    settle = load_swap_settlements(root)
+    settle, settle_contract = load_swap_settlements(root)
 
     dates = sorted(set(cash_pos) & set(swap_pos))
     if not dates:
@@ -481,8 +495,8 @@ def build_pnl(root):
         })
 
         # ---------------- 종목별 손익 (Cash Equity) ----------------
-        prev_rows = {r['symbol']: r for r in cash_pos[prev]['rows']} if prev else {}
-        cur_rows = {r['symbol']: r for r in cash_pos[date]['rows']}
+        prev_rows = cash_pos[prev]['rows'] if prev else {}
+        cur_rows = cash_pos[date]['rows']
         trades = defaultdict(float)
         for record in cash_trd.get(date, {}).get('rows', []):
             trades[record['symbol']] += record['net_base']
@@ -538,7 +552,8 @@ def build_pnl(root):
             cur_rows = {r['contract']: r for r in swap_pos[date][bucket]['rows']}
             for contract in sorted(set(prev_rows) | set(cur_rows)):
                 was, now = prev_rows.get(contract, {}), cur_rows.get(contract, {})
-                pnl = now.get('mtm', 0.0) - was.get('mtm', 0.0)
+                pnl = (now.get('mtm', 0.0) - was.get('mtm', 0.0)
+                       + settle_contract.get(date, {}).get(contract, 0.0))
                 if abs(pnl) < 0.005 and not now.get('qty') and not was.get('qty'):
                     continue
                 instrument.append({
