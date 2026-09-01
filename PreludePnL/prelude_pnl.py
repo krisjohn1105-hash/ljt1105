@@ -137,6 +137,12 @@ DEFAULT_MAX_GAP_DAYS = 5
 # 잔고 마커 행(손익계산에서 제외)
 BALANCE_MARKER_CATEGORIES = {"STARTING CASH BALANCE", "ENDING CASH BALANCE"}
 
+# 같은 거래라도 파일마다 값이 달라지는 헤더성 컬럼 (중복 판정에서 제외)
+FILE_VARYING_COLUMNS = {
+    "Report Date", "Run Date", "Report ID", "Report Id", "Report Name",
+    "Generation Account Number",
+}
+
 REPORT_CODES = {
     "positions": "MAC001X",          # Global Positions Extract
     "activity": "MAC002TDX",         # Normalized Trade Date Activity Extract
@@ -332,22 +338,34 @@ def build_positions(raw: pd.DataFrame) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 
 def build_activity(raw: pd.DataFrame) -> pd.DataFrame:
-    """월말에는 Daily/MTD 파일이 함께 존재하므로 Entry Date == 기준일 행만 사용하고 중복 제거."""
+    """
+    거래·저널을 정규화한다.
+
+    같은 거래가 여러 파일(일별 / 월말 MTD)에 중복 등장하므로, 파일마다 달라지는
+    헤더성 컬럼을 뺀 나머지 값이 모두 같으면 동일 거래로 보고 중복을 제거한다.
+
+    손익 귀속일은 Entry Date 가 아니라 **그 거래가 처음 나타난 리포트 파일의 기준일**을
+    쓴다. Prelude 는 익일자(Entry Date = D+1) 거래를 당일 파일에 미리 실어 보내는데,
+    MAC001X 포지션도 그 거래를 이미 반영한 상태로 나오기 때문이다.
+    (Entry Date 기준으로 끊으면 그 행이 어느 날에도 잡히지 않고 유실된다.)
+    """
     if raw.empty:
         return raw
     df = raw.copy()
-    df["기준일"] = df["_기준일"]
+
+    dedup_cols = [c for c in df.columns
+                  if not c.startswith("_") and c not in FILE_VARYING_COLUMNS]
+    df = (df.sort_values("_기준일")
+            .drop_duplicates(subset=dedup_cols, keep="first")
+            .copy())
+
+    df["기준일"] = df["_기준일"]          # 최초 인식일 = 손익 귀속일
     df["입력일"] = to_date(df.get("Entry Date", pd.Series(dtype=str)))
     df["매매일"] = to_date(df.get("Trade Date", pd.Series(dtype=str)))
     df["결제일"] = to_date(df.get("Settle Date", pd.Series(dtype=str)))
 
     df["구분"] = df.get("Activity Category", "")
     df = df[~df["구분"].isin(BALANCE_MARKER_CATEGORIES)].copy()
-    # 당일 입력분만 (MTD 파일의 과거분 제거)
-    df = df[df["입력일"] == df["기준일"]].copy()
-
-    dedup_cols = [c for c in df.columns if not c.startswith("_")]
-    df = df.drop_duplicates(subset=dedup_cols).copy()
 
     df["포지션유형"] = df.get("Position Type", "")
     df["상품유형"] = df.get("Product Type Desc", "")
@@ -1251,7 +1269,19 @@ def main(argv=None):
         print(f"\n[정리] 리포트별 폴더 분류 ({'복사' if args.copy else '이동'}"
               f"{', DRY-RUN(실제로 옮기지 않음)' if args.dry_run else ''}, layout={args.layout})")
         skip = os.path.abspath(os.path.join(src, "_output"))
-        targets = [f for f in files if not os.path.abspath(f.path).startswith(skip)]
+        # 리포트 추출물만 옮긴다. 관리용 워크북(EQSWAP.xlsx 등)과 날짜가 없는 파일은 제자리에 둔다.
+        targets, kept = [], []
+        for f in files:
+            if os.path.abspath(f.path).startswith(skip):
+                continue
+            if f.date is None or f.ext in (".xlsx", ".xlsm", ".xlsb", ".xls"):
+                kept.append(f)
+            else:
+                targets.append(f)
+        if kept:
+            print(f"      제외(리포트 아님) {len(kept)}건: "
+                  + ", ".join(sorted(k.filename for k in kept)[:5])
+                  + (" ..." if len(kept) > 5 else ""))
         log = os.path.join(src, "_output", "_organize_log.csv")
         os.makedirs(long_path(os.path.dirname(log)), exist_ok=True)
         organize_df = organize_files(targets, src, layout=args.layout,

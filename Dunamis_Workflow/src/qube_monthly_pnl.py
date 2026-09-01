@@ -31,6 +31,7 @@ Citco(공식 장부) P&L 구성 — 2026년 7월 대사표에서 검증한 항�
 import argparse
 import datetime as dt
 import json
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -106,9 +107,13 @@ def load_cost_basis(path):
     받아 차감한다.
 
     JSON 형식 (금액은 음수 = 취득원가 지출)
-        {"KQ950260": {"cost_local": -302751360, "ccy": "KRW",
-                      "note": "공모가 x 배정수량 + 수수료"},
+        {"KQ950260": {"cost_local": -363600000, "ccy": "KRW",
+                      "fx_date": "2026-08-04",
+                      "note": "공모가 x 배정수량 + 수수료 1%"},
          "KQ417030": {"cost_usd": -95000}}
+
+    fx_date 를 주면 그 날짜 환율로 환산한다 (청약대금이 실제로 출금된 날).
+    생략하면 무상입고일 환율을 쓴다.
     """
     if not path:
         return {}
@@ -125,19 +130,26 @@ def load_cost_basis(path):
     return basis
 
 
-def resolve_cost(spec, fx_on_date, me_fx):
-    """원가 스펙을 Base(USD) 금액으로 환산."""
+def resolve_cost(spec, transfer_date, fx_by_date, me_fx):
+    """원가 스펙을 Base(USD) 금액으로 환산. 반환 (금액, 적용환율일)."""
     if 'cost_usd' in spec:
-        return float(spec['cost_usd'])
+        return float(spec['cost_usd']), None
     amount = float(spec.get('cost_local', 0.0))
     currency = str(spec.get('ccy', '')).strip().upper()
     if not currency or currency == BASE_CCY:
-        return amount
-    rate = (fx_on_date or {}).get(currency) or (me_fx or {}).get(currency)
+        return amount, None
+
+    fx_date = to_date(spec.get('fx_date')) or transfer_date
+    # 지정일에 환율이 없으면(주말/리포트 공백) 그 이전 가장 가까운 영업일로 대체
+    candidates = sorted(d for d in fx_by_date if d <= fx_date and fx_by_date[d].get(currency))
+    used = candidates[-1] if candidates else None
+    rate = fx_by_date[used][currency] if used else (me_fx or {}).get(currency)
     if not rate:
         warn(f'{currency} 환율을 찾지 못해 취득원가 {amount:,.0f} 를 환산하지 못했습니다.')
-        return 0.0
-    return amount * rate
+        return 0.0, None
+    if used and used != fx_date:
+        warn(f'{fx_date} 환율이 없어 {used} 환율로 취득원가를 환산했습니다.')
+    return amount * rate, (used or 'ME')
 
 
 def bloomberg_ticker(ric, gs_code, ric_map, is_index=False):
@@ -431,19 +443,26 @@ def build_monthly(root, prev_root, ric_map, cost_basis=None):
     month_end = common[-1]
     month_start = dt.date(month_end.year, month_end.month, 1)
 
-    later = {}
+    # 리포트별 최신 기준일을 모아 '앞서 온 것 / 밀려 있는 것' 을 함께 알려준다.
+    # 무엇을 기다려야 하는지(AR 코드 포함)가 실제로 필요한 정보다.
+    latest = {}
     for label, key in (('현물 포지션', 'custody_pos'), ('스왑 P&V', 'swap_pnv'),
                        ('현물 거래', 'custody_trade'), ('현금잔고', 'cash_bal'),
                        ('스왑 결제', 'swap_settle'), ('자산관리', 'asset_serv'),
                        ('PB 이자', 'int_mtd')):
         found = collect_files(root, key)
-        if found and max(found) > month_end:
-            later[label] = max(found)
-    if later:
-        detail = ', '.join(f'{k} {v}' for k, v in later.items())
-        warn(f'{month_end} 이후 리포트가 일부만 도착했습니다 ({detail}). '
-             f'현물/스왑이 모두 있는 {month_end} 를 월말 평가 시점으로 사용했습니다 — '
-             '나머지 리포트가 모두 도착하면 재실행하세요.')
+        if found:
+            ar = re.search(r'_(\d{6})_', base.REPORT_PATTERNS[key])
+            latest[label] = (max(found), ar.group(1) if ar else '?')
+
+    if latest:
+        newest = max(v[0] for v in latest.values())
+        lagging = {k: v for k, v in latest.items() if v[0] < newest}
+        if lagging:
+            need = ', '.join(f'{k}(AR={ar}) {d}' for k, (d, ar) in lagging.items())
+            warn(f'리포트 도착일이 어긋납니다. 가장 최신은 {newest} 인데 다음이 밀려 '
+                 f'있습니다: {need}. 월말 평가 시점은 현물/스왑이 모두 있는 '
+                 f'{month_end} 를 사용했습니다 — 밀린 리포트가 도착하면 재실행하세요.')
 
     # 월 마지막 영업일(주말 제외) 리포트가 아직 없으면 MTD 가 월말 기준이 아니다.
     last_day = (dt.date(month_end.year + (month_end.month == 12),
@@ -494,13 +513,14 @@ def build_monthly(root, prev_root, ric_map, cost_basis=None):
 
     # ---- 무상입고 종목의 취득원가 주입 (없으면 매도대금 전액이 손익이 됨) ----
     cost_basis = cost_basis or {}
-    cost_adjust, missing_cost = defaultdict(float), {}
+    cost_adjust, missing_cost, cost_fx_date = defaultdict(float), {}, {}
     for bdate, record in transfers:
         symbol = record['symbol']
         spec = cost_basis.get(symbol)
         if spec:
-            amount = resolve_cost(spec, fx_by_date.get(bdate), me_fx)
+            amount, used = resolve_cost(spec, bdate, fx_by_date, me_fx)
             cost_adjust[symbol] += amount
+            cost_fx_date[symbol] = used
         else:
             missing_cost[symbol] = (bdate, record['qty'], record['mnemonic'],
                                     record['name'])
@@ -509,7 +529,8 @@ def build_monthly(root, prev_root, ric_map, cost_basis=None):
              '취득원가가 GS 리포트에 없습니다. --cost-basis 로 청약원가를 넣지 않으면 '
              '매도대금 전액이 손익으로 계상됩니다.')
     for symbol, amount in cost_adjust.items():
-        warn(f'{symbol}: 취득원가 {amount:,.2f} USD 를 손익에서 차감했습니다 (--cost-basis).')
+        warn(f'{symbol}: 취득원가 {amount:,.2f} USD 차감 '
+             f'(환율기준일 {cost_fx_date.get(symbol)}) — --cost-basis 반영')
 
     rows = []
 
@@ -652,6 +673,22 @@ QUBE_COLUMNS = ['Type', 'Description', 'Bloomberg Ticker', 'EOM quantity / posit
                 'ME price', 'ME FX', '$ MTD P&L']
 
 
+def collect_warnings(meta):
+    """월별 리포트용 경고 목록.
+
+    취득원가를 이미 반영한 종목에 대해서는 일별엔진(qube_pnl)의 '매입원가 없음'
+    경고를 빼서 같은 리포트 안에서 모순된 안내가 나오지 않게 한다.
+    """
+    applied = set(meta.get('cost_adjust') or {})
+    messages = list(WARNINGS)
+    for message in base.WARNINGS:
+        if '무상' in message and any(symbol in message for symbol in applied):
+            continue
+        if message not in messages:
+            messages.append(message)
+    return messages
+
+
 def write_excel(out_path, frame, meta, expenses, root):
     from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
     from openpyxl.utils import get_column_letter
@@ -756,7 +793,7 @@ def write_excel(out_path, frame, meta, expenses, root):
                       f'{name} ({ric}) {amount:,.2f}'))
     for currency, amount in meta['fx_by_ccy'].items():
         notes.append((f'FX 손익 내역 {currency}', f'{amount:,.2f}'))
-    for message in WARNINGS + base.WARNINGS:
+    for message in collect_warnings(meta):
         notes.append(('확인 필요', message))
     basis = pd.DataFrame(notes, columns=['구분', '내용'])
 
@@ -895,7 +932,7 @@ def main():
         print(f'\n취득원가 미입력 종목이 있어 템플릿을 만들었습니다: {template}')
         print('  값을 채운 뒤 --cost-basis 로 지정해 재실행하세요.')
 
-    messages = WARNINGS + base.WARNINGS
+    messages = collect_warnings(meta)
     if messages:
         print('\n[확인 필요]')
         for message in messages:
