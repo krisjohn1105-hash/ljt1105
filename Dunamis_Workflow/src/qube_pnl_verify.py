@@ -148,10 +148,12 @@ def main():
         check('A1 현물 LMV (Consolidated Fund vs 집계)', c['lmv'], my_lmv,
               f'{month_end} Physical LMV TD Base')
         check('A2 현물 SMV', c['smv'], my_smv, '현물 공매도 (없어야 정상)')
-        my_syn = sum(r['total'] for day in [swap_snaps[month_end]] for r in day.values())
-        check('A3 스왑 MTM 합계 (Syn Long + Short)',
-              c['syn_long'] + c['syn_short'], my_syn,
-              'Consolidated Fund 은 Total MTM 기준이 아닐 수 있어 참고용', tol=1e9)
+        # Consolidated Fund 의 Synthetic MTM 은 Equity Mark to Market 단독값이다
+        # (미결제 현금·이자·배당 제외). 데이터로 확인한 대조 기준.
+        my_eq_mtm = sum(r['equity_mtm'] for r in swap_snaps[month_end].values())
+        check('A3 스왑 Equity MTM (Consolidated Syn L+S vs 집계)',
+              c['syn_long'] + c['syn_short'], my_eq_mtm,
+              f'{month_end} — Consolidated 의 Syn MTM 은 Equity MTM 단독값')
     else:
         results.append({'검증': 'A 포지션 대조', '기준값': None, '산출값': None,
                         '차이': None, '판정': '자료없음',
@@ -223,7 +225,9 @@ def main():
     for i in range(1, len(sdates)):
         a, b = swap_snaps[sdates[i - 1]], swap_snaps[sdates[i]]
         for cid in set(a) & set(b):
-            approx += (a[cid]['qty'] * (b[cid]['price'] - a[cid]['price'])
+            # Contract CCY 표시가격 x Multiplier x (Contract→Base 환율)
+            approx += (a[cid]['qty']
+                       * (b[cid]['price_contract'] - a[cid]['price_contract'])
                        * a[cid]['multiplier'] * a[cid]['fx_contract_base'])
     results.append({
         '검증': 'E 스왑 주식손익 독립재계산 (Σ 전일수량 x 가격변동)',
@@ -246,16 +250,71 @@ def main():
         fx_pnl, _, _ = mo.load_fx_pnl(root, c0 + dt.timedelta(days=1), c1)
         pb_int, _ = mo.load_broker_interest(root, c1)
 
-        explained = pnl_window + flow + fx_pnl
+        # 자금이동은 리포트의 FX 컬럼이 월 단일환율이라 부정확하므로
+        # 포지션 리포트에서 역산한 당일 환율로 다시 환산한다.
+        flow = 0.0
+        flow_lines = []
+        for day in sorted(moves):
+            for _amount, desc, local, ccy in moves[day]:
+                rate = fx_by_date.get(day, {}).get(ccy)
+                value = local * rate if rate else _amount
+                flow += value
+                flow_lines.append((day, local, ccy, value, desc))
+
+        # Equity 를 구성요소로 쪼개 어디서 어긋나는지 국소화한다
+        d_lmv = consol[c1]['lmv'] - consol[c0]['lmv']
+        d_syn = ((consol[c1]['syn_long'] + consol[c1]['syn_short'])
+                 - (consol[c0]['syn_long'] + consol[c0]['syn_short']))
+        d_cash = ((consol[c1]['long_cash'] + consol[c1]['short_cash'])
+                  - (consol[c0]['long_cash'] + consol[c0]['short_cash']))
+        d_fwd = consol[c1]['fwd_cash'] - consol[c0]['fwd_cash']
+
+        my_lmv = (sum(v['mv'] for v in cash_snaps[c1].values())
+                  - sum(v['mv'] for v in cash_snaps[c0].values()))
+        my_syn = (sum(r['equity_mtm'] for r in swap_snaps[c1].values())
+                  - sum(r['equity_mtm'] for r in swap_snaps[c0].values()))
+        check(f'F1 현물 평가액 변동 ({c0}→{c1})', d_lmv, my_lmv, 'Physical LMV')
+        check(f'F2 스왑 Equity MTM 변동', d_syn, my_syn, 'Synthetic MTM (L+S)')
+
+        trade_net = sum(bag['net'] for d, bag in
+                        base.load_cash_trades(root, fx_by_date).items() if c0 < d <= c1)
+        sb, _ = base.load_swap_settlements(root)
+        settle = sum(x for d, bucket in sb.items() if c0 < d <= c1
+                     for x in bucket.values())
+        cash_explained = trade_net + settle + flow + fx_pnl
         results.append({
-            '검증': f'F NAV 변동 대조 ({c0} → {c1})',
-            '기준값': d_equity, '산출값': explained, '차이': d_equity - explained,
-            '판정': 'OK' if abs(d_equity - explained) < abs(d_equity) * 0.05 else '확인필요',
-            '비고': (f'Equity 변동 {d_equity:,.0f} vs 손익 {pnl_window:,.0f} '
-                   f'+ 자금이동 {flow:,.0f} + FX {fx_pnl:,.0f} '
-                   f'(PB이자 {pb_int:,.0f}, 선물환 Fwd Cash '
-                   f'{consol[c1]["fwd_cash"] - consol[c0]["fwd_cash"]:,.0f} 미포함)'),
+            '검증': f'F3 현금 변동 설명 ({c0}→{c1})',
+            '기준값': d_cash + d_fwd, '산출값': cash_explained,
+            '차이': d_cash + d_fwd - cash_explained,
+            '판정': '참고',
+            '비고': (f'매매순대금 {trade_net:,.0f} + 스왑결제 {settle:,.0f} '
+                   f'+ 자금이동 {flow:,.0f} + FX {fx_pnl:,.0f}. '
+                   f'미반영: PB이자 {pb_int:,.0f}, 배당 수취, 세금, 선물환 {d_fwd:,.0f}'),
         })
+
+        # GS 의 Equity 는 스왑 미결제현금·미수이자·미수배당(accrual)을 포함하지 않는다
+        # (Syn MTM 이 Equity MTM 단독값). 내 손익은 accrual 을 포함하므로 더해서 비교한다.
+        def accruals(day):
+            return sum(r['total'] - r['equity_mtm'] for r in day.values())
+
+        d_accrual = accruals(swap_snaps[c1]) - accruals(swap_snaps[c0])
+        adjusted_equity = d_equity + d_accrual
+        explained = pnl_window + flow
+        residual = adjusted_equity - explained
+        results.append({
+            '검증': f'F4 NAV(Equity) 변동 대조 ({c0} → {c1})',
+            '기준값': adjusted_equity, '산출값': explained, '차이': residual,
+            '판정': '참고',
+            '비고': (f'Equity {d_equity:,.0f} + 스왑 accrual {d_accrual:,.0f} '
+                   f'= {adjusted_equity:,.0f} vs 손익 {pnl_window:,.0f} '
+                   f'+ 청약대금 {flow:,.0f}. 잔차 {residual:,.0f} 에는 PB이자'
+                   f'({pb_int:,.0f})·세금·선물환({d_fwd:,.0f})·현금 FX 가 섞여 있어 '
+                   '0 이 되지 않는다 — 규모(NAV 변동의 몇 %)만 확인하는 용도'),
+        })
+        print('※ 당월 자금이동 (매매 외 현금 입출금):')
+        for day, local, ccy, value, desc in flow_lines:
+            print(f'    {day}  {local:>18,.0f} {ccy} → {value:>13,.2f} USD  {desc}')
+        print()
         print('※ NAV 대조 참고 — 당월 자금이동(매매 외 현금 입출금):')
         for day in sorted(moves):
             for amount, desc, local, ccy in moves[day]:

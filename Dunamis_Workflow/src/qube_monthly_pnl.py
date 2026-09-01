@@ -214,6 +214,11 @@ def load_swap_snapshots(root):
                 'bbg': str(cell(row, idx, 'Underlyer Bloomberg Code')).strip(),
                 'ric': str(cell(row, idx, 'Underlyer RIC')).strip(),
                 'isin': str(cell(row, idx, 'Underlyer ISIN')).strip(),
+                # Consolidated Fund Summary 의 Synthetic MTM 은 Equity MTM 단독값이므로
+                # 검산 대조를 위해 따로 보관한다. price_contract 는 Contract CCY 표시가격.
+                'equity_mtm': equity_mtm,
+                'unsettled': unsettled,
+                'price_contract': num(cell(row, idx, 'Current Price')),
                 # 종목 단위 P&L 구성 (Qube 기준: financing 제외)
                 'equity': equity_mtm + unsettled,
                 'dividend': dividend,
