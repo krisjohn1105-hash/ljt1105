@@ -417,8 +417,33 @@ def build_monthly(root, prev_root, ric_map, cost_basis=None):
     dates = sorted(set(swap_snaps) | set(cash_snaps))
     if not dates:
         raise SystemExit(f'{root} 에서 포지션 리포트를 찾지 못했습니다.')
-    month_end = max(dates)
+
+    # 월말 평가 시점은 현물/스왑 스냅샷이 모두 존재하는 마지막 날이어야 한다.
+    # 한쪽만 먼저 도착한 날을 월말로 잡으면 반대편 포지션이 통째로 0 으로 평가돼
+    # 수백만 달러짜리 허위 손익이 난다. (비어 있는 'NO DATA' 스냅샷도 제외)
+    usable_cash = {d for d, v in cash_snaps.items() if v}
+    usable_swap = {d for d, v in swap_snaps.items() if v}
+    common = sorted(usable_cash & usable_swap)
+    if not common:
+        raise SystemExit(
+            f'{root}: 현물/스왑 포지션이 같은 기준일에 모두 존재하는 날이 없습니다.\n'
+            f'  현물 스냅샷 {len(usable_cash)}일, 스왑 스냅샷 {len(usable_swap)}일')
+    month_end = common[-1]
     month_start = dt.date(month_end.year, month_end.month, 1)
+
+    later = {}
+    for label, key in (('현물 포지션', 'custody_pos'), ('스왑 P&V', 'swap_pnv'),
+                       ('현물 거래', 'custody_trade'), ('현금잔고', 'cash_bal'),
+                       ('스왑 결제', 'swap_settle'), ('자산관리', 'asset_serv'),
+                       ('PB 이자', 'int_mtd')):
+        found = collect_files(root, key)
+        if found and max(found) > month_end:
+            later[label] = max(found)
+    if later:
+        detail = ', '.join(f'{k} {v}' for k, v in later.items())
+        warn(f'{month_end} 이후 리포트가 일부만 도착했습니다 ({detail}). '
+             f'현물/스왑이 모두 있는 {month_end} 를 월말 평가 시점으로 사용했습니다 — '
+             '나머지 리포트가 모두 도착하면 재실행하세요.')
 
     # 월 마지막 영업일(주말 제외) 리포트가 아직 없으면 MTD 가 월말 기준이 아니다.
     last_day = (dt.date(month_end.year + (month_end.month == 12),

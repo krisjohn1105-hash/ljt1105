@@ -9,12 +9,30 @@ Prelude(Morgan Stanley Blue Border) 리포트 기반 통합 손익/현금 리포
   3) 종목별 손익 상세, 거래내역, 검증(Recon)
 
 을 하나의 엑셀 파일로 산출한다.
-추가로 --organize 옵션으로 원본 리포트를 리포트 종류별 폴더로 분류·이동한다.
+실행하면 원본 리포트도 대분류/리포트별 폴더로 자동 분류·이동한다(기본 동작).
 
 사용 예)
+    # 엑셀 생성 + 원본 폴더 정리 (기본)
     python prelude_pnl.py --src "Z:/02.펀드/003.매매보고서 대사/Prelude_new"
-    python prelude_pnl.py --src ... --organize --dry-run
-    python prelude_pnl.py --src ... --organize --layout report-year
+
+    # 어디로 옮겨지는지 미리 확인만
+    python prelude_pnl.py --src ... --dry-run --no-excel
+
+    # 정리하지 않고 엑셀만
+    python prelude_pnl.py --src ... --no-organize
+
+    # 폴더 구조 변경 (대분류/리포트/연월)
+    python prelude_pnl.py --src ... --layout group-month
+
+정리 후 폴더 구조 (layout=group, 기본)
+    Prelude_new/
+    ├─ 01_포지션/    MAC001X - Global Positions Extract/ ...
+    ├─ 02_거래활동/  MAC002TDX - Normalized Trade Date Activity Extract - Daily/ ...
+    ├─ 03_스왑/      EQSWAP36X - Equity Swap MTM Summary Extract/ ...
+    ├─ 04_현금결제/  CASH005X - Next Five Days Activity Summary Extract/ ...
+    ├─ 05_배당이자/  MAC007X - Dividend Income .../ ...
+    ├─ 06_명세서/    BBSTMNTS001X - .../ ...
+    └─ _output/      Prelude_PnL_*.xlsx , _organize_log.csv
 
 손익 계산 원리
 --------------
@@ -889,39 +907,95 @@ def safe_folder_name(name: str) -> str:
     return name[:120] or "UNKNOWN"
 
 
-def organize_files(files: Sequence[SourceFile], root: str, layout: str = "report",
+# ---- 리포트 대분류 -------------------------------------------------------
+# 1) 리포트 코드가 아래 목록에 있으면 그 그룹으로 분류한다.
+# 2) 없으면 리포트명(파일명)에서 키워드를 찾아 분류한다.
+GROUP_BY_CODE: Dict[str, Tuple[str, ...]] = {
+    "01_포지션": ("MAC001X", "MAC001RX", "EQSWAP19X", "EQSWAP54X"),
+    "02_거래활동": ("MAC002TDX", "EQSWAP37X", "EQSWAP47X", "EQSWAP47MX", "EQSWAP60MX"),
+    "03_스왑": ("EQSWAP16X", "EQSWAP18MX", "EQSWAP18SX", "EQSWAP18MDX",
+                "EQSWAP20MX", "EQSWAP20MDX", "EQSWAP24MX", "EQSWAP27CX",
+                "EQSWAP36X", "EQSWAP40X", "EQSWAP40RX", "EQSWAP43X", "SW1004X"),
+    "04_현금결제": ("CASH005X", "CASH005DX"),
+    "05_배당이자": ("MAC005X", "MAC006X", "MAC007X", "EQSWAP35AX", "SW1003MX"),
+    "06_명세서": ("BBSTMNTS001X", "BBSTMNTS002X"),
+}
+_CODE_TO_GROUP = {c: g for g, codes in GROUP_BY_CODE.items() for c in codes}
+
+# 리포트명 키워드 -> 그룹 (위에서부터 먼저 걸리는 것 적용)
+GROUP_BY_KEYWORD: Tuple[Tuple[str, Tuple[str, ...]], ...] = (
+    ("06_명세서", ("blue border", "statement", "email")),
+    ("04_현금결제", ("cash", "settlement", "wire")),
+    ("05_배당이자", ("dividend", "interest", "accrual", "coupon", "tax")),
+    ("01_포지션", ("position", "holding", "balance", "tax lot", "composition")),
+    ("02_거래활동", ("trade activity", "activity", "trade", "corporate action")),
+    ("03_스왑", ("swap", "financing", "collateral", "reset", "unwind", "mtm")),
+)
+GROUP_ETC = "99_기타"
+
+
+def classify_report(f: SourceFile) -> str:
+    """리포트 코드 → 대분류. 코드가 없거나 미등록이면 리포트명 키워드로 판정한다."""
+    if f.code and f.code in _CODE_TO_GROUP:
+        return _CODE_TO_GROUP[f.code]
+    text = f.label.lower()
+    for group, keywords in GROUP_BY_KEYWORD:
+        if any(k in text for k in keywords):
+            return group
+    return GROUP_ETC
+
+
+LAYOUTS = ("group", "group-month", "report", "report-year", "report-month",
+           "date-report", "group-only")
+
+
+def destination_subpath(f: SourceFile, layout: str) -> str:
+    """파일 하나가 들어갈 상대 폴더 경로를 만든다."""
+    report = safe_folder_name(f.label or "기타")
+    group = classify_report(f)
+    ym = f.date.strftime("%Y-%m") if f.date else "날짜미상"
+    if layout == "group":
+        return os.path.join(group, report)
+    if layout == "group-month":
+        return os.path.join(group, report, ym)
+    if layout == "group-only":
+        return group
+    if layout == "report":
+        return report
+    if layout == "report-year":
+        return os.path.join(report, f"{f.date.year}" if f.date else "날짜미상")
+    if layout == "report-month":
+        return os.path.join(report, ym)
+    if layout == "date-report":
+        return os.path.join(f.date.isoformat() if f.date else "날짜미상", report)
+    raise ValueError(f"알 수 없는 layout: {layout}")
+
+
+def organize_files(files: Sequence[SourceFile], root: str, layout: str = "group",
                    mode: str = "move", dry_run: bool = False,
                    log_path: Optional[str] = None) -> pd.DataFrame:
     """
-    리포트 종류별 폴더로 원본 파일을 분류한다.
+    원본 리포트를 리포트 종류별 폴더로 분류한다.
 
-    layout:
-      report        -> <root>/<CODE - Report Name>/파일
-      report-year   -> <root>/<CODE - Report Name>/<YYYY>/파일
-      report-month  -> <root>/<CODE - Report Name>/<YYYY-MM>/파일
-      date-report   -> <root>/<YYYY-MM-DD>/<CODE - Report Name>/파일
+    layout (<root> 하위 구조):
+      group        -> <대분류>/<CODE - Report Name>/파일     (기본)
+      group-month  -> <대분류>/<CODE - Report Name>/<YYYY-MM>/파일
+      group-only   -> <대분류>/파일
+      report       -> <CODE - Report Name>/파일
+      report-year  -> <CODE - Report Name>/<YYYY>/파일
+      report-month -> <CODE - Report Name>/<YYYY-MM>/파일
+      date-report  -> <YYYY-MM-DD>/<CODE - Report Name>/파일
     """
     records = []
     op = shutil.move if mode == "move" else shutil.copy2
     for f in files:
-        folder = safe_folder_name(f.label if f.label else "기타")
-        if layout == "report":
-            rel = folder
-        elif layout == "report-year":
-            rel = os.path.join(folder, f"{f.date.year}" if f.date else "날짜미상")
-        elif layout == "report-month":
-            rel = os.path.join(folder, f.date.strftime("%Y-%m") if f.date else "날짜미상")
-        elif layout == "date-report":
-            rel = os.path.join(f.date.isoformat() if f.date else "날짜미상", folder)
-        else:
-            raise ValueError(f"알 수 없는 layout: {layout}")
-
+        rel = destination_subpath(f, layout)
         dest_dir = os.path.join(root, rel)
         dest = os.path.join(dest_dir, f.filename)
 
         if os.path.abspath(dest) == os.path.abspath(f.path):
             status = "이미정리됨"
-        elif os.path.exists(dest):
+        elif os.path.exists(long_path(dest)):
             status = "건너뜀(동일파일존재)"
         else:
             status = "예정" if dry_run else "완료"
@@ -932,8 +1006,8 @@ def organize_files(files: Sequence[SourceFile], root: str, layout: str = "report
                 except Exception as exc:  # pragma: no cover
                     status = f"실패: {exc}"
 
-        records.append({"리포트": f.label, "코드": f.code, "기준일": f.date,
-                        "파일명": f.filename, "이전경로": f.path,
+        records.append({"대분류": classify_report(f), "리포트": f.label, "코드": f.code,
+                        "기준일": f.date, "파일명": f.filename, "이전경로": f.path,
                         "이동경로": dest, "처리": status})
 
     df = pd.DataFrame(records)
@@ -966,10 +1040,12 @@ def main(argv=None):
     ap.add_argument("--max-gap-days", type=int, default=DEFAULT_MAX_GAP_DAYS,
                     help=f"직전 리포트일과의 간격이 이 일수를 넘으면 손익 산출에서 제외 "
                          f"(기본: {DEFAULT_MAX_GAP_DAYS})")
-    ap.add_argument("--organize", action="store_true", help="원본 파일을 리포트별 폴더로 정리")
-    ap.add_argument("--layout", default="report",
-                    choices=["report", "report-year", "report-month", "date-report"],
-                    help="정리 폴더 구조 (기본: report)")
+    ap.add_argument("--organize", action="store_true", default=None,
+                    help="원본 파일을 리포트별 폴더로 정리 (기본 동작이므로 생략 가능)")
+    ap.add_argument("--no-organize", action="store_true",
+                    help="폴더 정리를 하지 않음 (엑셀만 생성)")
+    ap.add_argument("--layout", default="group", choices=list(LAYOUTS),
+                    help="정리 폴더 구조 (기본: group = 대분류/리포트별)")
     ap.add_argument("--copy", action="store_true", help="이동 대신 복사")
     ap.add_argument("--dry-run", action="store_true", help="정리 시 실제로 옮기지 않고 계획만 출력")
     ap.add_argument("--no-excel", action="store_true", help="엑셀 생성 없이 정리만 수행")
@@ -979,6 +1055,9 @@ def main(argv=None):
         args.external_category = []
     elif args.external_category is None:
         args.external_category = list(DEFAULT_EXTERNAL_CATEGORIES)
+
+    # 폴더 정리는 기본 동작. --no-organize 로만 끈다.
+    args.organize = False if args.no_organize else True
 
     for stream in (sys.stdout, sys.stderr):
         try:
@@ -1080,11 +1159,12 @@ def main(argv=None):
             pos_snapshot["자산군"] = pos_snapshot["버킷"].map(BUCKET_KR).fillna(pos_snapshot["버킷"])
 
         inventory = pd.DataFrame([{
-            "리포트": f.label, "코드": f.code, "계좌": f.account,
-            "기준일": f.date, "파일명": f.filename,
+            "대분류": classify_report(f), "리포트": f.label, "코드": f.code,
+            "계좌": f.account, "기준일": f.date, "파일명": f.filename,
             "크기(KB)": round(f.size / 1024, 1),
-            "경로": os.path.relpath(f.path, src),
-        } for f in files]).sort_values(["리포트", "기준일"])
+            "정리 폴더": destination_subpath(f, args.layout),
+            "현재 경로": os.path.relpath(f.path, src),
+        } for f in files]).sort_values(["대분류", "리포트", "기준일"])
 
         interest = pd.DataFrame()
         if not raw_int.empty:
@@ -1169,18 +1249,23 @@ def main(argv=None):
 
     if args.organize:
         print(f"\n[정리] 리포트별 폴더 분류 ({'복사' if args.copy else '이동'}"
-              f"{', DRY-RUN' if args.dry_run else ''}, layout={args.layout})")
+              f"{', DRY-RUN(실제로 옮기지 않음)' if args.dry_run else ''}, layout={args.layout})")
         skip = os.path.abspath(os.path.join(src, "_output"))
         targets = [f for f in files if not os.path.abspath(f.path).startswith(skip)]
         log = os.path.join(src, "_output", "_organize_log.csv")
-        os.makedirs(os.path.dirname(log), exist_ok=True)
+        os.makedirs(long_path(os.path.dirname(log)), exist_ok=True)
         organize_df = organize_files(targets, src, layout=args.layout,
                                      mode="copy" if args.copy else "move",
                                      dry_run=args.dry_run, log_path=log)
-        summary = organize_df.groupby(["리포트", "처리"]).size().reset_index(name="건수")
-        for _, r in summary.iterrows():
-            print(f"      {r['처리']:<20} {r['건수']:>5}건  {r['리포트']}")
-        print(f"      총 {len(organize_df):,}건" + ("" if args.dry_run else f" / 로그: {log}"))
+
+        for group, gdf in organize_df.groupby("대분류"):
+            print(f"  {group}  ({len(gdf):,}건)")
+            for (report, status), sdf in gdf.groupby(["리포트", "처리"]):
+                print(f"      {status:<22} {len(sdf):>5}건  {report}")
+        moved = (organize_df["처리"] == "완료").sum()
+        skipped = len(organize_df) - moved
+        print(f"      ── 총 {len(organize_df):,}건 (처리 {moved:,} / 기타 {skipped:,})"
+              + ("" if args.dry_run else f"\n      이동 로그: {log}"))
 
     return 0
 

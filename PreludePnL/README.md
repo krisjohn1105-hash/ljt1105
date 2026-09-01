@@ -13,22 +13,22 @@ pip install pandas openpyxl xlsxwriter
 
 ## 기본 사용법
 
-엑셀만 생성 (원본 파일은 건드리지 않음):
+**엑셀 생성 + 원본 폴더 정리**가 기본 동작입니다.
 
 ```bash
 python prelude_pnl.py --src "Z:/02.펀드/003.매매보고서 대사/Prelude_new"
 ```
 
-엑셀 생성 + 리포트별 폴더 정리(이동):
+어디로 옮겨지는지 먼저 확인하고 싶을 때 (파일을 옮기지 않음):
 
 ```bash
-python prelude_pnl.py --src "Z:/02.펀드/003.매매보고서 대사/Prelude_new" --organize
+python prelude_pnl.py --src "Z:/02.펀드/003.매매보고서 대사/Prelude_new" --dry-run --no-excel
 ```
 
-정리 계획만 미리 확인 (파일을 옮기지 않음):
+정리하지 않고 엑셀만:
 
 ```bash
-python prelude_pnl.py --src "Z:/02.펀드/003.매매보고서 대사/Prelude_new" --organize --dry-run --no-excel
+python prelude_pnl.py --src "Z:/02.펀드/003.매매보고서 대사/Prelude_new" --no-organize
 ```
 
 산출 파일 기본 경로: `<src>/_output/Prelude_PnL_<시작일>_<종료일>.xlsx`
@@ -40,10 +40,10 @@ python prelude_pnl.py --src "Z:/02.펀드/003.매매보고서 대사/Prelude_new
 | `--src` | 리포트 CSV 폴더 (**하위 폴더까지 재귀 스캔** — 정리 후에도 그대로 동작) |
 | `--out` | 산출 엑셀 경로 지정 |
 | `--from-date` / `--to-date` | 기준일 범위 (`YYYY-MM-DD`) |
-| `--organize` | 원본을 리포트별 폴더로 분류 |
-| `--layout` | `report`(기본) / `report-year` / `report-month` / `date-report` |
+| `--no-organize` | 폴더 정리를 하지 않음 (정리는 **기본 동작**) |
+| `--layout` | `group`(기본) / `group-month` / `group-only` / `report` / `report-year` / `report-month` / `date-report` |
 | `--copy` | 이동 대신 복사 |
-| `--dry-run` | 정리 계획만 출력 |
+| `--dry-run` | 정리 계획만 출력 (파일을 옮기지 않음) |
 | `--no-excel` | 엑셀 생성 없이 정리만 |
 | `--max-gap-days` | 직전 리포트일과 간격이 이 일수를 넘으면 손익 산출 제외 (기본 5) |
 | `--external-category` | 외부 자금이동(입출금)으로 볼 카테고리 (기본 `Wires`) |
@@ -122,25 +122,46 @@ python prelude_pnl.py --src "Z:/02.펀드/003.매매보고서 대사/Prelude_new
 | `전체 결제후 잔고` | 미도래 결제까지 전부 반영한 최종 잔고 | CASH005X |
 | `*_USD` | USD 환산 (MAC001X `Price (Base)` 로 나눔) | |
 
-## 리포트별 폴더 정리
+## 원본 폴더 정리 (기본 동작)
 
-`--organize` 실행 시 파일명의 리포트명 부분을 폴더명으로 사용합니다.
+실행하면 리포트 코드와 리포트명 키워드로 **대분류 → 리포트별** 2단 폴더에 자동 분류합니다.
+한 폴더에 1,500개가 쌓이지 않고, 대분류 6개만 먼저 보입니다.
 
 ```
 Prelude_new/
-├─ MAC001X - Global Positions Extract/
-│    MAC001X - Global Positions Extract - 038CAFFQ3 - 30Jun2026-0.csv
-├─ MAC002TDX - Normalized Trade Date Activity Extract - Daily/
-├─ EQSWAP36X - Equity Swap MTM Summary Extract/
-├─ ...
+├─ 01_포지션/      (200)  MAC001X, MAC001RX, EQSWAP19X, EQSWAP54X
+│    └─ MAC001X - Global Positions Extract/
+│         MAC001X - Global Positions Extract - 038CAFFQ3 - 30Jun2026-0.csv
+├─ 02_거래활동/    (261)  MAC002TDX, EQSWAP37X/47X/47MX, EQSWAP60MX
+├─ 03_스왑/        (650)  EQSWAP16X/18*/20*/24MX/27CX/36X/40*/43X, SW1004X
+├─ 04_현금결제/    (100)  CASH005X, CASH005DX
+├─ 05_배당이자/    (250)  MAC005X/006X/007X, EQSWAP35AX, SW1003MX
+├─ 06_명세서/       (63)  BBSTMNTS001X/002X, Blue Border Email(html)
 └─ _output/
      Prelude_PnL_20260130_20260731.xlsx
-     _organize_log.csv          ← 이동 이력 (이전경로 / 이동경로 / 처리결과)
+     _organize_log.csv          ← 이동 이력 (대분류/이전경로/이동경로/처리결과)
 ```
+
+분류 규칙:
+
+1. 리포트 코드가 `GROUP_BY_CODE` 에 있으면 그 대분류로 보냅니다.
+2. 코드가 없거나 새 리포트면 리포트명에서 키워드를 찾습니다
+   (`GROUP_BY_KEYWORD`: blue border/statement → 명세서, cash/settlement → 현금결제,
+   dividend/interest/accrual → 배당이자, position/balance/tax lot → 포지션,
+   trade/activity → 거래활동, swap/financing/reset/mtm → 스왑).
+3. 둘 다 안 맞으면 `99_기타` 로 모읍니다 → 여기 쌓이면 위 두 상수에 추가하면 됩니다.
+
+동작 특성:
 
 - 같은 이름의 파일이 대상 폴더에 이미 있으면 **건너뜁니다**(덮어쓰지 않음).
 - 스캐너가 재귀 동작하므로 정리 후에도 같은 `--src` 로 계속 실행하면 됩니다.
+  이미 제자리에 있는 파일은 `이미정리됨` 으로 표시하고 그대로 둡니다.
+- 새 리포트가 루트에 떨어지면 다음 실행 때 알아서 제 폴더로 들어갑니다.
 - Windows 260자 경로 제한은 `\\?\` 확장 경로로 우회합니다.
+- 엑셀의 `14_파일목록` 시트에서 파일별 `대분류` / `정리 폴더` / `현재 경로` 를 볼 수 있습니다.
+
+폴더가 더 잘게 나뉘길 원하면 `--layout group-month` (대분류/리포트/연월),
+예전처럼 리포트별 한 단만 쓰려면 `--layout report` 를 쓰세요.
 
 ## 사용하는 리포트
 
