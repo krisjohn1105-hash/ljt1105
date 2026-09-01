@@ -60,19 +60,39 @@ python daily_pnl.py --src "Z:/02.펀드/003.매매보고서 대사/Prelude_new"
 
 ## 시트 구성
 
+엑셀 파일 내부(시트명·컬럼명·셀 값)는 모두 **영문**입니다.
+(원본 폴더 경로만 실제 경로라 한글이 남습니다.)
+
 | 시트 | 내용 |
 |---|---|
-| `00_요약` | 시드·컷오버·최종 누적손익·기준가 + 누적손익 추이 차트 |
-| `01_일일손익` | **기준일별 스왑/현물/FX/IPO/현금·이자 일일손익, 누적손익, 기준가, AUM** |
-| `02_월별손익` | 월 단위 집계 |
-| `03_자산군별상세` | 전일평가액 → 당일평가액 → 현금흐름 → 일일손익 (계산 근거) |
-| `04_검증` | Σ자산군 = Δ총평가액 − 외부자금이동 검증 |
-| `05_종목별손익` | 자산군·종목 단위 일일/누적손익 |
-| `06_IPO상세` | IPO 배정주 평가·매도·청약대금 흐름 |
-| `07_IPO마스터(EQSWAP)` | EQSWAP.xlsx IPO 시트 원본 |
-| `08_IPO후보(무상입고)` | 대금 0원 입고 감지 결과 (IPO 등록 여부) |
-| `09_현금잔고` | 현재잔고 / 결제필요현금 / 결제후잔고 |
-| `10_거래내역` | 정규화된 거래·저널 |
+| `00_Summary` | 시드·컷오버·최종 누적손익·기준가 + 누적손익 추이 차트 |
+| `01_Daily_PnL` | **기준일별 Swap/Cash Equity/FX/IPO/Cash & Interest 일일손익, 누적손익, 기준가, AUM** |
+| `02_Monthly_PnL` | 월 단위 집계 |
+| `03_Asset_Class_Detail` | 전일평가액 → 당일평가액 → 현금흐름 → 일일손익 (계산 근거) |
+| `04_Reconciliation` | Σ자산군 = Δ총평가액 − 외부자금이동 검증 |
+| `05_Security_PnL` | 자산군·종목 단위 일일/누적손익 |
+| `06_IPO_Detail` | IPO 배정주 평가·매도·청약대금 흐름 |
+| `07_IPO_Master_EQSWAP` | EQSWAP.xlsx IPO 시트 원본 |
+| `08_IPO_Candidates` | 대금 0원 입고 감지 결과 (IPO 등록 여부) |
+| `09_Cash_Balance` | 현재잔고 / 결제필요현금 / 결제후잔고 |
+| `10_Transactions` | 정규화된 거래·저널 |
+
+### 주요 컬럼 (`01_Daily_PnL`)
+
+| 컬럼 | 뜻 |
+|---|---|
+| `Report Date` / `Prior Report Date` / `Days Elapsed` | 기준일 / 직전 기준일 / 경과일수 |
+| `Swap` `Cash Equity` `FX` `IPO` `Cash & Interest` | 자산군별 일일손익 |
+| `Daily PnL Total` / `Cumulative PnL` | 일일손익 합계 / 누적손익 |
+| `NAV per Unit (USD)` / `AUM (Principal + Cum PnL)` | 기준가(달러) / 원금+누적손익 |
+| `Daily Return (%)` | 일일수익률 |
+| `… Cum.` | 자산군별 컷오버 이후 누적 |
+| `MS Account Market Value` | MS 계좌 총평가액 |
+| `External Cash Movement` | 외부 자금이동 |
+| `Computed` / `Note` | 손익 산출 여부 / 비고 |
+
+> 이전 한글 버전으로 만든 파일이 남아 있어도 그대로 이어붙습니다
+> (`01_일일손익` 시트와 한글 컬럼·비고를 자동으로 영문으로 변환해 병합).
 
 ## 손익 산식
 
