@@ -67,16 +67,81 @@ DEFAULT_OUTPUT = "Prelude_Daily_PnL.xlsx"
 MAX_GAP_DAYS = 5
 
 BUCKETS = ["Swap", "Cash Equity", "FX", "IPO", "Cash"]
-BUCKET_KR = {
-    "Swap": "스왑",
-    "Cash Equity": "현물",
+BUCKET_EN = {
+    "Swap": "Swap",
+    "Cash Equity": "Cash Equity",
     "FX": "FX",
     "IPO": "IPO",
-    "Cash": "현금·이자·기타",
+    "Cash": "Cash & Interest",
 }
 
-DAILY_SHEET = "01_일일손익"
+DAILY_SHEET = "01_Daily_PnL"
+LEGACY_DAILY_SHEET = "01_일일손익"      # 이전 버전(한글) 파일과의 호환용
 IPO_WIRE_CATEGORIES = ("Wires",)
+
+# 이전 한글 산출물을 읽어 이어붙일 때 쓰는 컬럼명 매핑
+LEGACY_COLUMN_MAP = {
+    "기준일": "Report Date", "직전 기준일": "Prior Report Date", "경과일수": "Days Elapsed",
+    "스왑": "Swap", "현물": "Cash Equity", "현금·이자·기타": "Cash & Interest",
+    "일일손익 합계": "Daily PnL Total", "누적손익": "Cumulative PnL",
+    "기준가(달러)": "NAV per Unit (USD)", "AUM(원금+누적손익)": "AUM (Principal + Cum PnL)",
+    "일일수익률(%)": "Daily Return (%)", "MS계좌 총평가액": "MS Account Market Value",
+    "외부 자금이동": "External Cash Movement", "산출대상": "Computed", "비고": "Note",
+    "스왑 누적": "Swap Cum.", "현물 누적": "Cash Equity Cum.", "FX 누적": "FX Cum.",
+    "IPO 누적": "IPO Cum.", "현금·이자·기타 누적": "Cash & Interest Cum.",
+}
+
+# prelude_pnl 모듈이 만들어 주는 한글 컬럼 -> 영문 (출력 직전에만 적용)
+OUTPUT_COLUMN_MAP = {
+    "기준일": "Report Date", "통화": "Currency", "매매일": "Trade Date", "결제일": "Settle Date",
+    "구분": "Type", "중분류": "Category L2", "소분류": "Category L3", "버킷": "Bucket",
+    "포지션유형": "Position Type", "상품유형": "Product Type", "종목명": "Security",
+    "종목코드": "Symbol", "매매구분": "Buy/Sell", "수량": "Quantity", "단가_USD": "Price (USD)",
+    "약정금액_USD": "Principal (USD)", "정산금액_USD": "Net Amount (USD)",
+    "결제통화": "Settle CCY", "정산금액_결제통화": "Net Amount (Settle CCY)",
+    "현금원장": "Cash Ledger", "자산군": "Asset Class", "입고일": "Delivery Date",
+    "등록여부": "Registered",
+    "현재잔고(매매기준)": "Current Balance (Trade Date)",
+    "현재잔고(결제기준)": "Current Balance (Settled)",
+    "현재잔고_USD": "Current Balance (USD)",
+    "현재잔고(결제기준)_USD": "Current Balance Settled (USD)",
+    "결제예정 수취(D+1~D+4)": "Incoming Settlements (D+1~D+4)",
+    "결제필요현금(D+1~D+4)": "Cash Required for Settlement (D+1~D+4)",
+    "결제예정 순액(D+1~D+4)": "Net Settlements (D+1~D+4)",
+    "미도래 결제 순액(D+5 이후)": "Net Settlements (D+5 onward)",
+    "기준일 결제후잔고": "Balance After Settlement (Report Date)",
+    "D+1 예상잔고": "Projected Balance D+1", "D+2 예상잔고": "Projected Balance D+2",
+    "D+3 예상잔고": "Projected Balance D+3", "D+4 예상잔고": "Projected Balance D+4",
+    "전체 결제후 잔고": "Final Projected Balance",
+    "USD환산율(나누기)": "FX Rate to USD (divide)",
+    "결제필요현금(D+1~D+4)_USD": "Cash Required for Settlement (USD)",
+    "결제예정 순액(D+1~D+4)_USD": "Net Settlements (USD)",
+    "전체 결제후 잔고_USD": "Final Projected Balance (USD)",
+}
+
+# 셀 값 번역
+NOTE_SEED = "Handover baseline from EQSWAP.xlsx (seed)"
+NOTE_PRE_CUTOVER = "Before cutover (EQSWAP seed period)"
+NOTE_GAP = "Excluded - gap from prior report date too large"
+TYPE_SECURITY = "Security"
+TYPE_JOURNAL = "Cash flow (no security)"
+IPO_PAYMENT_LABEL = "IPO subscription payment"
+REGISTERED_YES = "Registered"
+REGISTERED_NO = "Not registered"
+
+# 이전 한글 산출물의 비고 값 -> 영문
+LEGACY_NOTE_MAP = {
+    "EQSWAP.xlsx 인수 기준점(시드)": NOTE_SEED,
+    "컷오버 이전(EQSWAP 시드 구간)": NOTE_PRE_CUTOVER,
+    "직전 리포트일과 간격이 커서 산출 제외": NOTE_GAP,
+}
+
+
+def to_english(df: pd.DataFrame) -> pd.DataFrame:
+    """출력 직전에 한글 컬럼명을 영문으로 바꾼다."""
+    if df is None or df.empty:
+        return df
+    return df.rename(columns=OUTPUT_COLUMN_MAP)
 
 
 # ---------------------------------------------------------------------------
@@ -261,7 +326,7 @@ def apply_ipo_buckets(positions: pd.DataFrame, activity: pd.DataFrame,
         if ipo_wire_index:
             w = act.index.isin(ipo_wire_index)
             act.loc[w, "버킷"] = "IPO"
-            act.loc[w, "종목명"] = "IPO 청약대금"
+            act.loc[w, "종목명"] = IPO_PAYMENT_LABEL
             act.loc[w, "종목코드"] = ""
     return pos, act
 
@@ -317,45 +382,45 @@ def compute_daily(positions: pd.DataFrame, activity: pd.DataFrame,
     pnl = pnl.where(computable, 0.0)
 
     note = pd.Series("", index=idx)
-    note[[d for d in idx if d < cutover]] = "컷오버 이전(EQSWAP 시드 구간)"
-    note[[d for d in idx if d >= cutover and not computable[d]]] = \
-        "직전 리포트일과 간격이 커서 산출 제외"
+    note[[d for d in idx if d < cutover]] = NOTE_PRE_CUTOVER
+    note[[d for d in idx if d >= cutover and not computable[d]]] = NOTE_GAP
 
     total_mv = mv.sum(axis=1)
     daily = pd.DataFrame(index=mv.index)
-    daily.index.name = "기준일"
-    daily["직전 기준일"] = prev_date
-    daily["경과일수"] = gap
+    daily.index.name = "Report Date"
+    daily["Prior Report Date"] = prev_date
+    daily["Days Elapsed"] = gap
     for b in BUCKETS:
-        daily[BUCKET_KR[b]] = pnl[b]
-    daily["일일손익 합계"] = pnl[BUCKETS].sum(axis=1)
-    daily["MS계좌 총평가액"] = total_mv
-    daily["외부 자금이동"] = ext.where(computable, 0.0)
-    daily["산출대상"] = computable
-    daily["비고"] = note
+        daily[BUCKET_EN[b]] = pnl[b]
+    daily["Daily PnL Total"] = pnl[BUCKETS].sum(axis=1)
+    daily["MS Account Market Value"] = total_mv
+    daily["External Cash Movement"] = ext.where(computable, 0.0)
+    daily["Computed"] = computable
+    daily["Note"] = note
 
     detail = []
     for i, d in enumerate(idx):
         for b in BUCKETS:
             detail.append({
-                "기준일": d, "자산군": BUCKET_KR[b],
-                "전일 평가액": mv[b].shift().iloc[i] if i else float("nan"),
-                "당일 평가액": mv[b].iloc[i],
-                "평가액 증감": d_mv[b].iloc[i],
-                "현금흐름": flow[b].iloc[i],
-                "일일손익": pnl[b].iloc[i],
-                "산출대상": bool(computable.iloc[i]),
+                "Report Date": d, "Asset Class": BUCKET_EN[b],
+                "Prior Market Value": mv[b].shift().iloc[i] if i else float("nan"),
+                "Market Value": mv[b].iloc[i],
+                "MV Change": d_mv[b].iloc[i],
+                "Cash Flow": flow[b].iloc[i],
+                "Daily PnL": pnl[b].iloc[i],
+                "Computed": bool(computable.iloc[i]),
             })
 
     recon = pd.DataFrame(index=mv.index)
-    recon.index.name = "기준일"
-    recon["산출대상"] = computable
-    recon["총평가액 증감"] = total_mv.diff().where(computable)
-    recon["외부 자금이동"] = ext.where(computable, 0.0)
-    recon["자산군 손익 합계"] = pnl[BUCKETS].sum(axis=1)
-    recon["차이(검증)"] = (recon["총평가액 증감"] - recon["외부 자금이동"]
-                       - recon["자산군 손익 합계"])
-    recon["비고"] = note
+    recon.index.name = "Report Date"
+    recon["Computed"] = computable
+    recon["Total MV Change"] = total_mv.diff().where(computable)
+    recon["External Cash Movement"] = ext.where(computable, 0.0)
+    recon["Sum of Asset Class PnL"] = pnl[BUCKETS].sum(axis=1)
+    recon["Difference (Check)"] = (recon["Total MV Change"]
+                                   - recon["External Cash Movement"]
+                                   - recon["Sum of Asset Class PnL"])
+    recon["Note"] = note
 
     return {"daily": daily.reset_index(), "detail": pd.DataFrame(detail),
             "recon": recon.reset_index(), "mv": mv, "flow": flow, "pnl": pnl,
@@ -393,15 +458,20 @@ def compute_security_pnl(positions: pd.DataFrame, activity: pd.DataFrame,
     bad = set(computable.index[~computable.astype(bool)])
     out.loc[out["기준일"].isin(bad), "일일손익"] = 0.0
     out["누적손익"] = out.groupby(key_cols)["일일손익"].cumsum()
-    out["자산군"] = out["버킷"].map(BUCKET_KR).fillna(out["버킷"])
+    out["자산군"] = out["버킷"].map(BUCKET_EN).fillna(out["버킷"])
     # 종목이 붙지 않는 현금원장 저널(스왑 리셋/파이낸싱 정산, 담보이체 등) 구분
-    out["구분"] = "종목"
+    out["구분"] = TYPE_SECURITY
     journal = (out["평가액"] == 0) & (out["수량"] == 0) & (out["현금흐름"] != 0)
-    out.loc[journal, "구분"] = "현금흐름(종목없음)"
+    out.loc[journal, "구분"] = TYPE_JOURNAL
     out = out[(out["평가액"] != 0) | (out["현금흐름"] != 0) | (out["일일손익"] != 0)]
     cols = ["기준일", "자산군", "구분", "종목명", "종목코드", "수량",
             "전일평가액", "평가액", "현금흐름", "일일손익", "누적손익"]
-    return out[cols].sort_values(["기준일", "자산군", "구분", "종목명"])
+    out = out[cols].sort_values(["기준일", "자산군", "구분", "종목명"])
+    return out.rename(columns={
+        "기준일": "Report Date", "자산군": "Asset Class", "구분": "Type",
+        "종목명": "Security", "종목코드": "Symbol", "수량": "Quantity",
+        "전일평가액": "Prior Market Value", "평가액": "Market Value",
+        "현금흐름": "Cash Flow", "일일손익": "Daily PnL", "누적손익": "Cumulative PnL"})
 
 
 # ---------------------------------------------------------------------------
@@ -412,60 +482,74 @@ def merge_history(new_rows: pd.DataFrame, out_path: str, rebuild: bool) -> pd.Da
     """기존 산출 파일의 일일손익을 읽어 신규 계산분과 병합한다(같은 날짜는 신규가 우선)."""
     if rebuild or not os.path.exists(long_path(out_path)):
         return new_rows.copy()
-    try:
-        old = pd.read_excel(out_path, sheet_name=DAILY_SHEET)
-    except Exception as exc:
-        print(f"  ! 기존 파일 읽기 실패({exc}) - 신규 계산분만 사용합니다.", file=sys.stderr)
+    old = None
+    for sheet in (DAILY_SHEET, LEGACY_DAILY_SHEET):
+        try:
+            old = pd.read_excel(out_path, sheet_name=sheet)
+            break
+        except Exception:
+            continue
+    if old is None:
+        print("  ! 기존 파일에서 일일손익 시트를 찾지 못했습니다 - 신규 계산분만 사용합니다.",
+              file=sys.stderr)
         return new_rows.copy()
-    if old.empty or "기준일" not in old.columns:
+    old = old.rename(columns=LEGACY_COLUMN_MAP)   # 이전 한글 산출물 호환
+    if "Note" in old.columns:
+        old["Note"] = old["Note"].replace(LEGACY_NOTE_MAP)
+    if old.empty or "Report Date" not in old.columns:
         return new_rows.copy()
-    old["기준일"] = pd.to_datetime(old["기준일"], errors="coerce").dt.date
-    old = old[old["기준일"].notna()]
+    old["Report Date"] = pd.to_datetime(old["Report Date"], errors="coerce").dt.date
+    old = old[old["Report Date"].notna()]
 
     # 새로 계산했지만 산출 불가(직전 기준일 없음 등)인 날은 기존 값을 덮어쓰지 않는다.
     # 과거 원본을 다른 곳으로 옮겨도 이미 쌓아둔 손익이 0 으로 지워지지 않게 하는 안전장치.
-    if "산출대상" in new_rows.columns:
-        usable = new_rows[new_rows["산출대상"].astype(bool)]
-        dropped = new_rows[~new_rows["산출대상"].astype(bool)]
-        overwritten = set(usable["기준일"])
-        readd = dropped[~dropped["기준일"].isin(set(old["기준일"]))]
+    if "Computed" in new_rows.columns:
+        usable = new_rows[new_rows["Computed"].astype(bool)]
+        dropped = new_rows[~new_rows["Computed"].astype(bool)]
+        overwritten = set(usable["Report Date"])
+        readd = dropped[~dropped["Report Date"].isin(set(old["Report Date"]))]
         new_rows = pd.concat([usable, readd], ignore_index=True, sort=False)
     else:
-        overwritten = set(new_rows["기준일"])
+        overwritten = set(new_rows["Report Date"])
 
-    keep = old[~old["기준일"].isin(overwritten | set(new_rows["기준일"]))]
+    keep = old[~old["Report Date"].isin(overwritten | set(new_rows["Report Date"]))]
     cols = [c for c in new_rows.columns if c in keep.columns]
     merged = pd.concat([keep[cols], new_rows], ignore_index=True, sort=False)
-    merged = merged.drop_duplicates(subset="기준일", keep="last")
-    return merged.sort_values("기준일").reset_index(drop=True)
+    merged = merged.drop_duplicates(subset="Report Date", keep="last")
+    return merged.sort_values("Report Date").reset_index(drop=True)
 
 
 def add_cumulative(daily: pd.DataFrame, seed_cum: float, seed_date: Optional[dt.date],
                    principal: float) -> pd.DataFrame:
-    d = daily.sort_values("기준일").reset_index(drop=True).copy()
+    d = daily.sort_values("Report Date").reset_index(drop=True).copy()
     # 인수인계 기준점(EQSWAP 시드)을 첫 행으로 넣어 누적 추이가 이어지게 한다
-    if seed_date is not None and seed_date not in set(d["기준일"]):
+    if seed_date is not None and seed_date not in set(d["Report Date"]):
         seed_row = {c: 0.0 for c in d.columns if d[c].dtype.kind in "if"}
-        seed_row.update({"기준일": seed_date, "직전 기준일": pd.NaT, "경과일수": float("nan"),
-                         "산출대상": False, "비고": "EQSWAP.xlsx 인수 기준점(시드)"})
+        seed_row.update({"Report Date": seed_date, "Prior Report Date": pd.NaT,
+                         "Days Elapsed": float("nan"), "Computed": False,
+                         "Note": NOTE_SEED})
         d = pd.concat([pd.DataFrame([seed_row]), d], ignore_index=True, sort=False)
-        d = d.sort_values("기준일").reset_index(drop=True)
-    d["누적손익"] = seed_cum + d["일일손익 합계"].fillna(0).cumsum()
+        d = d.sort_values("Report Date").reset_index(drop=True)
+    if seed_date is not None and "Note" in d.columns:
+        d.loc[d["Report Date"] == seed_date, "Note"] = NOTE_SEED
+    d["Cumulative PnL"] = seed_cum + d["Daily PnL Total"].fillna(0).cumsum()
     for b in BUCKETS:
-        kr = BUCKET_KR[b]
-        if kr in d.columns:
-            d[f"{kr} 누적"] = d[kr].fillna(0).cumsum()
-    d["기준가(달러)"] = (principal + d["누적손익"]) / principal
-    d["AUM(원금+누적손익)"] = principal + d["누적손익"]
-    d["일일수익률(%)"] = (d["일일손익 합계"] /
-                     (principal + d["누적손익"].shift().fillna(seed_cum))* 100).astype(float)
+        en = BUCKET_EN[b]
+        if en in d.columns:
+            d[f"{en} Cum."] = d[en].fillna(0).cumsum()
+    d["NAV per Unit (USD)"] = (principal + d["Cumulative PnL"]) / principal
+    d["AUM (Principal + Cum PnL)"] = principal + d["Cumulative PnL"]
+    d["Daily Return (%)"] = (d["Daily PnL Total"] /
+                             (principal + d["Cumulative PnL"].shift().fillna(seed_cum))
+                             * 100).astype(float)
     if seed_date is not None:
-        d.loc[d["기준일"] <= seed_date, "일일수익률(%)"] = float("nan")
-    order = (["기준일", "직전 기준일", "경과일수"]
-             + [BUCKET_KR[b] for b in BUCKETS]
-             + ["일일손익 합계", "누적손익", "기준가(달러)", "AUM(원금+누적손익)", "일일수익률(%)"]
-             + [f"{BUCKET_KR[b]} 누적" for b in BUCKETS]
-             + ["MS계좌 총평가액", "외부 자금이동", "산출대상", "비고"])
+        d.loc[d["Report Date"] <= seed_date, "Daily Return (%)"] = float("nan")
+    order = (["Report Date", "Prior Report Date", "Days Elapsed"]
+             + [BUCKET_EN[b] for b in BUCKETS]
+             + ["Daily PnL Total", "Cumulative PnL", "NAV per Unit (USD)",
+                "AUM (Principal + Cum PnL)", "Daily Return (%)"]
+             + [f"{BUCKET_EN[b]} Cum." for b in BUCKETS]
+             + ["MS Account Market Value", "External Cash Movement", "Computed", "Note"])
     return d[[c for c in order if c in d.columns]]
 
 
@@ -488,10 +572,10 @@ def write_workbook(path: str, sheets: List[Tuple[str, pd.DataFrame]],
         money = wb.add_format({"num_format": "#,##0.00"})
         px = wb.add_format({"num_format": "0.00000000"})
 
-        ws = wb.add_worksheet("00_요약")
-        xw.sheets["00_요약"] = ws
-        ws.set_column(0, 0, 34); ws.set_column(1, 1, 66)
-        ws.write(0, 0, "Prelude 일일손익 누적 관리", title)
+        ws = wb.add_worksheet("00_Summary")
+        xw.sheets["00_Summary"] = ws
+        ws.set_column(0, 0, 38); ws.set_column(1, 1, 72)
+        ws.write(0, 0, "Prelude Daily PnL Tracker", title)
         for r, (k, v) in enumerate(meta, start=2):
             ws.write(r, 0, k, label); ws.write(r, 1, v, value)
 
@@ -511,10 +595,15 @@ def write_workbook(path: str, sheets: List[Tuple[str, pd.DataFrame]],
                 except Exception:
                     width = len(str(c)) + 2
                 width = min(max(width, 11), 40)
-                if "기준가" in str(c):
+                name = str(c)
+                numeric = df[c].dtype.kind in "if"
+                if not numeric:
+                    w.set_column(i, i, width)
+                elif "NAV per Unit" in name:
                     w.set_column(i, i, width, px)
-                elif any(k in str(c) for k in ("손익", "평가액", "금액", "잔고", "현금",
-                                               "AUM", "누적", "증감", "이동", "대금")):
+                elif any(k in name for k in ("PnL", "Market Value", "Amount", "Balance",
+                                             "Cash", "AUM", "Cum", "Change", "Movement",
+                                             "Settlement", "Principal", "Price", "Flow")):
                     w.set_column(i, i, width, money)
                 else:
                     w.set_column(i, i, width)
@@ -523,14 +612,14 @@ def write_workbook(path: str, sheets: List[Tuple[str, pd.DataFrame]],
 
             if sn == DAILY_SHEET and len(df) > 2:
                 cols = list(df.columns)
-                if "누적손익" in cols and "기준일" in cols:
-                    ci, cc = cols.index("기준일"), cols.index("누적손익")
+                if "Cumulative PnL" in cols and "Report Date" in cols:
+                    ci, cc = cols.index("Report Date"), cols.index("Cumulative PnL")
                     ch = wb.add_chart({"type": "line"})
-                    ch.add_series({"name": "누적손익 (USD)",
+                    ch.add_series({"name": "Cumulative PnL (USD)",
                                    "categories": [sn, 1, ci, len(df), ci],
                                    "values": [sn, 1, cc, len(df), cc],
                                    "line": {"color": "#1F3864", "width": 2.0}})
-                    ch.set_title({"name": "누적손익 추이 (EQSWAP 시드 + Prelude 계산)"})
+                    ch.set_title({"name": "Cumulative PnL (EQSWAP seed + Prelude calculation)"})
                     ch.set_y_axis({"num_format": "#,##0"})
                     ch.set_size({"width": 900, "height": 380})
                     ch.set_legend({"position": "bottom"})
@@ -651,27 +740,26 @@ def main(argv=None):
     print("[5/7] 일일손익 계산")
     res = compute_daily(positions, activity, external_idx, cutover,
                         max_gap_days=args.max_gap_days)
-    new_daily = res["daily"][res["daily"]["기준일"] >= cutover].copy()
-    print(f"      계산 구간: {new_daily['기준일'].min()} ~ {new_daily['기준일'].max()} "
-          f"({int(new_daily['산출대상'].sum())}영업일)")
+    new_daily = res["daily"][res["daily"]["Report Date"] >= cutover].copy()
+    print(f"      계산 구간: {new_daily['Report Date'].min()} ~ {new_daily['Report Date'].max()} "
+          f"({int(new_daily['Computed'].sum())}영업일)")
 
     print("[6/7] 기존 누적분 병합")
-    merged = merge_history(new_daily.drop(columns=["산출대상"], errors="ignore")
-                           .assign(산출대상=new_daily["산출대상"].values),
-                           out_path, args.rebuild)
+    merged = merge_history(new_daily, out_path, args.rebuild)
     daily = add_cumulative(merged, seed_cum, seed_date, args.principal)
     last = daily.iloc[-1]
 
     sec = compute_security_pnl(positions, activity, res["computable"])
-    sec = sec[sec["기준일"] >= cutover]
-    detail = res["detail"][res["detail"]["기준일"] >= cutover]
-    recon = res["recon"][res["recon"]["기준일"] >= cutover]
-    cash_bal = build_cash_balance(positions, raw_cash)
-    cash_bal = cash_bal[cash_bal["기준일"] >= cutover] if len(cash_bal) else cash_bal
+    sec = sec[sec["Report Date"] >= cutover]
+    detail = res["detail"][res["detail"]["Report Date"] >= cutover]
+    recon = res["recon"][res["recon"]["Report Date"] >= cutover]
+    cash_bal = to_english(build_cash_balance(positions, raw_cash))
+    if len(cash_bal):
+        cash_bal = cash_bal[cash_bal["Report Date"] >= cutover]
 
     ipo_rows = pd.DataFrame()
     if len(sec):
-        ipo_rows = sec[sec["자산군"] == "IPO"].copy()
+        ipo_rows = sec[sec["Asset Class"] == "IPO"].copy()
     ipo_sheet = pd.DataFrame()
     if len(ipo_master):
         ipo_sheet = ipo_master[[c for c in ["Trade Date", "Settle Date", "Stock Description",
@@ -685,57 +773,75 @@ def main(argv=None):
                  "상품유형", "종목명", "종목코드", "매매구분", "수량", "단가_USD",
                  "약정금액_USD", "정산금액_USD", "결제통화", "정산금액_결제통화", "현금원장"]
         trades = activity[[c for c in tcols if c in activity.columns]].copy()
-        trades["자산군"] = trades["버킷"].map(BUCKET_KR).fillna(trades["버킷"])
-        trades = trades[trades["기준일"] >= cutover].sort_values(["기준일", "자산군", "종목명"])
+        trades["자산군"] = trades["버킷"].map(BUCKET_EN).fillna(trades["버킷"])
+        trades = (trades[trades["기준일"] >= cutover]
+                  .sort_values(["기준일", "자산군", "종목명"])
+                  .drop(columns=["버킷"]))
+        trades = to_english(trades)
+        trades = trades[["Report Date", "Asset Class"]
+                        + [c for c in trades.columns if c not in ("Report Date", "Asset Class")]]
 
-    monthly = daily[daily["기준일"] >= cutover].copy()
-    monthly["연월"] = pd.to_datetime(monthly["기준일"]).dt.strftime("%Y-%m")
-    magg = (monthly.groupby("연월", as_index=False)[[BUCKET_KR[b] for b in BUCKETS]
-                                                    + ["일일손익 합계"]].sum())
-    mlast = monthly.groupby("연월", as_index=False).last()[["연월", "누적손익", "기준가(달러)",
-                                                          "MS계좌 총평가액"]]
-    monthly = magg.merge(mlast, on="연월", how="left")
+    candidates = candidates.copy()
+    if len(candidates) and "등록여부" in candidates.columns:
+        candidates["등록여부"] = candidates["등록여부"].map(
+            {"등록됨": REGISTERED_YES, "미등록": REGISTERED_NO}).fillna(candidates["등록여부"])
+    candidates = to_english(candidates)
+
+    monthly = daily[daily["Report Date"] >= cutover].copy()
+    monthly["Year-Month"] = pd.to_datetime(monthly["Report Date"]).dt.strftime("%Y-%m")
+    magg = (monthly.groupby("Year-Month", as_index=False)[[BUCKET_EN[b] for b in BUCKETS]
+                                                          + ["Daily PnL Total"]].sum())
+    mlast = monthly.groupby("Year-Month", as_index=False).last()[
+        ["Year-Month", "Cumulative PnL", "NAV per Unit (USD)", "MS Account Market Value"]]
+    monthly = magg.merge(mlast, on="Year-Month", how="left")
 
     meta = [
-        ("생성일시", dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-        ("원본 폴더", src),
-        ("산출 파일", out_path),
-        ("시드 (EQSWAP.xlsx)", f"{seed_date} 누적손익 {seed_cum:,.2f} USD" if seed_date
+        ("Generated at", dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+        ("Source folder", src),
+        ("Output file", out_path),
+        ("Seed (EQSWAP.xlsx)",
+         f"{seed_date}  cumulative PnL {seed_cum:,.2f} USD" if seed_date
          else f"{seed_cum:,.2f} USD"),
-        ("Prelude 계산 시작일", str(cutover)),
-        ("최종 기준일", str(last["기준일"])),
-        ("누적손익 (최종)", f"{last['누적손익']:,.2f} USD"),
-        ("기준가(달러)", f"{last['기준가(달러)']:.8f}"),
-        ("AUM (원금+누적손익)", f"{last['AUM(원금+누적손익)']:,.2f} USD"),
-        ("컷오버 이후 손익", f"{last['누적손익'] - seed_cum:,.2f} USD"),
-        ("자산군별 누적 (컷오버 이후)",
-         " | ".join(f"{BUCKET_KR[b]} {last.get(f'{BUCKET_KR[b]} 누적', 0):,.0f}" for b in BUCKETS)),
-        ("IPO 종목", ", ".join(sorted(ipo_rows["종목명"].unique())) if len(ipo_rows) else "없음"),
-        ("IPO 시트 미등록 무상입고", ", ".join(unreg["종목명"]) if len(unreg) else "없음"),
-        ("컷오버 이전 지급 청약대금(참고)",
+        ("Prelude calculation starts", str(cutover)),
+        ("Latest report date", str(last["Report Date"])),
+        ("Cumulative PnL (latest)", f"{last['Cumulative PnL']:,.2f} USD"),
+        ("NAV per unit (USD)", f"{last['NAV per Unit (USD)']:.8f}"),
+        ("AUM (principal + cum. PnL)", f"{last['AUM (Principal + Cum PnL)']:,.2f} USD"),
+        ("PnL since cutover", f"{last['Cumulative PnL'] - seed_cum:,.2f} USD"),
+        ("Cumulative by asset class (since cutover)",
+         " | ".join(f"{BUCKET_EN[b]} {last.get(f'{BUCKET_EN[b]} Cum.', 0):,.0f}"
+                    for b in BUCKETS)),
+        ("IPO securities",
+         ", ".join(sorted(ipo_rows["Security"].unique())) if len(ipo_rows) else "None"),
+        ("Free deliveries not in IPO master",
+         ", ".join(unreg["종목명"]) if len(unreg) else "None"),
+        ("Subscriptions paid before cutover (FYI only)",
          " | ".join(f"{d} {nm} {abs(a):,.2f}" for d, nm, a in pre_cutover_ipo_pay)
-         if pre_cutover_ipo_pay else "없음"),
-        ("손익 산식", "일일손익 = Δ평가액 + 귀속 현금흐름 (현금·이자는 잔여항)"),
-        ("검증", "Σ자산군 = Δ총평가액 − 외부 자금이동 (04_검증 시트)"),
+         if pre_cutover_ipo_pay else "None"),
+        ("PnL formula",
+         "Daily PnL = ΔMarket Value + attributed cash flow (Cash & Interest is the residual)"),
+        ("Reconciliation",
+         "Σ asset classes = Δ total market value − external cash movement "
+         "(see 04_Reconciliation)"),
     ]
 
     sheets = [
         (DAILY_SHEET, daily),
-        ("02_월별손익", monthly),
-        ("03_자산군별상세", detail),
-        ("04_검증", recon),
-        ("05_종목별손익", sec),
-        ("06_IPO상세", ipo_rows),
-        ("07_IPO마스터(EQSWAP)", ipo_sheet),
-        ("08_IPO후보(무상입고)", candidates),
-        ("09_현금잔고", cash_bal),
-        ("10_거래내역", trades),
+        ("02_Monthly_PnL", monthly),
+        ("03_Asset_Class_Detail", detail),
+        ("04_Reconciliation", recon),
+        ("05_Security_PnL", sec),
+        ("06_IPO_Detail", ipo_rows),
+        ("07_IPO_Master_EQSWAP", ipo_sheet),
+        ("08_IPO_Candidates", candidates),
+        ("09_Cash_Balance", cash_bal),
+        ("10_Transactions", trades),
     ]
 
     print(f"[7/7] 엑셀 작성: {out_path}")
     write_workbook(out_path, sheets, meta)
-    print(f"      완료 · 최종 {last['기준일']} 누적손익 {last['누적손익']:,.2f} USD "
-          f"/ 기준가 {last['기준가(달러)']:.6f}")
+    print(f"      완료 · 최종 {last['Report Date']} 누적손익 {last['Cumulative PnL']:,.2f} USD "
+          f"/ 기준가 {last['NAV per Unit (USD)']:.6f}")
     return 0
 
 
