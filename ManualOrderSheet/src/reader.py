@@ -26,9 +26,12 @@ class Record:
     fund_name: str
     ticker: str              # 기준종목명
     qty: int                 # 대차수량
-    amount: int              # 대금
+    amount: int              # 대금 (현금배당 지급액)
     broker: str              # 중개기관명
     trustee: str             # 수탁기관명
+    alloc_name: str = ""     # 권리배정내역 > 종목명 (분할·배당으로 배정받는 종목)
+    alloc_qty: int = 0       # 권리배정내역 > 배정수량
+    odd_amount: int = 0      # 권리배정내역 > 단주대금
 
     @property
     def per_share(self) -> float:
@@ -148,10 +151,13 @@ def read_records(path: Path) -> list[Record]:
             fund_code=_text(col(row, "펀드코드")),
             fund_name=_text(col(row, "펀드명")),
             ticker=_text(col(row, "기준종목명")) or _text(col(row, "종목명")),
-            qty=_to_int(col(row, "대차수량")) or _to_int(col(row, "배정수량")),
+            qty=_to_int(col(row, "대차수량")),
             amount=_to_int(col(row, "대금")),
             broker=_text(col(row, "중개기관명")),
             trustee=_text(col(row, "수탁기관명")),
+            alloc_name=_text(col(row, "종목명")),
+            alloc_qty=_to_int(col(row, "배정수량")),
+            odd_amount=_to_int(col(row, "단주대금")),
         ))
     return records
 

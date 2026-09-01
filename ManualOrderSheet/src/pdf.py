@@ -152,9 +152,9 @@ def make_pdfs(converter, docx_path, dpi=None, image_only=True, keep_text_pdf=Non
         pages = rasterize(staging, image_pdf, dpi)
         made.append(image_pdf)
         if pages > 1:
-            # 내역이 많아 서명부가 다음 장으로 밀린 경우. 템플릿의 빈 줄을 더 줄이거나
-            # 표 글자 크기를 조정해야 한다.
-            print(f"   [경고] {pages}페이지로 나왔습니다 - 서명부 위치를 확인하세요: {image_pdf.name}")
+            # 내역이 많으면 두 장이 된다(기존 공문도 마찬가지). 오류는 아니지만
+            # 서명부가 어디에 찍혔는지 눈으로 확인하는 게 좋다.
+            print(f"   [참고] {pages}페이지 문서입니다 - 서명부 위치를 확인하세요.")
     except Exception as exc:
         print(f"   [경고] 이미지화 실패: {docx_path.name} -> {exc}")
     finally:

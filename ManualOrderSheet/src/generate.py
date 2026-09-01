@@ -74,7 +74,7 @@ def fit_spacers(conv, instruction, args) -> int:
     with tempfile.TemporaryDirectory() as tmp:
         tmp_dir = Path(tmp)
         for trim in range(start, MAX_TRIM + 1):
-            probe = render(instruction, tmp_dir, Path(args.template),
+            probe = render(instruction, tmp_dir, Path(args.template) if args.template else None,
                            subdir_by_date=False, insert_seal=not args.no_seal,
                            trim_spacers=trim)
             pdf = tmp_dir / "probe.pdf"
@@ -85,8 +85,6 @@ def fit_spacers(conv, instruction, args) -> int:
             pdf.unlink(missing_ok=True)
             if pages <= 1:
                 return trim
-    print(f"   [경고] 한 장에 담기지 않습니다 (내역 {len(instruction.lines)}줄). "
-          f"템플릿의 표 글자 크기나 여백을 조정하세요.")
     return MAX_TRIM
 
 
@@ -96,7 +94,8 @@ def main(argv=None):
                         help="엑셀 파일 또는 폴더 (data/input 하위 폴더명만 써도 됨). "
                              "생략하면 data/input 의 최신 날짜 폴더")
     parser.add_argument("-o", "--output", default=str(config.OUTPUT_DIR), help="출력 폴더")
-    parser.add_argument("-t", "--template", default=str(config.TEMPLATE_PATH), help="템플릿 .docx")
+    parser.add_argument("-t", "--template", default=None,
+                        help="템플릿 .docx 를 직접 지정 (기본: 문서 종류별 템플릿)")
     parser.add_argument("--seq", type=int, default=1, help="문서번호 시작 일련번호 (기본 1)")
     parser.add_argument("--no-overwrite", action="store_true", help="같은 이름이 있으면 (2) 를 붙여 저장")
     parser.add_argument("--flat", action="store_true",
@@ -129,7 +128,16 @@ def main(argv=None):
         raise SystemExit("읽어들인 권리배정 내역이 없습니다.")
     print(f"내역 {len(records)}건")
 
-    instructions = build_instructions(records, start_seq=args.seq)
+    instructions, skipped = build_instructions(records, start_seq=args.seq)
+    if skipped:
+        print("\n" + "=" * 72)
+        print("[중단] 등록되지 않은 거래유형이 있어 해당 건은 문서를 만들지 않았습니다.")
+        for reason, count in skipped.items():
+            print(f"   - {reason}  ({count}건)")
+        print("   config.TRADE_TYPE_NAMES / ODD_LOT_TRADE_NAMES 에 문구를 등록하세요.")
+        print("=" * 72)
+    if not instructions:
+        raise SystemExit("만들 수 있는 지시서가 없습니다.")
     outputs = []
     rendered = []
     shared_seen = set()
@@ -143,11 +151,13 @@ def main(argv=None):
         for ins in instructions:
             print(f"\n[지시서] 제{ins.doc_no} | {ins.trade_name} | 수신 {ins.bank} / 참조 {ins.pbs}")
             for i, line in enumerate(ins.lines, 1):
-                print(f"   {i}. {line.fund_label} {line.qty:,}주 {line.amount:,}원 {line.detail}")
-            print(f"   합계 {ins.total_qty:,}주 / {ins.total_amount:,}원")
+                qty = f"{line.qty:,}주 " if line.qty else ""
+                print(f"   {i}. {line.fund_label} {qty}{line.amount:,}원 {line.detail}")
+            total_qty = f"{ins.total_qty:,}주 / " if ins.total_qty else ""
+            print(f"   합계 {total_qty}{ins.total_amount:,}원")
 
             trim = fit_spacers(conv, ins, args) if conv.available else default_trim(ins)
-            path = render(ins, Path(args.output), Path(args.template),
+            path = render(ins, Path(args.output), Path(args.template) if args.template else None,
                           overwrite=not args.no_overwrite,
                           subdir_by_date=not args.flat,
                           insert_seal=not args.no_seal,
