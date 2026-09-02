@@ -447,10 +447,24 @@ def load_broker_interest(root, month_start, month_end):
             spans[key] = (num(cell(row, idx, 'Debit Interest Base'))
                           + num(cell(row, idx, 'Credit Interest Base')))
 
-    total = 0.0
-    for (_acct, _from, to_dt, _desc), amount in spans.items():
-        if to_dt is None or to_dt <= month_end:      # 당월에 귀속되는 구간만
+    # 구간이 월경계를 걸치는 경우가 있다(예: 2026-07-31 ~ 08-02 3일치 -88.40).
+    # 전월분은 전월 리포트에 이미 계상돼 있으므로 일수 비례로 당월분만 취한다.
+    total, spilled = 0.0, 0.0
+    for (_acct, from_dt, to_dt, _desc), amount in spans.items():
+        if from_dt is None or to_dt is None:
             total += amount
+            continue
+        days = (to_dt - from_dt).days + 1
+        inside = sum(1 for i in range(days)
+                     if month_start <= from_dt + dt.timedelta(days=i) <= month_end)
+        if inside == days:
+            total += amount
+        else:
+            total += amount * inside / days
+            spilled += amount * (days - inside) / days
+    if spilled:
+        warn(f'PB 이자 중 당월 밖 구간 {spilled:,.2f} 는 일수 비례로 제외했습니다 '
+             '(월경계 걸친 누적구간 — 전월 리포트에 이미 계상됨).')
     return total, max(files)
 
 
