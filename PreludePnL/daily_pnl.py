@@ -63,6 +63,7 @@ from prelude_pnl import (  # 같은 폴더의 모듈 재사용
 DEFAULT_CUTOVER = dt.date(2026, 6, 1)      # 이 날짜부터 Prelude 기반으로 계산
 DEFAULT_PRINCIPAL = 10_000_000.0           # 기준가 산출용 원금 (EQSWAP.xlsx 와 동일)
 DEFAULT_EQSWAP = "EQSWAP.xlsx"
+DEFAULT_IPO_FEE_RATE = 0.01                # 청약대금 = 공모확정가 x 배정수량 x 1.01
 DEFAULT_OUTPUT = "Prelude_Daily_PnL.xlsx"
 MAX_GAP_DAYS = 5
 
@@ -217,8 +218,13 @@ def _norm_ticker(s) -> str:
     return str(s).strip().upper().split(".")[0]
 
 
-def detect_free_deliveries(activity: pd.DataFrame) -> pd.DataFrame:
-    """대금 0원 매수(무상입고) = IPO 배정 후보를 찾는다."""
+def detect_allotments(activity: pd.DataFrame) -> pd.DataFrame:
+    """
+    Prelude 상 '대금 0원 매수' 로 들어온 배정주를 찾는다.
+
+    IPO 청약 배정주는 주식만 먼저 입고되고(대금 0), 청약대금은 며칠 뒤 Wire 로
+    빠져나간다. 따라서 이 행 자체는 무상입고가 아니라 '원가 미확정 입고' 다.
+    """
     if activity.empty:
         return pd.DataFrame()
     a = activity[
@@ -230,78 +236,169 @@ def detect_free_deliveries(activity: pd.DataFrame) -> pd.DataFrame:
     ]
     if a.empty:
         return pd.DataFrame()
-    return (a.groupby(["종목명", "종목코드"], as_index=False)
-            .agg(입고일=("기준일", "min"), 수량=("수량", "sum")))
+    # 같은 종목·같은 수량이 여러 파일에 재등장하는 경우(재부킹)는 한 건으로 본다
+    out = (a.groupby(["종목명", "수량"], as_index=False)
+           .agg(배정인식일=("기준일", "min"), 배정입력일=("입력일", "min"),
+                종목코드=("종목코드", "last")))
+    return out.rename(columns={"수량": "배정수량"}).sort_values("배정입력일")
 
 
-def build_ipo_universe(ipo_master: pd.DataFrame, activity: pd.DataFrame,
-                       extra_tickers: Sequence[str], use_auto: bool
-                       ) -> Tuple[Set[str], Set[str], pd.DataFrame]:
-    """
-    IPO 종목 식별자 집합을 만든다.
-    반환: (티커 집합, 정규화 종목명 집합, 자동탐지 후보 표)
-    """
-    tickers: Set[str] = {_norm_ticker(t) for t in extra_tickers if str(t).strip()}
-    names: Set[str] = set()
-
-    if ipo_master is not None and not ipo_master.empty:
-        for _, r in ipo_master.iterrows():
-            if str(r.get("ticker", "")).strip():
-                tickers.add(_norm_ticker(r["ticker"]))
-            if str(r.get("Stock Description", "")).strip():
-                names.add(_norm_name(r["Stock Description"]))
-
-    candidates = detect_free_deliveries(activity)
-    if not candidates.empty:
-        known = tickers | names
-        candidates["등록여부"] = candidates.apply(
-            lambda r: "등록됨" if (_norm_ticker(r["종목코드"]) in tickers
-                                or _norm_name(r["종목명"]) in names
-                                or any(n and n in _norm_name(r["종목명"]) for n in names)) else "미등록",
-            axis=1)
-        if use_auto:
-            for _, r in candidates[candidates["등록여부"] == "미등록"].iterrows():
-                tickers.add(_norm_ticker(r["종목코드"]))
-                names.add(_norm_name(r["종목명"]))
-    return tickers, names, candidates
-
-
-def is_ipo_security(name, code, tickers: Set[str], names: Set[str]) -> bool:
-    if _norm_ticker(code) in tickers:
-        return True
-    n = _norm_name(name)
-    if not n:
-        return False
-    if n in names:
-        return True
-    # 'Piece Peace Studio' (시트) vs 'PIECE PEACE STUDIO CO LTD' (Prelude)
-    return any(m and (m in n or n in m) for m in names)
-
-
-def find_ipo_wires(activity: pd.DataFrame, ipo_master: pd.DataFrame,
-                   tolerance: float = 1.0) -> pd.DataFrame:
-    """IPO 청약대금 Wire 를 찾아낸다(원화 금액을 IPO 시트 Payment Amount 와 대조)."""
+def detect_subscription_wires(activity: pd.DataFrame) -> pd.DataFrame:
+    """청약대금 후보 = 원화 출금 Wire."""
     if activity.empty:
         return pd.DataFrame()
-    wires = activity[activity["소분류"].isin(IPO_WIRE_CATEGORIES) & activity["현금원장"]].copy()
-    if wires.empty:
+    w = activity[activity["소분류"].isin(IPO_WIRE_CATEGORIES)
+                 & activity["현금원장"]
+                 & (activity["정산금액_결제통화"] < 0)]
+    if w.empty:
         return pd.DataFrame()
-    pays = []
-    if ipo_master is not None and not ipo_master.empty and "Payment Amount" in ipo_master.columns:
-        for _, r in ipo_master.iterrows():
-            amt = r.get("Payment Amount")
-            if pd.notna(amt) and float(amt) != 0:
-                pays.append((float(amt), r.get("Stock Description", ""), r.get("Trade Date")))
+    return (w.groupby(["입력일", "정산금액_결제통화"], as_index=False)
+            .agg(Wire인식일=("기준일", "min"), 대금_USD=("정산금액_USD", "first"),
+                 결제통화=("결제통화", "first"))
+            .rename(columns={"입력일": "Wire입력일", "정산금액_결제통화": "대금_결제통화"})
+            .sort_values("Wire입력일"))
 
-    def match(row):
-        for amt, name, td in pays:
-            if abs(abs(row["정산금액_결제통화"]) - amt) <= tolerance:
-                return pd.Series({"IPO종목": name, "청약대금": amt, "IPO매매일": td})
-        return pd.Series({"IPO종목": None, "청약대금": None, "IPO매매일": None})
 
-    wires = pd.concat([wires.reset_index(drop=True),
-                       wires.apply(match, axis=1).reset_index(drop=True)], axis=1)
-    return wires
+def match_allotment_costs(allotments: pd.DataFrame, wires: pd.DataFrame,
+                          fee_rate: float = 0.01,
+                          window_before: int = 8, window_after: int = 30,
+                          price_tolerance: float = 1e-5) -> pd.DataFrame:
+    """
+    배정주와 청약대금 Wire 를 짝지어 원가를 확정한다.
+
+    청약대금 = 공모확정가 x 배정수량 x (1 + 수수료율)  이므로
+        내재 공모가 = |Wire| / (배정수량 x (1 + 수수료율))
+    가 '깔끔한 값'(10원 단위)으로 떨어지는 조합을 찾는다.
+    실제 데이터에서 이 값은 오차 없이 정확히 일치한다.
+    """
+    if allotments.empty:
+        return allotments
+    out = allotments.copy()
+    for c in ("Wire입력일", "Wire인식일", "공모가", "청약대금_결제통화", "청약대금_USD"):
+        out[c] = None
+    if wires is None or wires.empty:
+        out["원가확정"] = False
+        return out
+
+    used: Dict[int, Tuple[str, str]] = {}     # wire row -> (종목명, 종목코드)
+    for i in out.index:
+        qty = float(out.at[i, "배정수량"])
+        d = out.at[i, "배정입력일"]
+        best = None
+        for j in wires.index:
+            if j in used:
+                continue
+            wd = wires.at[j, "Wire입력일"]
+            if wd is None or d is None:
+                continue
+            if not (d - dt.timedelta(days=window_before) <= wd
+                    <= d + dt.timedelta(days=window_after)):
+                continue
+            price = abs(float(wires.at[j, "대금_결제통화"])) / (qty * (1.0 + fee_rate))
+            # 공모가는 10원 단위 -> 라운드 오차가 가장 작은 Wire 를 채택
+            err = abs(price - round(price / 10.0) * 10.0) / max(price, 1.0)
+            if best is None or err < best[0]:
+                best = (err, j, price)
+        if best is not None and best[0] <= price_tolerance:
+            _, j, price = best
+            used[j] = (out.at[i, "종목명"], out.at[i, "종목코드"])
+            out.at[i, "Wire입력일"] = wires.at[j, "Wire입력일"]
+            out.at[i, "Wire인식일"] = wires.at[j, "Wire인식일"]
+            out.at[i, "공모가"] = round(price / 10.0) * 10.0
+            out.at[i, "청약대금_결제통화"] = abs(float(wires.at[j, "대금_결제통화"]))
+            out.at[i, "청약대금_USD"] = abs(float(wires.at[j, "대금_USD"]))
+    out["원가확정"] = out["청약대금_USD"].notna()
+    out.attrs["matched_wire_rows"] = used
+    return out
+
+
+def apply_manual_costs(allotments: pd.DataFrame, overrides: Sequence[str]) -> pd.DataFrame:
+    """--ipo-cost "종목키워드=USD금액" 으로 원가를 수동 지정한다."""
+    if allotments.empty or not overrides:
+        return allotments
+    out = allotments.copy()
+    for spec in overrides:
+        if "=" not in spec:
+            continue
+        key, amt = spec.split("=", 1)
+        try:
+            amt = abs(float(amt.replace(",", "").strip()))
+        except ValueError:
+            continue
+        k = _norm_name(key)
+        hit = out["종목명"].apply(lambda s: k in _norm_name(s)) | \
+            out["종목코드"].apply(lambda s: k in _norm_ticker(s))
+        out.loc[hit, "청약대금_USD"] = amt
+        out.loc[hit, "원가확정"] = True
+        out.loc[hit, "Wire인식일"] = out.loc[hit, "Wire인식일"].fillna(
+            out.loc[hit, "배정인식일"])
+    return out
+
+
+def ipo_security_matcher(allotments: pd.DataFrame):
+    """배정 이력이 있는 종목인지 판별하는 함수를 만든다."""
+    names = {_norm_name(n) for n in allotments["종목명"]} if len(allotments) else set()
+    codes = {_norm_ticker(c) for c in allotments["종목코드"]} if len(allotments) else set()
+    codes.discard("")
+
+    def is_ipo(name, code) -> bool:
+        return _norm_name(name) in names or _norm_ticker(code) in codes
+    return is_ipo
+
+
+def build_ipo_synthetic(allotments: pd.DataFrame, positions: pd.DataFrame,
+                        dates: Sequence[dt.date]) -> Tuple[pd.Series, pd.DataFrame]:
+    """
+    IPO 청약 회계를 맞추기 위한 합성 평가액을 만든다.
+
+    (1) 청약미지급금 : 배정 인식일 ~ Wire 인식일 직전까지 -원가
+        (주식은 들어왔는데 대금은 아직 안 나간 구간)
+    (2) 미평가 배정주 : Prelude 가 아직 가격을 안 매긴 배정주(MV=0, 수량≠0)를 원가로 평가
+
+    이렇게 하면
+        배정일   손익 = 0                      (자산 +원가, 부채 -원가)
+        최초평가일 손익 = 시가 - 원가           (무상입고 전액 인식 X)
+        Wire일   손익 = 순수 시가변동          (부채 소멸 +원가, 현금 -원가)
+    이 되어 실제 청약 손익과 일치한다.
+    """
+    idx = pd.Index(dates, name="Report Date")
+    synth = pd.Series(0.0, index=idx)
+    rows = []
+    if allotments.empty:
+        return synth, pd.DataFrame()
+
+    for _, a in allotments.iterrows():
+        cost = a.get("청약대금_USD")
+        if cost is None or pd.isna(cost):
+            continue
+        cost = float(cost)
+        d0 = a["배정인식일"]
+        wd = a.get("Wire인식일") or d0
+        qty0 = float(a["배정수량"])
+
+        # (1) 청약미지급금
+        payable = pd.Series(0.0, index=idx)
+        payable[(idx >= d0) & (idx < wd)] = -cost
+
+        # (2) 미평가 배정주를 원가로 평가 (잔여수량 비례)
+        held = positions[(positions["종목명"] == a["종목명"])
+                         & (positions["기준일"] >= d0)]
+        atcost = pd.Series(0.0, index=idx)
+        if len(held):
+            g = held.groupby("기준일").agg(qty=("수량", "sum"), mv=("평가액_USD", "sum"))
+            for d, r in g.iterrows():
+                if d in atcost.index and r["mv"] == 0 and r["qty"] != 0 and qty0:
+                    atcost[d] = cost * (r["qty"] / qty0)
+
+        synth = synth.add(payable, fill_value=0.0).add(atcost, fill_value=0.0)
+        for d in idx:
+            if payable[d] or atcost[d]:
+                rows.append({"Report Date": d, "Security": a["종목명"],
+                             "Symbol": a["종목코드"],
+                             "Unpaid Subscription": payable[d],
+                             "Allotment at Cost": atcost[d],
+                             "Total Adjustment": payable[d] + atcost[d]})
+    return synth, pd.DataFrame(rows)
 
 
 # ---------------------------------------------------------------------------
@@ -309,25 +406,31 @@ def find_ipo_wires(activity: pd.DataFrame, ipo_master: pd.DataFrame,
 # ---------------------------------------------------------------------------
 
 def apply_ipo_buckets(positions: pd.DataFrame, activity: pd.DataFrame,
-                      tickers: Set[str], names: Set[str],
-                      ipo_wire_index: Set[int]) -> Tuple[pd.DataFrame, pd.DataFrame]:
+                      allotments: pd.DataFrame,
+                      ipo_wire_map: Dict[int, Tuple[str, str]]
+                      ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    배정 이력이 있는 종목과 청약대금 Wire 를 IPO 자산군으로 옮긴다.
+    청약대금 Wire 는 해당 배정 종목에 귀속시켜(종목명 부여) 종목별 손익이 맞게 한다.
+    """
     pos = positions.copy()
     act = activity.copy()
+    is_ipo = ipo_security_matcher(allotments)
 
     if not pos.empty:
         mask = (pos["버킷"] == "Cash Equity") & pos.apply(
-            lambda r: is_ipo_security(r["종목명"], r["종목코드"], tickers, names), axis=1)
+            lambda r: is_ipo(r["종목명"], r["종목코드"]), axis=1)
         pos.loc[mask, "버킷"] = "IPO"
 
     if not act.empty:
-        mask = act["버킷"].isin(["Cash Equity"]) & act.apply(
-            lambda r: is_ipo_security(r["종목명"], r["종목코드"], tickers, names), axis=1)
+        mask = act["버킷"].eq("Cash Equity") & act.apply(
+            lambda r: is_ipo(r["종목명"], r["종목코드"]), axis=1)
         act.loc[mask, "버킷"] = "IPO"
-        if ipo_wire_index:
-            w = act.index.isin(ipo_wire_index)
-            act.loc[w, "버킷"] = "IPO"
-            act.loc[w, "종목명"] = IPO_PAYMENT_LABEL
-            act.loc[w, "종목코드"] = ""
+        for idx, (nm, code) in (ipo_wire_map or {}).items():
+            if idx in act.index:
+                act.at[idx, "버킷"] = "IPO"
+                act.at[idx, "종목명"] = nm
+                act.at[idx, "종목코드"] = code
     return pos, act
 
 
@@ -337,7 +440,8 @@ def apply_ipo_buckets(positions: pd.DataFrame, activity: pd.DataFrame,
 
 def compute_daily(positions: pd.DataFrame, activity: pd.DataFrame,
                   external_index: Set[int], cutover: dt.date,
-                  max_gap_days: int = MAX_GAP_DAYS) -> Dict[str, pd.DataFrame]:
+                  max_gap_days: int = MAX_GAP_DAYS,
+                  synthetic_ipo: Optional[pd.Series] = None) -> Dict[str, pd.DataFrame]:
     dates = sorted(positions["기준일"].unique())
     if not dates:
         raise SystemExit("MAC001X 포지션 데이터가 없습니다.")
@@ -349,6 +453,12 @@ def compute_daily(positions: pd.DataFrame, activity: pd.DataFrame,
         if b not in mv.columns:
             mv[b] = 0.0
     mv = mv[BUCKETS + [c for c in mv.columns if c not in BUCKETS]]
+
+    raw_total_mv = mv.sum(axis=1)
+    # IPO 청약미지급금 / 미평가 배정주 원가 반영 (Prelude 장부에는 없는 항목)
+    synth = (pd.Series(0.0, index=mv.index) if synthetic_ipo is None
+             else synthetic_ipo.reindex(mv.index).fillna(0.0))
+    mv["IPO"] = mv["IPO"] + synth
 
     cash_rows = activity[activity["현금원장"]] if not activity.empty else pd.DataFrame()
     if len(cash_rows):
@@ -393,7 +503,9 @@ def compute_daily(positions: pd.DataFrame, activity: pd.DataFrame,
     for b in BUCKETS:
         daily[BUCKET_EN[b]] = pnl[b]
     daily["Daily PnL Total"] = pnl[BUCKETS].sum(axis=1)
-    daily["MS Account Market Value"] = total_mv
+    daily["MS Account Market Value"] = raw_total_mv
+    daily["IPO Subscription Adjustment"] = synth
+    daily["Total Market Value (adj.)"] = total_mv
     daily["External Cash Movement"] = ext.where(computable, 0.0)
     daily["Computed"] = computable
     daily["Note"] = note
@@ -414,6 +526,8 @@ def compute_daily(positions: pd.DataFrame, activity: pd.DataFrame,
     recon = pd.DataFrame(index=mv.index)
     recon.index.name = "Report Date"
     recon["Computed"] = computable
+    recon["MS Account Market Value"] = raw_total_mv
+    recon["IPO Subscription Adjustment"] = synth
     recon["Total MV Change"] = total_mv.diff().where(computable)
     recon["External Cash Movement"] = ext.where(computable, 0.0)
     recon["Sum of Asset Class PnL"] = pnl[BUCKETS].sum(axis=1)
@@ -428,7 +542,8 @@ def compute_daily(positions: pd.DataFrame, activity: pd.DataFrame,
 
 
 def compute_security_pnl(positions: pd.DataFrame, activity: pd.DataFrame,
-                         computable: pd.Series) -> pd.DataFrame:
+                         computable: pd.Series,
+                         synth_detail: Optional[pd.DataFrame] = None) -> pd.DataFrame:
     """자산군·종목 단위 일일손익."""
     pos = positions.copy()
     act = activity[activity["현금원장"]].copy() if not activity.empty else pd.DataFrame()
@@ -452,6 +567,17 @@ def compute_security_pnl(positions: pd.DataFrame, activity: pd.DataFrame,
               .merge(fl, on=["기준일"] + key_cols, how="left")
     for c in ("평가액", "현금흐름", "수량"):
         out[c] = pd.to_numeric(out[c], errors="coerce").fillna(0.0)
+
+    # IPO 청약 합성 조정(미지급금 / 미평가 배정주 원가)을 종목 평가액에 반영
+    if synth_detail is not None and len(synth_detail):
+        adj = (synth_detail.rename(columns={"Report Date": "기준일", "Security": "종목명",
+                                            "Total Adjustment": "_adj"})
+               .groupby(["기준일", "종목명"], as_index=False)["_adj"].sum())
+        out = out.merge(adj, on=["기준일", "종목명"], how="left")
+        out["_adj"] = out["_adj"].fillna(0.0)
+        out["평가액"] = out["평가액"] + out["_adj"]
+        out = out.drop(columns="_adj")
+
     out = out.sort_values(key_cols + ["기준일"])
     out["전일평가액"] = out.groupby(key_cols)["평가액"].shift()
     out["일일손익"] = (out["평가액"] - out["전일평가액"].fillna(out["평가액"])) + out["현금흐름"]
@@ -459,10 +585,12 @@ def compute_security_pnl(positions: pd.DataFrame, activity: pd.DataFrame,
     out.loc[out["기준일"].isin(bad), "일일손익"] = 0.0
     out["누적손익"] = out.groupby(key_cols)["일일손익"].cumsum()
     out["자산군"] = out["버킷"].map(BUCKET_EN).fillna(out["버킷"])
-    # 종목이 붙지 않는 현금원장 저널(스왑 리셋/파이낸싱 정산, 담보이체 등) 구분
-    out["구분"] = TYPE_SECURITY
-    journal = (out["평가액"] == 0) & (out["수량"] == 0) & (out["현금흐름"] != 0)
-    out.loc[journal, "구분"] = TYPE_JOURNAL
+    # 종목이 붙지 않는 현금원장 저널(스왑 리셋/파이낸싱 정산, 담보이체 등) 구분.
+    # 포지션 리포트에 한 번도 등장하지 않은 이름만 저널로 본다.
+    held_names = (set(pos.loc[pos["상품유형"].astype(str).str.upper() != "CASH", "종목명"])
+                  if not pos.empty else set())
+    out["구분"] = out["종목명"].apply(
+        lambda n: TYPE_SECURITY if n in held_names else TYPE_JOURNAL)
     out = out[(out["평가액"] != 0) | (out["현금흐름"] != 0) | (out["일일손익"] != 0)]
     cols = ["기준일", "자산군", "구분", "종목명", "종목코드", "수량",
             "전일평가액", "평가액", "현금흐름", "일일손익", "누적손익"]
@@ -647,10 +775,12 @@ def main(argv=None):
                     help="시드 누적손익을 직접 지정 (EQSWAP 파일 대신)")
     ap.add_argument("--principal", type=float, default=DEFAULT_PRINCIPAL,
                     help=f"기준가 산출 원금 (기본 {DEFAULT_PRINCIPAL:,.0f})")
-    ap.add_argument("--ipo-ticker", action="append", default=[],
-                    help="IPO 종목 티커 추가 지정 (여러 번 사용 가능)")
-    ap.add_argument("--ipo-auto", action="store_true",
-                    help="IPO 시트에 없는 무상입고 종목도 IPO 로 자동 편입")
+    ap.add_argument("--ipo-fee-rate", type=float, default=DEFAULT_IPO_FEE_RATE,
+                    help=f"청약 수수료율. 청약대금 = 공모가 x 수량 x (1+수수료율) "
+                         f"(기본 {DEFAULT_IPO_FEE_RATE:.1%})")
+    ap.add_argument("--ipo-cost", action="append", default=[], metavar="종목=USD금액",
+                    help="청약대금 Wire 가 아직 없는 배정주의 원가를 수동 지정 "
+                         "(예: --ipo-cost \"NH SPECIAL=59000\")")
     ap.add_argument("--rebuild", action="store_true",
                     help="기존 산출 파일을 무시하고 전체 재계산")
     ap.add_argument("--max-gap-days", type=int, default=MAX_GAP_DAYS,
@@ -705,41 +835,50 @@ def main(argv=None):
     else:
         print(f"      ! EQSWAP.xlsx 없음({eqswap_path}) - 시드 0 으로 진행")
 
-    print("[4/7] IPO 식별")
-    tickers, names, candidates = build_ipo_universe(
-        ipo_master, activity, args.ipo_ticker, args.ipo_auto)
-    wires = find_ipo_wires(activity, ipo_master)
-    ipo_wire_idx: Set[int] = set()
+    print("[4/7] IPO 배정·청약대금 매칭")
+    allot = detect_allotments(activity)
+    wires = detect_subscription_wires(activity)
+    allot = match_allotment_costs(allot, wires, fee_rate=args.ipo_fee_rate)
+    allot = apply_manual_costs(allot, args.ipo_cost)
+    matched_wire_rows = allot.attrs.get("matched_wire_rows", {})
+
+    ipo_wire_map: Dict[int, Tuple[str, str]] = {}
     external_idx: Set[int] = set()
-    pre_cutover_ipo_pay = []
-    if not wires.empty:
-        for _, r in wires.iterrows():
-            orig = activity.index[(activity["기준일"] == r["기준일"])
-                                  & (activity["정산금액_결제통화"] == r["정산금액_결제통화"])
-                                  & (activity["소분류"] == r["소분류"])]
-            if r["기준일"] < cutover:
-                if r["IPO종목"]:
-                    pre_cutover_ipo_pay.append((r["기준일"], r["IPO종목"], r["정산금액_USD"]))
-                continue          # 컷오버 이전 건은 시드 구간이므로 손익에 영향 없음
-            if r["IPO종목"]:
-                ipo_wire_idx.update(orig)
+    if len(wires):
+        for j in wires.index:
+            orig = activity.index[
+                (activity["입력일"] == wires.at[j, "Wire입력일"])
+                & (activity["정산금액_결제통화"] == wires.at[j, "대금_결제통화"])
+                & activity["소분류"].isin(IPO_WIRE_CATEGORIES)]
+            if j in matched_wire_rows:
+                for k in orig:
+                    ipo_wire_map[k] = matched_wire_rows[j]
             else:
                 external_idx.update(orig)
-        print(f"      IPO 청약 Wire {len(ipo_wire_idx)}건 / 외부 자금이동 {len(external_idx)}건 (컷오버 이후)")
-        for d, nm, amt in pre_cutover_ipo_pay:
-            print(f"      · 컷오버 이전 청약대금 {d} {nm} {abs(amt):,.2f} USD (참고, 손익 미반영)")
-    unreg = candidates[(candidates.get("등록여부", "") == "미등록")
-                       & (candidates["입고일"] >= cutover)] if len(candidates) else pd.DataFrame()
-    if len(unreg):
-        print(f"      ! IPO 시트 미등록 무상입고 {len(unreg)}건 "
-              f"({', '.join(unreg['종목명'].head(3))}) → 현물에 남김"
-              f"{' (--ipo-auto 로 편입 가능)' if not args.ipo_auto else ''}")
 
-    positions, activity = apply_ipo_buckets(positions, activity, tickers, names, ipo_wire_idx)
+    ok = allot[allot["원가확정"]] if len(allot) else pd.DataFrame()
+    ng = allot[~allot["원가확정"]] if len(allot) else pd.DataFrame()
+    print(f"      배정주 {len(allot)}건 중 원가 확정 {len(ok)}건 "
+          f"(청약대금 Wire 매칭, 수수료율 {args.ipo_fee_rate:.1%})")
+    for _, r in ok[ok["배정인식일"] >= cutover].iterrows() if len(ok) else []:
+        print(f"      · {r['종목명'][:30]:30s} {r['배정수량']:>8,.0f}주 "
+              f"공모가 {r['공모가']:>9,.0f} 원가 {r['청약대금_USD']:>11,.2f} USD "
+              f"(배정 {r['배정인식일']} / 납입 {r['Wire인식일']})")
+    for _, r in ng.iterrows() if len(ng) else []:
+        print(f"      ! 원가 미확정: {r['종목명'][:30]} {r['배정수량']:,.0f}주 "
+              f"(배정 {r['배정인식일']}) → 청약대금 Wire 미도착. "
+              f"--ipo-cost \"종목=USD금액\" 으로 지정 가능")
+    if external_idx:
+        print(f"      외부 자금이동(청약 무관 Wire) {len(external_idx)}건")
+
+    positions, activity = apply_ipo_buckets(positions, activity, allot, ipo_wire_map)
+    all_dates = sorted(positions["기준일"].unique())
+    synth_ipo, synth_detail = build_ipo_synthetic(allot, positions, all_dates)
 
     print("[5/7] 일일손익 계산")
     res = compute_daily(positions, activity, external_idx, cutover,
-                        max_gap_days=args.max_gap_days)
+                        max_gap_days=args.max_gap_days,
+                        synthetic_ipo=synth_ipo)
     new_daily = res["daily"][res["daily"]["Report Date"] >= cutover].copy()
     print(f"      계산 구간: {new_daily['Report Date'].min()} ~ {new_daily['Report Date'].max()} "
           f"({int(new_daily['Computed'].sum())}영업일)")
@@ -749,7 +888,7 @@ def main(argv=None):
     daily = add_cumulative(merged, seed_cum, seed_date, args.principal)
     last = daily.iloc[-1]
 
-    sec = compute_security_pnl(positions, activity, res["computable"])
+    sec = compute_security_pnl(positions, activity, res["computable"], synth_detail)
     sec = sec[sec["Report Date"] >= cutover]
     detail = res["detail"][res["detail"]["Report Date"] >= cutover]
     recon = res["recon"][res["recon"]["Report Date"] >= cutover]
@@ -781,11 +920,21 @@ def main(argv=None):
         trades = trades[["Report Date", "Asset Class"]
                         + [c for c in trades.columns if c not in ("Report Date", "Asset Class")]]
 
-    candidates = candidates.copy()
-    if len(candidates) and "등록여부" in candidates.columns:
-        candidates["등록여부"] = candidates["등록여부"].map(
-            {"등록됨": REGISTERED_YES, "미등록": REGISTERED_NO}).fillna(candidates["등록여부"])
-    candidates = to_english(candidates)
+    allot_sheet = pd.DataFrame()
+    if len(allot):
+        allot_sheet = allot.rename(columns={
+            "종목명": "Security", "종목코드": "Symbol", "배정수량": "Allotted Qty",
+            "배정인식일": "Delivery Date", "배정입력일": "Delivery Entry Date",
+            "Wire입력일": "Wire Entry Date", "Wire인식일": "Payment Date",
+            "공모가": "Offer Price (KRW)", "청약대금_결제통화": "Subscription (KRW)",
+            "청약대금_USD": "Subscription Cost (USD)", "원가확정": "Cost Matched"})
+        cols = ["Security", "Symbol", "Allotted Qty", "Delivery Date", "Payment Date",
+                "Offer Price (KRW)", "Subscription (KRW)", "Subscription Cost (USD)",
+                "Cost Matched", "Delivery Entry Date", "Wire Entry Date"]
+        allot_sheet = allot_sheet[[c for c in cols if c in allot_sheet.columns]]
+        allot_sheet = allot_sheet.sort_values("Delivery Date")
+    if len(synth_detail):
+        synth_detail = synth_detail[synth_detail["Report Date"] >= cutover]
 
     monthly = daily[daily["Report Date"] >= cutover].copy()
     monthly["Year-Month"] = pd.to_datetime(monthly["Report Date"]).dt.strftime("%Y-%m")
@@ -813,16 +962,23 @@ def main(argv=None):
                     for b in BUCKETS)),
         ("IPO securities",
          ", ".join(sorted(ipo_rows["Security"].unique())) if len(ipo_rows) else "None"),
-        ("Free deliveries not in IPO master",
-         ", ".join(unreg["종목명"]) if len(unreg) else "None"),
-        ("Subscriptions paid before cutover (FYI only)",
-         " | ".join(f"{d} {nm} {abs(a):,.2f}" for d, nm, a in pre_cutover_ipo_pay)
-         if pre_cutover_ipo_pay else "None"),
+        ("IPO allotments with cost matched",
+         f"{len(ok)} of {len(allot)}  (subscription = offer price x qty x "
+         f"{1 + args.ipo_fee_rate:.2f})"),
+        ("IPO allotments WITHOUT cost (check!)",
+         " | ".join(f"{r['종목명']} {r['배정수량']:,.0f}sh @ {r['배정인식일']}"
+                    for _, r in ng.iterrows()) if len(ng) else "None"),
         ("PnL formula",
          "Daily PnL = ΔMarket Value + attributed cash flow (Cash & Interest is the residual)"),
+        ("IPO accounting",
+         "Allotted shares are NOT free deliveries. Cost = offer price x qty x "
+         f"{1 + args.ipo_fee_rate:.2f}, paid by wire a few days after delivery. "
+         "An unpaid-subscription liability is carried from delivery until the wire "
+         "clears, and unpriced allotments are held at cost, so day-1 PnL = "
+         "market value - subscription cost."),
         ("Reconciliation",
-         "Σ asset classes = Δ total market value − external cash movement "
-         "(see 04_Reconciliation)"),
+         "Σ asset classes = Δ total market value (incl. IPO subscription adjustment) "
+         "− external cash movement (see 04_Reconciliation)"),
     ]
 
     sheets = [
@@ -832,10 +988,11 @@ def main(argv=None):
         ("04_Reconciliation", recon),
         ("05_Security_PnL", sec),
         ("06_IPO_Detail", ipo_rows),
-        ("07_IPO_Master_EQSWAP", ipo_sheet),
-        ("08_IPO_Candidates", candidates),
+        ("07_IPO_Allotment_Cost", allot_sheet),
+        ("08_IPO_Subscription_Adj", synth_detail),
         ("09_Cash_Balance", cash_bal),
         ("10_Transactions", trades),
+        ("11_IPO_Master_EQSWAP", ipo_sheet),
     ]
 
     print(f"[7/7] 엑셀 작성: {out_path}")
