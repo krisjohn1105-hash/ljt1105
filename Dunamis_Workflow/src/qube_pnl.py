@@ -88,8 +88,18 @@ def to_date(value, datemode=0):
 
 
 def business_date_of(path):
-    """리포트 상단 메타에서 Business Date를 읽는다 (폴더명은 배포일이라 신뢰할 수 없음)."""
-    book = xlrd.open_workbook(path, on_demand=True)
+    """리포트 상단 메타에서 Business Date를 읽는다 (폴더명은 배포일이라 신뢰할 수 없음).
+
+    전송이 잘려 열리지 않는 파일이 섞여 들어오는 경우가 있어(다운로드 실패 등)
+    예외를 삼키고 None 을 돌려준 뒤 경고로 남긴다. 여기서 죽으면 월 전체가 멈춘다.
+    """
+    try:
+        book = xlrd.open_workbook(path, on_demand=True)
+    except Exception as exc:
+        WARNINGS.append(f'파일을 열 수 없어 건너뜁니다 — {os.path.basename(path)} '
+                        f'({os.path.getsize(path):,} bytes, {type(exc).__name__}: '
+                        f'{str(exc)[:80]}). 다시 내려받으세요.')
+        return None
     sheet = book.sheet_by_index(0)
     found = None
     for r in range(min(sheet.nrows, 10)):
@@ -371,8 +381,12 @@ def load_swap_positions(root):
     return result
 
 
-def load_swap_settlements(root):
-    """MTD Settlement(월 누적) 중 최신 파일 1개로 결제금액을 집계.
+def load_swap_settlements(root, as_of=None):
+    """MTD Settlement(월 누적) 중 as_of 이하의 최신 파일 1개로 결제금액을 집계.
+
+    폴더에 익월분 리포트가 섞여 있을 수 있다(예: 8월 폴더의 '0901' 하위폴더에
+    BD 9/1 파일). MTD 리포트는 월이 바뀌면 초기화되므로 무턱대고 max() 를 쓰면
+    당월 결제가 통째로 사라진다. 반드시 as_of 이하에서 고른다.
 
     반환 (by_bucket, by_contract)
         by_bucket   : {결제일: {bucket: 금액}}   — 버킷 합계용
@@ -380,6 +394,8 @@ def load_swap_settlements(root):
     두 곳에서 같은 값을 쓰지 않으면 결제일에 버킷 합계와 종목별 합계가 어긋난다.
     """
     files = collect_files(root, 'swap_settle')
+    if as_of is not None:
+        files = {d: p for d, p in files.items() if d <= as_of}
     if not files:
         return {}, {}
     _, idx, rows, datemode = read_report(files[max(files)],
@@ -410,9 +426,20 @@ def build_pnl(root):
     cash_trd = load_cash_trades(root, {d: v['fx'] for d, v in cash_pos.items()})
     div_by_date, div_detail = load_physical_dividends(root)
     swap_pos = load_swap_positions(root)
-    settle, settle_contract = load_swap_settlements(root)
-
     dates = sorted(set(cash_pos) & set(swap_pos))
+
+    # 월 폴더(YYYYMM) 안에 익월 초 리포트가 섞여 들어오는 경우가 있어 대상 월로 제한한다.
+    name = Path(root).name
+    if len(name) == 6 and name.isdigit() and dates:
+        year, month = int(name[:4]), int(name[4:])
+        if 1 <= month <= 12:
+            dropped = [d for d in dates if (d.year, d.month) != (year, month)]
+            if dropped:
+                WARNINGS.append(
+                    f'{name} 폴더에 대상 월 밖의 기준일이 섞여 있어 제외했습니다: '
+                    + ', '.join(str(d) for d in dropped))
+            dates = [d for d in dates if (d.year, d.month) == (year, month)]
+    settle, settle_contract = load_swap_settlements(root, max(dates) if dates else None)
     if not dates:
         missing = [f'{key}({REPORT_PATTERNS[key]})'
                    for key, found in (('custody_pos', cash_pos), ('swap_pnv', swap_pos))

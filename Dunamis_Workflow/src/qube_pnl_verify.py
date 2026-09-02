@@ -81,8 +81,11 @@ def load_consolidated(root):
 
 
 def load_cash_movements(root, month_start, month_end):
-    """당월 자금이동(매매 이외의 현금 입출금) — {날짜: [(금액Base, 설명)]}."""
-    files = collect_files(root, 'mtd_txn')
+    """당월 자금이동(매매 이외의 현금 입출금) — {날짜: [(금액Base, 설명)]}.
+
+    MTD 거래 리포트도 월이 바뀌면 초기화되므로 month_end 이하 최신본을 쓴다.
+    """
+    files = {d: p for d, p in collect_files(root, 'mtd_txn').items() if d <= month_end}
     if not files:
         return {}
     _, idx, rows, dm = read_report(files[max(files)],
@@ -141,19 +144,24 @@ def main():
     print()
 
     # =================== A. 포지션 대조 (Consolidated Fund) =================== #
-    if month_end in consol:
-        c = consol[month_end]
-        my_lmv = sum(v['mv'] for v in cash_snaps[month_end].values() if v['mv'] > 0)
-        my_smv = sum(v['mv'] for v in cash_snaps[month_end].values() if v['mv'] < 0)
+    # 월말 Consolidated Fund 가 아직 안 왔으면, 양쪽 스냅샷이 다 있는 가장 최근일로 대조한다.
+    anchor = month_end if month_end in consol else max(
+        (d for d in consol if d <= month_end and d in cash_snaps and d in swap_snaps),
+        default=None)
+    if anchor:
+        c = consol[anchor]
+        tag = '' if anchor == month_end else f' (월말 {month_end} 리포트 없어 {anchor} 로 대조)'
+        my_lmv = sum(v['mv'] for v in cash_snaps[anchor].values() if v['mv'] > 0)
+        my_smv = sum(v['mv'] for v in cash_snaps[anchor].values() if v['mv'] < 0)
         check('A1 현물 LMV (Consolidated Fund vs 집계)', c['lmv'], my_lmv,
-              f'{month_end} Physical LMV TD Base')
+              f'{anchor} Physical LMV TD Base{tag}')
         check('A2 현물 SMV', c['smv'], my_smv, '현물 공매도 (없어야 정상)')
         # Consolidated Fund 의 Synthetic MTM 은 Equity Mark to Market 단독값이다
         # (미결제 현금·이자·배당 제외). 데이터로 확인한 대조 기준.
-        my_eq_mtm = sum(r['equity_mtm'] for r in swap_snaps[month_end].values())
+        my_eq_mtm = sum(r['equity_mtm'] for r in swap_snaps[anchor].values())
         check('A3 스왑 Equity MTM (Consolidated Syn L+S vs 집계)',
               c['syn_long'] + c['syn_short'], my_eq_mtm,
-              f'{month_end} — Consolidated 의 Syn MTM 은 Equity MTM 단독값')
+              f'{anchor} — Consolidated 의 Syn MTM 은 Equity MTM 단독값{tag}')
     else:
         results.append({'검증': 'A 포지션 대조', '기준값': None, '산출값': None,
                         '차이': None, '판정': '자료없음',
@@ -214,10 +222,36 @@ def main():
     m_swap = frame.loc[frame['Type'] == mo.TYPE_SWAP, '$ MTD P&L'].sum()
     m_swfin = frame.loc[frame['Description'] == mo.GL_SWAP_INTEREST, '$ MTD P&L'].sum()
 
-    note = f'일별엔진 시작 {daily_from} (취득원가 미반영분 {m_cost:,.2f} 조정)'
-    check('D1 현물 손익 경로 대조', d_cash + m_cost, m_cash, note, tol=5.0)
-    check('D2 스왑 손익 경로 대조', d_swap, m_swap + m_swfin,
-          '월별은 financing 을 분리하므로 합산 후 비교', tol=5.0)
+    # 월별은 전월말 스냅샷을 기준선으로 쓰고 일별엔진은 당월 첫 영업일부터 시작한다.
+    # 그 사이(전월말 → 당월 첫 영업일) 구간 손익을 더해야 같은 구간을 비교하게 된다.
+    first = dates[0]
+    bridge_cash = 0.0
+    if cash_base_date and cash_base_date < first:
+        prev_cash, prev_fx = mo.load_cash_snapshots(prev_root)
+        base_mv = sum(v['mv'] for v in prev_cash[cash_base_date].values())
+        now_mv = sum(v['mv'] for v in cash_snaps[first].values())
+        bridge_trades = sum(
+            bag['net'] for d, bag in base.load_cash_trades(root, fx_by_date).items()
+            if cash_base_date < d <= first)
+        bridge_cash = now_mv - base_mv + bridge_trades
+
+    bridge_swap = 0.0
+    if swap_base_date and swap_base_date < first:
+        prev_swap = mo.load_swap_snapshots(prev_root)
+        base_mtm = sum(r['total'] for r in prev_swap[swap_base_date].values())
+        now_mtm = sum(r['total'] for r in swap_snaps[first].values())
+        sb2, _ = base.load_swap_settlements(root, month_end)
+        bridge_settle = sum(x for d, bucket in sb2.items()
+                            if swap_base_date < d <= first for x in bucket.values())
+        bridge_swap = now_mtm - base_mtm + bridge_settle
+
+    note = (f'일별엔진 시작 {daily_from} / 월별 기준선 {cash_base_date}. '
+            f'브릿지({cash_base_date}→{first}) {bridge_cash:,.2f}, '
+            f'취득원가 {m_cost:,.2f} 조정')
+    check('D1 현물 손익 경로 대조', d_cash + m_cost + bridge_cash, m_cash, note, tol=5.0)
+    check('D2 스왑 손익 경로 대조', d_swap + bridge_swap, m_swap + m_swfin,
+          f'월별은 financing 분리 후 합산. 브릿지({swap_base_date}→{first}) '
+          f'{bridge_swap:,.2f} 반영', tol=5.0)
 
     # =================== E. 독립 재계산 (스왑 주식손익) =================== #
     sdates = sorted(swap_snaps)
@@ -248,7 +282,7 @@ def main():
         moves = load_cash_movements(root, c0 + dt.timedelta(days=1), c1)
         flow = sum(amount for day in moves.values() for amount, *_ in day)
         fx_pnl, _, _ = mo.load_fx_pnl(root, c0 + dt.timedelta(days=1), c1)
-        pb_int, _ = mo.load_broker_interest(root, c1)
+        pb_int, _ = mo.load_broker_interest(root, month_start, c1)
 
         # 자금이동은 리포트의 FX 컬럼이 월 단일환율이라 부정확하므로
         # 포지션 리포트에서 역산한 당일 환율로 다시 환산한다.
@@ -278,7 +312,7 @@ def main():
 
         trade_net = sum(bag['net'] for d, bag in
                         base.load_cash_trades(root, fx_by_date).items() if c0 < d <= c1)
-        sb, _ = base.load_swap_settlements(root)
+        sb, _ = base.load_swap_settlements(root, month_end)
         settle = sum(x for d, bucket in sb.items() if c0 < d <= c1
                      for x in bucket.values())
         cash_explained = trade_net + settle + flow + fx_pnl

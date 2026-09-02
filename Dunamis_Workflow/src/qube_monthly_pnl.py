@@ -232,10 +232,12 @@ def load_swap_snapshots(root):
 def load_swap_settlements(root, month_start, month_end):
     """{contract_id: {'equity','dividend'}} 및 financing 합계 — 당월 결제분.
 
-    MTDSynSettle 은 월 누적이므로 최신 파일 1개만 사용한다. 결제일이 당월 범위
-    밖(익월 예정분)인 행은 제외한다.
+    MTDSynSettle 은 월 누적이므로 파일 1개만 쓰되, 폴더에 익월분(월이 바뀌면
+    초기화된 파일)이 섞여 있을 수 있으므로 month_end 이하에서 최신본을 고른다.
+    결제일이 당월 범위 밖(익월 예정분)인 행은 제외한다.
     """
-    files = collect_files(root, 'swap_settle')
+    files = {d: p for d, p in collect_files(root, 'swap_settle').items()
+             if d <= month_end}
     per_contract = defaultdict(lambda: {'equity': 0.0, 'dividend': 0.0, 'financing': 0.0})
     financing_total = 0.0
     if not files:
@@ -403,25 +405,42 @@ def load_fx_pnl(root, month_start, month_end):
     return total, dict(by_ccy), max(files)
 
 
-def load_broker_interest(root, month_end):
-    """GS PB 계좌 MTD 이자 → Citco 'Int Exp / Inc Broker' 대응."""
-    files = collect_files(root, 'int_mtd')
+def load_broker_interest(root, month_start, month_end):
+    """GS PB 계좌 MTD 이자 → Citco 'Int Exp / Inc Broker' 대응.
+
+    이 리포트는 'MTD 누적'이지만 월 마지막 영업일자 파일이 하루치만 담고 초기화되는
+    경우가 있다(2026-08 기준: BD 8/28 파일 = 7/31~8/30 누적 -8,226, BD 8/31 파일 =
+    8/31 하루치 -696). 최신 파일 하나만 쓰면 8월 이자가 통째로 사라지므로,
+    당월 파일 전체에서 (계좌·기간) 구간을 모아 중복 제거 후 합산한다.
+    """
+    files = {d: p for d, p in collect_files(root, 'int_mtd').items()
+             if month_start <= d <= month_end}
     if not files:
         warn('Interest MTD Accrual 리포트가 없어 PB 계좌 이자를 반영하지 못했습니다.')
         return 0.0, None
-    usable = [d for d in files if d <= month_end]
-    if not usable:
-        return 0.0, None
-    path = files[max(usable)]
-    _, idx, rows, _ = read_report(path, ['Account Number', 'Debit Interest Base'])
-    if idx is None:
-        return 0.0, path
-    total = 0.0
-    for row in rows:
-        if not str(cell(row, idx, 'Account Number')).strip():
+
+    spans = {}
+    for bdate in sorted(files):                 # 뒤에 오는 파일이 같은 구간을 덮어쓴다
+        _, idx, rows, datemode = read_report(files[bdate],
+                                             ['Account Number', 'Debit Interest Base'])
+        if idx is None:
             continue
-        total += num(cell(row, idx, 'Debit Interest Base')) + num(cell(row, idx, 'Credit Interest Base'))
-    return total, path
+        for row in rows:
+            account = str(cell(row, idx, 'Account Number')).strip()
+            if not account:
+                continue
+            key = (acct8(account),
+                   to_date(cell(row, idx, 'From Date'), datemode),
+                   to_date(cell(row, idx, 'To Date'), datemode),
+                   str(cell(row, idx, 'Product Description')).strip())
+            spans[key] = (num(cell(row, idx, 'Debit Interest Base'))
+                          + num(cell(row, idx, 'Credit Interest Base')))
+
+    total = 0.0
+    for (_acct, _from, to_dt, _desc), amount in spans.items():
+        if to_dt is None or to_dt <= month_end:      # 당월에 귀속되는 구간만
+            total += amount
+    return total, max(files)
 
 
 # --------------------------------------------------------------------------- #
@@ -435,18 +454,24 @@ def build_monthly(root, prev_root, ric_map, cost_basis=None):
     if not dates:
         raise SystemExit(f'{root} 에서 포지션 리포트를 찾지 못했습니다.')
 
+    # 대상 연월을 폴더명으로 확정하고 그 달 안에서만 기준일을 고른다.
+    year, month = month_of(root, max(dates))
+    dates = [d for d in dates if (d.year, d.month) == (year, month)]
+    if not dates:
+        raise SystemExit(f'{root}: {year}-{month:02d} 에 해당하는 기준일이 없습니다.')
+
     # 월말 평가 시점은 현물/스왑 스냅샷이 모두 존재하는 마지막 날이어야 한다.
     # 한쪽만 먼저 도착한 날을 월말로 잡으면 반대편 포지션이 통째로 0 으로 평가돼
     # 수백만 달러짜리 허위 손익이 난다. (비어 있는 'NO DATA' 스냅샷도 제외)
-    usable_cash = {d for d, v in cash_snaps.items() if v}
-    usable_swap = {d for d, v in swap_snaps.items() if v}
+    usable_cash = {d for d, v in cash_snaps.items() if v and (d.year, d.month) == (year, month)}
+    usable_swap = {d for d, v in swap_snaps.items() if v and (d.year, d.month) == (year, month)}
     common = sorted(usable_cash & usable_swap)
     if not common:
         raise SystemExit(
             f'{root}: 현물/스왑 포지션이 같은 기준일에 모두 존재하는 날이 없습니다.\n'
             f'  현물 스냅샷 {len(usable_cash)}일, 스왑 스냅샷 {len(usable_swap)}일')
     month_end = common[-1]
-    month_start = dt.date(month_end.year, month_end.month, 1)
+    month_start = dt.date(year, month, 1)
 
     # 리포트별 최신 기준일을 모아 '앞서 온 것 / 밀려 있는 것' 을 함께 알려준다.
     # 무엇을 기다려야 하는지(AR 코드 포함)가 실제로 필요한 정보다.
@@ -455,7 +480,7 @@ def build_monthly(root, prev_root, ric_map, cost_basis=None):
                        ('현물 거래', 'custody_trade'), ('현금잔고', 'cash_bal'),
                        ('스왑 결제', 'swap_settle'), ('자산관리', 'asset_serv'),
                        ('PB 이자', 'int_mtd')):
-        found = collect_files(root, key)
+        found = [d for d in collect_files(root, key) if (d.year, d.month) == (year, month)]
         if found:
             ar = re.search(r'_(\d{6})_', base.REPORT_PATTERNS[key])
             latest[label] = (max(found), ar.group(1) if ar else '?')
@@ -638,7 +663,7 @@ def build_monthly(root, prev_root, ric_map, cost_basis=None):
     })
 
     # ---- 이자 (Qube 기준: 종목별 배분 없이 계정 단위 1줄) ----
-    broker_interest, _ = load_broker_interest(root, month_end)
+    broker_interest, _ = load_broker_interest(root, month_start, month_end)
     for label, amount in ((GL_SWAP_INTEREST, swap_financing),
                           (GL_BROKER_INTEREST, broker_interest)):
         rows.append({
@@ -864,6 +889,21 @@ def write_excel(out_path, frame, meta, expenses, root):
 
 
 # --------------------------------------------------------------------------- #
+def month_of(root, fallback):
+    """대상 연월을 폴더명(YYYYMM)에서 확정한다.
+
+    월 폴더 안에 익월 초 리포트가 섞여 들어오는 일이 잦다(예: 202608 폴더의
+    '0901' 하위폴더에 BD 9/1 파일). max(기준일) 로 월을 정하면 8월 리포트가
+    9월 하루짜리로 둔갑하므로 폴더명을 우선한다.
+    """
+    name = Path(root).name
+    if len(name) == 6 and name.isdigit():
+        year, month = int(name[:4]), int(name[4:])
+        if 1 <= month <= 12:
+            return year, month
+    return fallback.year, fallback.month
+
+
 def guess_prev_root(root):
     """202608 → 202607 형태의 형제 폴더를 추정."""
     root = Path(root)
