@@ -355,13 +355,23 @@ def load_dividends_month(root, month_start, month_end):
 # --------------------------------------------------------------------------- #
 # FX 손익 / PB 이자
 # --------------------------------------------------------------------------- #
-def load_fx_pnl(root, month_start, month_end):
+def load_fx_pnl(root, month_start, month_end, prev_root=None):
     """비-USD 현금잔고의 일별 환평가손익 합계 → Citco 'Cross Rate' 대응.
 
     FX 손익 = Σ_일 Σ_통화  전일잔고(Local) x (당일환율 - 전일환율)
     일별로 누적하므로 월 중 자금이동이 있어도 자연히 반영된다.
+
+    당월 첫 영업일의 환변동은 전월말 잔고에 붙으므로, 전월 폴더의 월말 잔고를
+    시작점으로 이어 붙인다(AR=302239 는 월 첫 영업일자가 당월 폴더에 있어도
+    그 하루 전 변동은 전월말 잔고 기준이라 여기서 빠진다).
     """
     files = collect_files(root, 'cash_bal')
+    if prev_root and Path(prev_root).is_dir():
+        prev_files = {d: p for d, p in collect_files(prev_root, 'cash_bal').items()
+                      if d < month_start}
+        if prev_files:
+            anchor = max(prev_files)
+            files[anchor] = prev_files[anchor]
     if not files:
         warn('현금잔고(Custody Cash Balances) 리포트가 없어 FX 손익을 산출하지 못했습니다.')
         return 0.0, {}, None
@@ -399,9 +409,10 @@ def load_fx_pnl(root, month_start, month_end):
                 total += amount
                 by_ccy[currency] += amount
 
-    if dates and dates[0] > month_start:
-        warn(f'현금잔고 리포트가 {dates[0]} 부터만 있어 {month_start}~{dates[0]} 구간의 '
-             'FX 손익이 누락됐습니다.')
+    # 시작점이 전월말이면 첫 영업일 환변동까지 잡힌 것이므로 경고 불필요
+    if dates and dates[0] >= month_start:
+        warn(f'현금잔고 시작점이 {dates[0]} 입니다 — 전월말 잔고가 없어 '
+             f'{dates[0]} 하루의 환변동이 FX 손익에서 빠졌습니다.')
     return total, dict(by_ccy), max(files)
 
 
@@ -506,13 +517,24 @@ def build_monthly(root, prev_root, ric_map, cost_basis=None):
     # ---- 월초 기준선 (전월말 스냅샷) ----
     cash_base, cash_base_date = {}, None
     if prev_root and Path(prev_root).is_dir():
+        # 전월 폴더를 읽으면 익월(=당월) 폴더까지 함께 훑기 때문에 당월 날짜가 섞여 들어온다.
+        # 기준선은 반드시 당월 시작 이전의 마지막 스냅샷이어야 한다.
+        def before_month(snaps):
+            usable = [d for d in snaps if d < month_start and snaps[d]]
+            return max(usable) if usable else None
+
         prev_cash, _ = load_cash_snapshots(prev_root)
-        if prev_cash:
-            cash_base_date = max(prev_cash)
+        cash_base_date = before_month(prev_cash)
+        if cash_base_date:
             cash_base = prev_cash[cash_base_date]
+        else:
+            cash_base_date, cash_base = dates[0], cash_snaps.get(dates[0], {})
+            warn(f'전월 폴더({Path(prev_root).name})에 전월말 현물 포지션이 없어 '
+                 f'기준선을 당월 첫 영업일({dates[0]})로 사용했습니다 → '
+                 f'전월말~{dates[0]} 구간의 현물 손익이 MTD 에서 누락됩니다.')
         prev_swap = load_swap_snapshots(prev_root)
-        if prev_swap:
-            swap_base_date = max(prev_swap)
+        swap_base_date = before_month(prev_swap)
+        if swap_base_date:
             swap_base = prev_swap[swap_base_date]
         else:
             swap_base_date, swap_base = dates[0], swap_snaps.get(dates[0], {})
@@ -648,7 +670,7 @@ def build_monthly(root, prev_root, ric_map, cost_basis=None):
         })
 
     # ---- FX (Cross Rate) ----
-    fx_pnl, fx_by_ccy, _ = load_fx_pnl(root, month_start, month_end)
+    fx_pnl, fx_by_ccy, _ = load_fx_pnl(root, month_start, month_end, prev_root)
     rows.append({
         'Type': TYPE_FX,
         'Description': 'KRW [USD] FX CROSS',

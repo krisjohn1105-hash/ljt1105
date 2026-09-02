@@ -139,8 +139,31 @@ def read_report(path, required_cols):
     return bdate, None, [], book.datemode      # 'NO DATA' 리포트
 
 
+def next_month_root(root):
+    """202608 → 202609 형태의 다음 달 형제 폴더 (없으면 None).
+
+    GS 는 배포일 기준으로 폴더를 나누는데 Consolidated Fund·Interest MTD 처럼
+    직전 영업일자를 다음날 생성하는 리포트가 있어, 월 마지막 영업일자 파일이
+    항상 익월 첫 폴더에 들어간다. 따라서 익월 폴더까지 훑어야 월말이 채워진다.
+    """
+    path = Path(root)
+    name = path.name
+    if not (len(name) == 6 and name.isdigit()):
+        return None
+    year, month = int(name[:4]), int(name[4:])
+    if not 1 <= month <= 12:
+        return None
+    year, month = (year + 1, 1) if month == 12 else (year, month + 1)
+    candidate = path.parent / f'{year}{month:02d}'
+    return candidate if candidate.is_dir() else None
+
+
 def collect_files(root, key):
-    """리포트 종류별 {기준일: 파일경로}. 같은 기준일이면 접미사 없는 원본을 우선한다."""
+    """리포트 종류별 {기준일: 파일경로}. 같은 기준일이면 접미사 없는 원본을 우선한다.
+
+    root 는 폴더 하나 또는 여러 개(iterable). 월 폴더 형태면 익월 폴더도 함께 훑는다.
+    기준일은 파일 내부 Business Date 를 쓰므로 대상 월 밖의 파일이 섞여도 무해하다.
+    """
     def priority(path):
         name = os.path.basename(path)
         if '_APE_' in name:
@@ -149,13 +172,22 @@ def collect_files(root, key):
             return 1
         return 0
 
+    if isinstance(root, (str, Path)):
+        roots = [root]
+        nxt = next_month_root(root)
+        if nxt is not None:
+            roots.append(nxt)
+    else:
+        roots = list(root)
+
     found = {}
-    for path in sorted(glob.glob(os.path.join(str(root), '*', REPORT_PATTERNS[key]))):
-        bdate = business_date_of(path)
-        if bdate is None:
-            continue
-        if bdate not in found or priority(path) < priority(found[bdate]):
-            found[bdate] = path
+    for one in roots:
+        for path in sorted(glob.glob(os.path.join(str(one), '*', REPORT_PATTERNS[key]))):
+            bdate = business_date_of(path)
+            if bdate is None:
+                continue
+            if bdate not in found or priority(path) < priority(found[bdate]):
+                found[bdate] = path
     return found
 
 
