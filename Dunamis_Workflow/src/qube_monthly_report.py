@@ -34,6 +34,7 @@ report_inputs.json 으로 받는다. --write-inputs 로 템플릿을 만들 수 
 import argparse
 import datetime as dt
 import json
+import re
 import shutil
 import sys
 from collections import defaultdict
@@ -98,9 +99,14 @@ def load_trading_costs(root, month_start, month_end, fx_by_date):
             if str(row[idx['Product Type']]).strip().upper() != 'EQ':
                 continue
             fx = (num(row[fx_col]) if fx_col is not None else 1.0) or 1.0
-            commission += num(row[idx['Commission']]) * fx
-            tax += (num(row[idx['Tax']]) + num(row[idx['Other Fees']])
-                    + num(row[idx['Fees']])) * fx
+            # Commission 은 부호가 붙어 있으나 Tax/Fees/Other Fees 는 양수 표기라
+            # 컬럼을 그대로 더하면 부호가 뒤집힌다. 항등식으로 분해한다.
+            #   Trade Net Amount = Principal Amount + Commission - (세금·기타비용)
+            net_amt = num(row[idx['Trade Net Amount']])
+            principal = num(row[idx['Principal Amount']])
+            comm = num(row[idx['Commission']])
+            commission += comm * fx
+            tax += (net_amt - principal - comm) * fx
 
     # 스왑: MTD 누적 리포트이므로 당월 범위 내 최신본 1개만 사용
     files = {d: p for d, p in collect_files(root, 'syn_mtd_act').items()
@@ -207,14 +213,17 @@ def load_citco_prior(path):
         'realized': float(inst['P&S'].sum()),
         'unrealized': float(inst['OTE Change'].sum()),
         'dividend': float(inst['Dividends'].sum()),
-        'commission': 0.0,      # Citco 는 수수료를 instrument P&L 에 포함
-        'tax': 0.0,
+        # Citco 는 수수료·제비용을 instrument P&L 안에 넣고 별도 컬럼으로도 보여준다.
+        # P&S/OTE 합계와 P&L 의 차이가 정확히 이 금액이므로 Part B 로 옮겨 표시한다.
+        'commission': float(inst['Actual Comm'].sum()),
+        'tax': float(inst['Total Misc Exp'].sum() + inst['SEC Fees'].sum()),
         'swap_interest': gl_sum('Int Exp Equity Swaps', 'Int Inc Swaps'),
         'broker_interest': gl_sum('Int Exp Broker', 'Int Inc Broker'),
         'other': cash_items,
         'grand_total': grand,
     }
     computed = sum(prior[k] for k in ('realized', 'unrealized', 'dividend',
+                                      'commission', 'tax',
                                       'swap_interest', 'broker_interest', 'other'))
     if grand and abs(computed - grand) > 1.0:
         warn(f'Citco 전월 분해 합계 {computed:,.2f} 가 대사파일 합계 행 {grand:,.2f} 와 '
@@ -257,11 +266,10 @@ def build_current(root, prev_root, cost_basis):
 
     # Part A 는 gross(수수료·거래세 제외 전) 로 표시한다 → 비용을 되돌려 더한다.
     # FX 손익과 IPO 취득원가는 실현손익에 포함시킨다(현금 확정분).
-    net_instrument = (cash_real + cash_unreal + swap_real + swap_unreal
-                      + swap_div + div_total + fx_pnl)
     gross_adjust = -(costs['commission'] + costs['tax'])
     current = {
-        'realized': cash_real + swap_real + fx_pnl + gross_adjust,
+        # 무상입고(IPO) 취득원가는 매도로 확정된 원가이므로 실현손익에 포함
+        'realized': cash_real + swap_real + fx_pnl + cost_adj + gross_adjust,
         'unrealized': cash_unreal + swap_unreal,
         'dividend': swap_div + div_total,
         'commission': costs['commission'],
@@ -269,7 +277,8 @@ def build_current(root, prev_root, cost_basis):
         'swap_interest': swap_interest,
         'broker_interest': broker_interest,
         'other': 0.0,
-        'net_check': net_instrument + swap_interest + broker_interest,
+        # 자기참조 검증이 되지 않도록 월별 리포트의 실제 Sub-total 과 대조한다
+        'net_check': float(frame['$ MTD P&L'].sum()),
         'cost_adj': cost_adj,
     }
     return current, frame, meta
@@ -278,76 +287,178 @@ def build_current(root, prev_root, cost_basis):
 # --------------------------------------------------------------------------- #
 # 템플릿 채우기
 # --------------------------------------------------------------------------- #
+def put(ws, coord, value):
+    """병합셀에 안전하게 쓴다 — 병합범위는 좌상단 셀만 쓸 수 있다."""
+    for rng in ws.merged_cells.ranges:
+        if coord in rng:
+            ws.cell(row=rng.min_row, column=rng.min_col).value = value
+            return
+    ws[coord] = value
+
+
+def label_rows(ws, col='B', upto=None):
+    """{정규화된 라벨: 행번호} — 셀 주소를 하드코딩하지 않기 위해 라벨로 찾는다.
+
+    템플릿 개정판마다 행 위치가 바뀌므로(v7 은 R4 Interest Income 이 있고
+    2026-07 제출본은 없다) 반드시 라벨 기준으로 써야 한다.
+    """
+    from openpyxl.utils import column_index_from_string
+    ci = column_index_from_string(col)
+    found = {}
+    for r in range(1, (upto or ws.max_row) + 1):
+        value = ws.cell(row=r, column=ci).value
+        if value is None:
+            continue
+        key = re.sub(r'\s+', ' ', str(value)).strip().lower()
+        if key:
+            found.setdefault(key, r)
+    return found
+
+
+def find_row(rows, *needles):
+    """라벨 부분일치로 행을 찾는다 (앞에 있는 needle 우선)."""
+    for needle in needles:
+        target = needle.lower()
+        for key, row in rows.items():
+            if key.startswith(target):
+                return row
+        for key, row in rows.items():
+            if target in key:
+                return row
+    return None
+
+
+# 02_MonthlyPL 행 라벨 → (당월값 키, 새 라벨)
+REVENUE_MAP = [
+    ('realized p&l', 'realized', None),
+    ('unrealized p&l', 'unrealized', None),
+    ('dividend income', 'dividend', None),
+    ('interest income', None, None),          # 이자는 Part B 에 음수로 계상
+]
+EXPENSE_MAP = [
+    ('brokerage commissions', 'commission', None),
+    ('stamp duty', 'tax', None),
+    ('interest —', 'swap_interest', 'Interest - Equity Swaps (Int Exp / Inc Equity Swaps)'),
+    ('interest', 'swap_interest', 'Interest - Equity Swaps (Int Exp / Inc Equity Swaps)'),
+    ('financing', 'broker_interest', 'Interest - Broker (Int Exp / Inc Broker)'),
+    ('research charge', None, None),
+    ('other', 'other', 'Other'),
+    ('short sale', None, None),
+    ('clearing and settlement', None, None),
+    ('custodial fees', None, None),
+]
+
+
+def fill_monthly_pl(ws, month_end, current, prior):
+    rows = label_rows(ws)
+    month_start = dt.date(month_end.year, month_end.month, 1)
+    put(ws, 'C9', month_start)
+    put(ws, 'F9', month_end)
+    put(ws, 'C10', 'USD')
+
+    used = set()
+    for needle, key, relabel in REVENUE_MAP + EXPENSE_MAP:
+        r = find_row(rows, needle)
+        if r is None or r in used:
+            continue
+        used.add(r)
+        if relabel:
+            put(ws, f'B{r}', relabel)
+        put(ws, f'C{r}', round(current.get(key, 0.0), 2) if key else 0)
+        put(ws, f'D{r}', round(prior.get(key, 0.0), 2) if (key and prior) else 0)
+
+    # 관리보수 0%, 그리고 (D) 행의 전월 열 수식 부호 통일
+    fee = find_row(rows, '(c) management fee')
+    if fee:
+        put(ws, f'C{fee}', 0)
+        put(ws, f'D{fee}', 0)
+    net = find_row(rows, '(d) monthly net p&l')
+    rev = find_row(rows, '(a) total revenue')
+    exp = find_row(rows, '(b) total expenses')
+    if net and rev and exp and fee:
+        # 비용을 음수로 넣으므로 A+B+C 로 합산해야 한다(템플릿 원본은 A-B-C).
+        put(ws, f'C{net}', f'=C{rev}+C{exp}+C{fee}')
+        put(ws, f'D{net}', f'=D{rev}+D{exp}+D{fee}')
+    if prior:
+        # Part A / Part B 두 표의 헤더 모두 표시 (전월은 Citco 기준임을 명시)
+        for r in range(1, ws.max_row + 1):
+            if str(ws.cell(row=r, column=4).value or '').strip().startswith('Prior Month'):
+                put(ws, f'D{r}', 'Prior Month (USD) - Citco')
+            if str(ws.cell(row=r, column=2).value or '').strip() == 'Item':
+                put(ws, f'D{r}', 'Prior Month (USD) - Citco')
+    r1 = find_row(rows, 'realized p&l')
+    r2 = find_row(rows, 'unrealized p&l')
+    if r1:
+        put(ws, f'E{r1}', '스왑 미결제/정산 + 현물 평균원가법 실현 + FX + IPO 취득원가 '
+                          '(수수료·거래세는 Part B 로 분리한 gross 표시)')
+    if r2:
+        put(ws, f'E{r2}', '스왑 Equity MTM 증감 + 현물 미실현')
+    return {'A': rev, 'B': exp, 'C': fee, 'D': net}
+
+
 def fill_workbook(template, out_path, month_end, current, prior, inputs, cum_pnl):
     import openpyxl
 
     shutil.copyfile(template, out_path)
     wb = openpyxl.load_workbook(out_path)
 
-    pl = wb['02_MonthlyPL'] if '02_MonthlyPL' in wb.sheetnames else None
-    if pl is None:
+    pl_name = next((n for n in wb.sheetnames if 'MonthlyPL' in n), None)
+    if pl_name is None:
         raise SystemExit('템플릿에 02_MonthlyPL 시트가 없습니다.')
+    fill_monthly_pl(wb[pl_name], month_end, current, prior)
 
-    month_start = dt.date(month_end.year, month_end.month, 1)
-    pl['C9'], pl['F9'] = month_start, month_end
-    pl['C10'] = 'USD'
+    cap_name = next((n for n in wb.sheetnames if 'Capacity' in n), None)
+    if cap_name:
+        cap = wb[cap_name]
+        rows = label_rows(cap, col='A')
+        put(cap, 'C9', month_end)
+        notional = find_row(rows, 'current notional value')
+        if notional:
+            # 템플릿 수식은 '50M + 당월 손익' 이라 2개월차부터 틀린다 → 누적으로 직접 기입
+            put(cap, f'C{notional}', round(50_000_000 + cum_pnl, 2))
+            put(cap, f'D{notional}',
+                f'Section 5.1 - initial $50M + 설정 후 누적손익 {cum_pnl:,.2f}')
+        unused = find_row(rows, 'unused reserved capacity')
+        if unused:
+            put(cap, f'C{unused}', inputs['unused_reserved_capacity'])
+        brows = label_rows(cap)
+        for needle, value in (
+                ('total programme capacity', inputs['total_programme_capacity']),
+                ('total dunamis aum', inputs['dunamis_strategy_aum']),
+                ('unused reserved capacity', inputs['unused_reserved_capacity']),
+                ('potential allocations', inputs['third_party_allocations'])):
+            r = find_row(brows, needle)
+            if r:
+                put(cap, f'C{r}', value)
 
-    rows = (('C14', 'D14', 'realized'), ('C15', 'D15', 'unrealized'),
-            ('C16', 'D16', 'dividend'), ('C21', 'D21', 'commission'),
-            ('C22', 'D22', 'tax'), ('C23', 'D23', 'swap_interest'),
-            ('C24', 'D24', 'broker_interest'))
-    for cur_cell, prior_cell, key in rows:
-        pl[cur_cell] = round(current.get(key, 0.0), 2)
-        pl[prior_cell] = round(prior.get(key, 0.0), 2) if prior else 0
-    pl['B23'] = 'Interest — Equity Swaps (Int Exp / Inc Equity Swaps)'
-    pl['B24'] = 'Interest — Broker (Int Exp / Inc Broker)'
-    pl['C26'] = 0                                        # E5 Research Charge
-    pl['D26'] = 0
-    pl['B27'] = 'Other'
-    pl['C27'] = 0                                        # E6 Other — 데이터비용 제외
-    pl['D27'] = round(prior.get('other', 0.0), 2) if prior else 0
-    pl['C29'] = pl['D29'] = 0                            # (C) Management Fee 0%
-    # 템플릿 D32 가 '=D17-D28-D29' 라 비용을 음수로 넣으면 부호가 뒤집힌다 → 합산으로 통일
-    pl['D32'] = '=D17+D28+D29'
-    pl['E14'] = ('스왑 미결제/정산 + 현물 평균원가법 실현 + FX, '
-                 '수수료·거래세는 Part B 로 분리(gross 표시)')
-    pl['E15'] = '스왑 Equity MTM 증감 + 현물 미실현'
-    if prior:
-        pl['E13'] = 'Current Month (USD)'
-        pl['D13'] = 'Prior Month (USD) — Citco'
-        pl['D20'] = 'Prior Month (USD) — Citco'
-
-    if '03_MonthlyCapacity' in wb.sheetnames:
-        cap = wb['03_MonthlyCapacity']
-        cap['C9'] = month_end
-        # 템플릿 수식은 '50M + 당월 손익' 이라 2개월차부터 틀린다 → 누적손익으로 직접 기입
-        cap['C12'] = round(50_000_000 + cum_pnl, 2)
-        cap['D12'] = f'Section 5.1 — initial $50M + 설정 후 누적손익 {cum_pnl:,.2f}'
-        cap['C13'] = inputs['unused_reserved_capacity']
-        cap['C17'] = inputs['total_programme_capacity']
-        cap['C18'] = inputs['dunamis_strategy_aum']
-        cap['C19'] = inputs['unused_reserved_capacity']
-        cap['C20'] = inputs['third_party_allocations']
-
-    aum_sheet = next((n for n in wb.sheetnames if n.endswith('FirmAUM')), None)
-    if aum_sheet:
-        aum = wb[aum_sheet]
-        aum['C8'] = month_end
-        funds = list(inputs['firm_aum_funds'])
-        for i in range(10):                              # 15행부터 10줄
-            r = 15 + i
-            if i < len(funds):
-                item = funds[i]
-                name = item['name']
-                value = (round(50_000_000 + cum_pnl, 2)
-                         if str(item.get('aum')).upper() == 'QSMA' else item['aum'])
-                aum[f'B{r}'] = name
-                aum[f'C{r}'] = value
-                aum[f'F{r}'] = item.get('note', '')
-            else:
-                aum[f'B{r}'] = None
-                aum[f'C{r}'] = None
-                aum[f'F{r}'] = None
+    aum_name = next((n for n in wb.sheetnames if n.endswith('FirmAUM')), None)
+    if aum_name:
+        aum = wb[aum_name]
+        rows = label_rows(aum, col='A')
+        head = find_row(rows, 'month-end date')
+        if head:
+            put(aum, f'C{head}', month_end)
+        # 브레이크다운 표는 'No.' 헤더 다음 줄부터 번호가 1..10 으로 붙어 있다
+        first = None
+        for r in range(1, aum.max_row + 1):
+            if str(aum.cell(row=r, column=1).value).strip() == '1':
+                first = r
+                break
+        if first:
+            funds = list(inputs['firm_aum_funds'])
+            for i in range(10):
+                r = first + i
+                if i < len(funds):
+                    item = funds[i]
+                    value = (round(50_000_000 + cum_pnl, 2)
+                             if str(item.get('aum')).upper() == 'QSMA' else item['aum'])
+                    put(aum, f'B{r}', item['name'])
+                    put(aum, f'C{r}', value)
+                    put(aum, f'F{r}', item.get('note', ''))
+                else:
+                    put(aum, f'B{r}', None)
+                    put(aum, f'C{r}', None)
+                    put(aum, f'F{r}', None)
 
     wb.save(out_path)
     return out_path
@@ -422,7 +533,8 @@ def main():
     parser.add_argument('--cost-basis', default=None)
     parser.add_argument('--template', required=False,
                         default=r"Z:\01.공용\Ops\33. Qube-SMA (QRT)\06. Monthly Report"
-                                r"\QSMA_Qube_Reporting_Templates_v7.xlsx")
+                                r"\202607_report\QSMA_Qube_Reporting_2026.07 v2.xlsx",
+                        help='기본값은 2026-07 제출본(Qube 가 받은 레이아웃)')
     parser.add_argument('--citco', default=None,
                         help='전월 Citco 대사파일 (Prior Month 열에 사용)')
     parser.add_argument('--prior-cum', type=float, default=None,
