@@ -140,6 +140,20 @@ LEGACY_NOTE_MAP = {
 }
 
 
+# 시트를 최신 날짜가 맨 위로 오도록 정렬할 때 기준으로 삼는 컬럼(먼저 걸리는 것 사용)
+DATE_SORT_COLUMNS = ("Report Date", "Year-Month", "Delivery Date")
+
+
+def sort_newest_first(df: pd.DataFrame) -> pd.DataFrame:
+    """최신 날짜가 맨 위로 오도록 정렬한다(같은 날짜 안의 순서는 유지)."""
+    if df is None or df.empty:
+        return df
+    for c in DATE_SORT_COLUMNS:
+        if c in df.columns:
+            return df.sort_values(c, ascending=False, kind="mergesort").reset_index(drop=True)
+    return df
+
+
 def to_english(df: pd.DataFrame) -> pd.DataFrame:
     """출력 직전에 한글 컬럼명을 영문으로 바꾼다."""
     if df is None or df.empty:
@@ -699,13 +713,16 @@ def add_cumulative(daily: pd.DataFrame, seed_cum: float, seed_date: Optional[dt.
                              * 100).astype(float)
     if seed_date is not None:
         d.loc[d["Report Date"] <= seed_date, "Daily Return (%)"] = float("nan")
-    order = (["Report Date", "Prior Report Date", "Days Elapsed"]
+    # 기준일 → 누적손익 → 일일손익 순으로 맨 앞에 배치(열자마자 바로 읽히도록)
+    order = (["Report Date", "Cumulative PnL", "Daily PnL Total",
+              "NAV per Unit (USD)", "AUM (Principal + Cum PnL)", "Daily Return (%)"]
              + [BUCKET_EN[b] for b in BUCKETS]
-             + ["Daily PnL Total", "Cumulative PnL", "NAV per Unit (USD)",
-                "AUM (Principal + Cum PnL)", "Daily Return (%)"]
              + [f"{BUCKET_EN[b]} Cum." for b in BUCKETS]
-             + ["MS Account Market Value", "External Cash Movement", "Computed", "Note"])
-    return d[[c for c in order if c in d.columns]]
+             + ["MS Account Market Value", "IPO Subscription Adjustment",
+                "Total Market Value (adj.)", "External Cash Movement",
+                "Prior Report Date", "Days Elapsed", "Computed", "Note"])
+    return d[[c for c in order if c in d.columns] +
+             [c for c in d.columns if c not in order]]
 
 
 # ---------------------------------------------------------------------------
@@ -738,8 +755,9 @@ def write_workbook(path: str, sheets: List[Tuple[str, pd.DataFrame]],
             sn = name[:31]
             if df is None or len(df) == 0:
                 w = wb.add_worksheet(sn); xw.sheets[sn] = w
-                w.write(0, 0, "해당 데이터 없음")
+                w.write(0, 0, "No data")
                 continue
+            df = sort_newest_first(df)      # 최신 날짜가 맨 위
             df.to_excel(xw, sheet_name=sn, index=False)
             w = xw.sheets[sn]
             for i, c in enumerate(df.columns):
@@ -762,7 +780,10 @@ def write_workbook(path: str, sheets: List[Tuple[str, pd.DataFrame]],
                     w.set_column(i, i, width, money)
                 else:
                     w.set_column(i, i, width)
-            w.freeze_panes(1, 1)
+            # 기준일 열까지는 고정해 두어 오른쪽으로 스크롤해도 날짜가 보이게 한다
+            cols = list(df.columns)
+            frozen = (cols.index("Report Date") + 1) if "Report Date" in cols else 1
+            w.freeze_panes(1, min(frozen, 4))
             w.autofilter(0, 0, len(df), len(df.columns) - 1)
 
             if sn == DAILY_SHEET and len(df) > 2:
@@ -775,7 +796,9 @@ def write_workbook(path: str, sheets: List[Tuple[str, pd.DataFrame]],
                                    "values": [sn, 1, cc, len(df), cc],
                                    "line": {"color": "#1F3864", "width": 2.0}})
                     ch.set_title({"name": "Cumulative PnL (EQSWAP seed + Prelude calculation)"})
-                    ch.set_y_axis({"num_format": "#,##0"})
+                    # 시트는 최신순이지만 차트는 시간 순(과거→최근)으로 그린다
+                    ch.set_x_axis({"reverse": True})
+                    ch.set_y_axis({"num_format": "#,##0", "crossing": "max"})
                     ch.set_size({"width": 900, "height": 380})
                     ch.set_legend({"position": "bottom"})
                     ws.insert_chart(f"A{len(meta) + 5}", ch)
@@ -970,7 +993,14 @@ def main(argv=None):
                                                           + ["Daily PnL Total"]].sum())
     mlast = monthly.groupby("Year-Month", as_index=False).last()[
         ["Year-Month", "Cumulative PnL", "NAV per Unit (USD)", "MS Account Market Value"]]
-    monthly = magg.merge(mlast, on="Year-Month", how="left")
+    monthly = (magg.merge(mlast, on="Year-Month", how="left")
+               .rename(columns={"Daily PnL Total": "Monthly PnL Total"}))
+    # 01_Daily_PnL 과 같은 배치: 기준(연월) → 누적손익 → 손익합계
+    m_order = (["Year-Month", "Cumulative PnL", "Monthly PnL Total",
+                "NAV per Unit (USD)", "MS Account Market Value"]
+               + [BUCKET_EN[b] for b in BUCKETS])
+    monthly = monthly[[c for c in m_order if c in monthly.columns]
+                      + [c for c in monthly.columns if c not in m_order]]
 
     meta = [
         ("Generated at", dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
