@@ -51,9 +51,9 @@ from typing import Dict, List, Optional, Sequence, Set, Tuple
 import pandas as pd
 
 from prelude_pnl import (  # 같은 폴더의 모듈 재사용
-    ASSET_CLASS_TO_BUCKET, CASH_LEDGER_POSITION_TYPES,
+    ASSET_CLASS_TO_BUCKET, CASH_LEDGER_POSITION_TYPES, LAYOUTS,
     build_activity, build_cash_balance, build_positions,
-    index_by_code, load_code, long_path, scan_files, to_num,
+    index_by_code, load_code, long_path, organize_files, scan_files, to_num,
 )
 
 # ---------------------------------------------------------------------------
@@ -64,6 +64,12 @@ DEFAULT_CUTOVER = dt.date(2026, 6, 1)      # 이 날짜부터 Prelude 기반으�
 DEFAULT_PRINCIPAL = 10_000_000.0           # 기준가 산출용 원금 (EQSWAP.xlsx 와 동일)
 DEFAULT_EQSWAP = "EQSWAP.xlsx"
 DEFAULT_IPO_FEE_RATE = 0.01                # 청약대금 = 공모확정가 x 배정수량 x 1.01
+
+# 손익 산출에 반드시 필요한 리포트. 하루치라도 빠지면 그 날은 계산하지 않는다.
+#   MAC001X   : 평가액(Δ평가액)
+#   MAC002TDX : 현금흐름(매매/정산)
+# 둘 중 하나만 도착한 상태로 계산하면 그날 평가변동 전액이 손익으로 잘못 잡힌다.
+REQUIRED_CODES = ("MAC001X", "MAC002TDX")
 DEFAULT_OUTPUT = "Prelude_Daily_PnL.xlsx"
 MAX_GAP_DAYS = 5
 
@@ -122,6 +128,7 @@ OUTPUT_COLUMN_MAP = {
 
 # 셀 값 번역
 NOTE_SEED = "Handover baseline from EQSWAP.xlsx (seed)"
+NOTE_AFTER_INCOMPLETE = "Excluded - preceding report date was incomplete"
 NOTE_PRE_CUTOVER = "Before cutover (EQSWAP seed period)"
 NOTE_GAP = "Excluded - gap from prior report date too large"
 TYPE_SECURITY = "Security"
@@ -220,6 +227,52 @@ def _f(v) -> float:
         return float(v)
     except (TypeError, ValueError):
         return 0.0
+
+
+# ---------------------------------------------------------------------------
+# 리포트 도착 현황 점검
+# ---------------------------------------------------------------------------
+
+def report_availability(files, required: Sequence[str] = REQUIRED_CODES) -> pd.DataFrame:
+    """
+    기준일별로 필수 리포트가 다 도착했는지 표를 만든다.
+
+    Prelude 리포트는 아침에 나눠서 들어오기 때문에, 평가(MAC001X)만 오고
+    거래(MAC002TDX)가 아직 안 온 상태로 계산하면 그날 평가변동 전액이
+    손익으로 잡혀 버린다. 그런 날은 아예 계산에서 뺀다.
+    """
+    have: Dict[dt.date, Set[str]] = {}
+    for f in files:
+        if f.date and f.code:
+            have.setdefault(f.date, set()).add(f.code)
+    rows = []
+    for d in sorted(have):
+        missing = [c for c in required if c not in have[d]]
+        rows.append({"기준일": d, "리포트종류수": len(have[d]),
+                     "미도착": ", ".join(missing), "완비": not missing})
+    return pd.DataFrame(rows)
+
+
+def truncate_to_complete(positions: pd.DataFrame, activity: pd.DataFrame,
+                         avail: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, Set[dt.date]]:
+    """
+    필수 리포트가 덜 온 기준일을 제거하고, 그 다음 영업일은 산출 대상에서 뺀다.
+    (제외된 날의 거래가 유실되므로 그 다음날 손익도 신뢰할 수 없다)
+    """
+    if avail.empty:
+        return positions, activity, set()
+    bad = set(avail.loc[~avail["완비"], "기준일"])
+    if not bad:
+        return positions, activity, set()
+    keep = [d for d in sorted(avail["기준일"]) if d not in bad]
+    after = set()
+    for i, d in enumerate(keep):
+        prev_all = [x for x in sorted(avail["기준일"]) if x < d]
+        if prev_all and prev_all[-1] in bad:
+            after.add(d)
+    positions = positions[~positions["기준일"].isin(bad)] if not positions.empty else positions
+    activity = activity[~activity["기준일"].isin(bad)] if not activity.empty else activity
+    return positions, activity, after
 
 
 # ---------------------------------------------------------------------------
@@ -457,7 +510,8 @@ def apply_ipo_buckets(positions: pd.DataFrame, activity: pd.DataFrame,
 def compute_daily(positions: pd.DataFrame, activity: pd.DataFrame,
                   external_index: Set[int], cutover: dt.date,
                   max_gap_days: int = MAX_GAP_DAYS,
-                  synthetic_ipo: Optional[pd.Series] = None) -> Dict[str, pd.DataFrame]:
+                  synthetic_ipo: Optional[pd.Series] = None,
+                  exclude_dates: Optional[Set[dt.date]] = None) -> Dict[str, pd.DataFrame]:
     dates = sorted(positions["기준일"].unique())
     if not dates:
         raise SystemExit("MAC001X 포지션 데이터가 없습니다.")
@@ -495,7 +549,9 @@ def compute_daily(positions: pd.DataFrame, activity: pd.DataFrame,
     idx = list(mv.index)
     prev_date = pd.Series([None] + idx[:-1], index=idx)
     gap = pd.Series([float("nan")] + [(idx[i] - idx[i - 1]).days for i in range(1, len(idx))], index=idx)
-    computable = pd.Series([d >= cutover and (i > 0 and gap.iloc[i] <= max_gap_days)
+    skip = set(exclude_dates or ())
+    computable = pd.Series([d >= cutover and d not in skip
+                            and (i > 0 and gap.iloc[i] <= max_gap_days)
                             for i, d in enumerate(idx)], index=idx)
 
     first = next((d for d in idx if computable[d]), None)
@@ -510,6 +566,7 @@ def compute_daily(positions: pd.DataFrame, activity: pd.DataFrame,
     note = pd.Series("", index=idx)
     note[[d for d in idx if d < cutover]] = NOTE_PRE_CUTOVER
     note[[d for d in idx if d >= cutover and not computable[d]]] = NOTE_GAP
+    note[[d for d in idx if d >= cutover and d in skip]] = NOTE_AFTER_INCOMPLETE
 
     total_mv = mv.sum(axis=1)
     daily = pd.DataFrame(index=mv.index)
@@ -833,9 +890,14 @@ def main(argv=None):
                          "(예: --ipo-cost \"NH SPECIAL=59000\")")
     ap.add_argument("--rebuild", action="store_true",
                     help="기존 산출 파일을 무시하고 전체 재계산")
+    ap.add_argument("--no-organize", action="store_true",
+                    help="루트에 새로 들어온 리포트를 폴더로 정리하지 않음 (정리가 기본)")
+    ap.add_argument("--layout", default="group", choices=list(LAYOUTS),
+                    help="정리 폴더 구조 (기본: group = 대분류/리포트별)")
     ap.add_argument("--max-gap-days", type=int, default=MAX_GAP_DAYS,
                     help=f"직전 리포트일과 간격이 이 일수를 넘으면 산출 제외 (기본 {MAX_GAP_DAYS})")
     args = ap.parse_args(argv)
+    args.organize = not args.no_organize
 
     for s in (sys.stdout, sys.stderr):
         try:
@@ -855,12 +917,26 @@ def main(argv=None):
     by_code = index_by_code(files)
     print(f"      {len(files):,}개 파일")
 
+    avail = report_availability(files)
+    today = dt.date.today()
+    latest = avail["기준일"].max() if len(avail) else None
+    latest_ok = avail.loc[avail["완비"], "기준일"].max() if len(avail) else None
+    if latest is not None:
+        age = (today - latest).days
+        print(f"      최신 리포트일 {latest} ({'오늘' if age == 0 else f'{age}일 전'})"
+              f" · 오늘 {today}")
+        bad = avail[~avail["완비"]]
+        if len(bad):
+            for _, b in bad.tail(5).iterrows():
+                print(f"      ! {b['기준일']} 필수 리포트 미도착({b['미도착']}) → 산출 제외")
+
     print("[2/7] 리포트 로드")
     positions = build_positions(load_code(by_code, "MAC001X"))
     activity = build_activity(load_code(by_code, "MAC002TDX"))
     raw_cash = load_code(by_code, "CASH005X")
     if positions.empty:
         raise SystemExit("MAC001X 파일이 없어 계산할 수 없습니다.")
+    positions, activity, after_incomplete = truncate_to_complete(positions, activity, avail)
 
     print("[3/7] EQSWAP.xlsx 시드 읽기")
     seed_cum, seed_date, ipo_master = 0.0, None, pd.DataFrame()
@@ -928,7 +1004,8 @@ def main(argv=None):
     print("[5/7] 일일손익 계산")
     res = compute_daily(positions, activity, external_idx, cutover,
                         max_gap_days=args.max_gap_days,
-                        synthetic_ipo=synth_ipo)
+                        synthetic_ipo=synth_ipo,
+                        exclude_dates=after_incomplete)
     new_daily = res["daily"][res["daily"]["Report Date"] >= cutover].copy()
     print(f"      계산 구간: {new_daily['Report Date'].min()} ~ {new_daily['Report Date'].max()} "
           f"({int(new_daily['Computed'].sum())}영업일)")
@@ -1002,15 +1079,23 @@ def main(argv=None):
     monthly = monthly[[c for c in m_order if c in monthly.columns]
                       + [c for c in monthly.columns if c not in m_order]]
 
+    incomplete = avail[~avail["완비"]] if len(avail) else pd.DataFrame()
     meta = [
         ("Generated at", dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+        ("Run date", str(today)),
+        ("Latest report date", f"{latest}  ({(today - latest).days} day(s) old)"
+         if latest is not None else "-"),
+        ("Latest complete report date", str(latest_ok) if latest_ok is not None else "-"),
+        ("Incomplete report dates (excluded)",
+         " | ".join(f"{r['기준일']} missing {r['미도착']}" for _, r in incomplete.iterrows())
+         if len(incomplete) else "None"),
         ("Source folder", src),
         ("Output file", out_path),
         ("Seed (EQSWAP.xlsx)",
          f"{seed_date}  cumulative PnL {seed_cum:,.2f} USD" if seed_date
          else f"{seed_cum:,.2f} USD"),
         ("Prelude calculation starts", str(cutover)),
-        ("Latest report date", str(last["Report Date"])),
+        ("Latest row in tracker", str(last["Report Date"])),
         ("Cumulative PnL (latest)", f"{last['Cumulative PnL']:,.2f} USD"),
         ("NAV per unit (USD)", f"{last['NAV per Unit (USD)']:.8f}"),
         ("AUM (principal + cum. PnL)", f"{last['AUM (Principal + Cum PnL)']:,.2f} USD"),
@@ -1051,12 +1136,34 @@ def main(argv=None):
         ("09_Cash_Balance", cash_bal),
         ("10_Transactions", trades),
         ("11_IPO_Master_EQSWAP", ipo_sheet),
+        ("12_Report_Availability", avail.rename(columns={
+            "기준일": "Report Date", "리포트종류수": "Report Types Received",
+            "미도착": "Missing (required)", "완비": "Complete"})),
     ]
 
     print(f"[7/7] 엑셀 작성: {out_path}")
     write_workbook(out_path, sheets, meta)
     print(f"      완료 · 최종 {last['Report Date']} 누적손익 {last['Cumulative PnL']:,.2f} USD "
           f"/ 기준가 {last['NAV per Unit (USD)']:.6f}")
+
+    if args.organize:
+        skip = os.path.abspath(os.path.join(src, "_output"))
+        targets = [f for f in files
+                   if not os.path.abspath(f.path).startswith(skip)
+                   and f.date is not None
+                   and f.ext not in (".xlsx", ".xlsm", ".xlsb", ".xls")
+                   and os.path.dirname(os.path.abspath(f.path)) == os.path.abspath(src)]
+        if targets:
+            print(f"\n[정리] 루트에 있는 신규 리포트 {len(targets)}개를 폴더로 이동")
+            log = os.path.join(src, "_output", "_organize_log.csv")
+            df = organize_files(targets, src, layout=args.layout, mode="move",
+                                dry_run=False, log_path=log)
+            for grp, g in df.groupby("대분류"):
+                print(f"      {grp}  {len(g)}건", end="")
+                fail = g[g["처리"].str.startswith("실패")]
+                print(f"  (실패 {len(fail)})" if len(fail) else "")
+        else:
+            print("\n[정리] 루트에 정리할 신규 리포트 없음")
     return 0
 
 
