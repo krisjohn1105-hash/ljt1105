@@ -126,6 +126,8 @@ NOTE_PRE_CUTOVER = "Before cutover (EQSWAP seed period)"
 NOTE_GAP = "Excluded - gap from prior report date too large"
 TYPE_SECURITY = "Security"
 TYPE_JOURNAL = "Cash flow (no security)"
+TYPE_RESIDUAL = "Residual (not attributable per security)"
+CASH_RESIDUAL_LABEL = "Cash & Interest (FX revaluation, interest, dividends, fees)"
 IPO_PAYMENT_LABEL = "IPO subscription payment"
 REGISTERED_YES = "Registered"
 REGISTERED_NO = "Not registered"
@@ -543,8 +545,15 @@ def compute_daily(positions: pd.DataFrame, activity: pd.DataFrame,
 
 def compute_security_pnl(positions: pd.DataFrame, activity: pd.DataFrame,
                          computable: pd.Series,
-                         synth_detail: Optional[pd.DataFrame] = None) -> pd.DataFrame:
-    """자산군·종목 단위 일일손익."""
+                         synth_detail: Optional[pd.DataFrame] = None,
+                         bucket_pnl: Optional[pd.DataFrame] = None) -> pd.DataFrame:
+    """
+    자산군·종목 단위 일일손익.
+
+    현금·이자 자산군은 정의상 잔여항(Δ현금평가액 − 타 자산군 현금흐름)이라
+    종목 단위로 분해되지 않는다. 종목별로 쪼개면 버킷 합계와 어긋나므로
+    한 줄의 잔여항 행으로 표시한다.
+    """
     pos = positions.copy()
     act = activity[activity["현금원장"]].copy() if not activity.empty else pd.DataFrame()
     key_cols = ["버킷", "종목명"]
@@ -594,7 +603,25 @@ def compute_security_pnl(positions: pd.DataFrame, activity: pd.DataFrame,
     out = out[(out["평가액"] != 0) | (out["현금흐름"] != 0) | (out["일일손익"] != 0)]
     cols = ["기준일", "자산군", "구분", "종목명", "종목코드", "수량",
             "전일평가액", "평가액", "현금흐름", "일일손익", "누적손익"]
-    out = out[cols].sort_values(["기준일", "자산군", "구분", "종목명"])
+    out = out[cols]
+
+    # 현금·이자 버킷은 종목 분해분을 버리고 잔여항 한 줄로 대체한다
+    out = out[out["자산군"] != BUCKET_EN["Cash"]]
+    if bucket_pnl is not None and "Cash" in bucket_pnl.columns:
+        res = pd.DataFrame({
+            "기준일": list(bucket_pnl.index),
+            "자산군": BUCKET_EN["Cash"],
+            "구분": TYPE_RESIDUAL,
+            "종목명": CASH_RESIDUAL_LABEL,
+            "종목코드": "",
+            "수량": 0.0, "전일평가액": float("nan"), "평가액": 0.0, "현금흐름": 0.0,
+            "일일손익": bucket_pnl["Cash"].values,
+        })
+        res["누적손익"] = res["일일손익"].cumsum()
+        res = res[res["일일손익"] != 0]
+        out = pd.concat([out, res[cols]], ignore_index=True, sort=False)
+
+    out = out.sort_values(["기준일", "자산군", "구분", "종목명"])
     return out.rename(columns={
         "기준일": "Report Date", "자산군": "Asset Class", "구분": "Type",
         "종목명": "Security", "종목코드": "Symbol", "수량": "Quantity",
@@ -888,7 +915,8 @@ def main(argv=None):
     daily = add_cumulative(merged, seed_cum, seed_date, args.principal)
     last = daily.iloc[-1]
 
-    sec = compute_security_pnl(positions, activity, res["computable"], synth_detail)
+    sec = compute_security_pnl(positions, activity, res["computable"], synth_detail,
+                               bucket_pnl=res["pnl"])
     sec = sec[sec["Report Date"] >= cutover]
     detail = res["detail"][res["detail"]["Report Date"] >= cutover]
     recon = res["recon"][res["recon"]["Report Date"] >= cutover]
