@@ -130,6 +130,128 @@ def load_cost_basis(path):
     return basis
 
 
+SUBSCRIPTION_PATH = Path(r"Z:\02.펀드\002.청약\청약내역_펀드_v2.xlsx")
+
+base.REPORT_PATTERNS.setdefault('mtd_txn', '*DATA_Custody_MTD_303209_*.xls')
+
+
+def load_subscription_prices(path=None):
+    """청약내역 엑셀 → {6자리 티커: (공모단가, 수수료율)}.
+
+    이 장부에는 국내 펀드(코벤/멀티/블록딜) 배정분만 있고 QSMA 배정분은 없다.
+    다만 공모단가·수수료율은 전 펀드 공통이므로 단가만 가져와 GS 의 무상입고
+    수량에 곱한다. 금액은 반드시 GS 현금 PAYMENT 와 교차검증한다.
+    """
+    path = Path(path or SUBSCRIPTION_PATH)
+    if not path.is_file():
+        warn(f'청약내역 파일을 찾을 수 없어 IPO 취득원가를 자동 도출하지 못했습니다: {path}')
+        return {}
+    try:
+        raw = pd.read_excel(path, sheet_name='Sheet1', header=None)
+        header = None
+        for i in range(min(len(raw), 12)):
+            values = [str(v).strip() for v in raw.iloc[i].tolist()]
+            if 'Ticker' in values and '배정수량' in values:
+                header = i
+                break
+        if header is None:
+            warn(f'청약내역 파일에서 헤더(Ticker/배정수량)를 찾지 못했습니다: {path}')
+            return {}
+        frame = pd.read_excel(path, sheet_name='Sheet1', header=header)
+    except Exception as exc:
+        warn(f'청약내역 파일을 읽지 못했습니다 ({path}): {exc}')
+        return {}
+
+    frame.columns = [str(c).strip().replace('\n', ' ') for c in frame.columns]
+    out = {}
+    for _, row in frame.iterrows():
+        ticker = re.sub(r'\D', '', str(row.get('Ticker', ''))).zfill(6)
+        price = num(row.get('단가'))
+        gross = num(row.get('청약금액'))
+        fee = num(row.get('수수료'))
+        if len(ticker) == 6 and price:
+            out[ticker] = (price, (fee / gross) if gross else 0.0)
+    return out
+
+
+def load_cash_payments(root, month_start, month_end):
+    """당월 현금 PAYMENT(매매 외 출금) — [(기준일, 현지금액, 통화)].
+
+    IPO 청약대금이 이 경로로 빠져나가므로 취득원가 교차검증에 쓴다.
+    """
+    files = {d: p for d, p in collect_files(root, 'mtd_txn').items() if d <= month_end}
+    if not files:
+        return []
+    _, idx, rows, datemode = read_report(
+        files[max(files)], ['Account Number', 'Product Type', 'Trade Net Amount'])
+    if idx is None:
+        return []
+    seen, out = set(), []
+    for row in rows:
+        if acct8(cell(row, idx, 'Account Number')) != CASH_ACCT:
+            continue
+        if 'PAYMENT' not in str(cell(row, idx, 'Transaction Mnemonic')).upper():
+            continue
+        bdate = to_date(cell(row, idx, 'Business Date'), datemode)
+        amount = num(cell(row, idx, 'Trade Net Amount'))
+        if bdate is None or not (month_start <= bdate <= month_end):
+            continue
+        key = (bdate, amount)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append((bdate, amount, str(cell(row, idx, 'Settle Currency')).strip().upper()))
+    return out
+
+
+def derive_cost_basis(root, transfers, month_start, month_end, subscription_path=None):
+    """무상입고(FREC) 종목의 취득원가를 자동 도출 — {symbol: spec}.
+
+    청약 공모단가 x 무상입고 수량 x (1+수수료율) 로 계산한 뒤,
+    같은 금액의 GS 현금 PAYMENT 가 실제로 있는지 확인한 것만 채택한다.
+    (2026-08 기준으로 3건 모두 원 단위까지 일치함을 확인)
+    """
+    prices = load_subscription_prices(subscription_path)
+    if not prices:
+        return {}
+    payments = load_cash_payments(root, month_start, month_end)
+
+    by_symbol = defaultdict(float)
+    meta = {}
+    for bdate, record in transfers:
+        by_symbol[record['symbol']] += record['qty']
+        meta.setdefault(record['symbol'], (bdate, record['name']))
+
+    derived = {}
+    for symbol, qty in by_symbol.items():
+        ticker = re.sub(r'\D', '', symbol).zfill(6)
+        if ticker not in prices or qty <= 0:
+            continue
+        price, fee_rate = prices[ticker]
+        gross = qty * price
+        expected = -(gross + round(gross * fee_rate))
+        match = next(((d, amt, ccy) for d, amt, ccy in payments
+                      if abs(amt - expected) <= 1.0), None)
+        bdate, name = meta[symbol]
+        if match is None:
+            warn(f'{symbol} {name}: 청약단가 {price:,.0f}원 x {qty:,.0f}주 = '
+                 f'{expected:,.0f} 인데 같은 금액의 GS 현금 PAYMENT 를 찾지 못했습니다 '
+                 '— 자동 도출을 보류했습니다. --cost-basis 로 직접 넣으세요.')
+            continue
+        pay_date, amount, ccy = match
+        derived[symbol] = {
+            'cost_local': amount,
+            'ccy': ccy or 'KRW',
+            'fx_date': pay_date.isoformat(),
+            'note': (f'{name} 공모단가 {price:,.0f} x {qty:,.0f}주 + 수수료 '
+                     f'{fee_rate:.2%} = {amount:,.0f} {ccy}. '
+                     f'GS 현금 PAYMENT {pay_date} 금액과 일치(자동 도출).'),
+        }
+        warn(f'{symbol} {name}: IPO 취득원가 {amount:,.0f} {ccy} 자동 도출 '
+             f'(청약단가 {price:,.0f} x {qty:,.0f}주, GS PAYMENT {pay_date} 일치)')
+    return derived
+
+
 def resolve_cost(spec, transfer_date, fx_by_date, me_fx):
     """원가 스펙을 Base(USD) 금액으로 환산. 반환 (금액, 적용환율일)."""
     if 'cost_usd' in spec:
@@ -471,7 +593,8 @@ def load_broker_interest(root, month_start, month_end):
 # --------------------------------------------------------------------------- #
 # 월별 손익 조립
 # --------------------------------------------------------------------------- #
-def build_monthly(root, prev_root, ric_map, cost_basis=None):
+def build_monthly(root, prev_root, ric_map, cost_basis=None,
+                  subscription_path=None):
     swap_snaps = load_swap_snapshots(root)
     cash_snaps, fx_by_date = load_cash_snapshots(root)
 
@@ -590,10 +713,22 @@ def build_monthly(root, prev_root, ric_map, cost_basis=None):
         else:
             missing_cost[symbol] = (bdate, record['qty'], record['mnemonic'],
                                     record['name'])
+    # 수동 입력이 없으면 청약내역 + GS 현금 PAYMENT 로 자동 도출을 시도한다
+    if missing_cost:
+        auto = derive_cost_basis(root, transfers, month_start, month_end,
+                                 subscription_path)
+        for symbol, spec in auto.items():
+            if symbol in missing_cost:
+                amount, used = resolve_cost(spec, missing_cost[symbol][0],
+                                            fx_by_date, me_fx)
+                cost_adjust[symbol] += amount
+                cost_fx_date[symbol] = used
+                cost_basis[symbol] = spec
+                missing_cost.pop(symbol, None)
     for symbol, (bdate, qty, mnemonic, name) in missing_cost.items():
         warn(f'{bdate}: {symbol} {name} {qty:,.0f}주 무상입고({mnemonic}) — '
-             '취득원가가 GS 리포트에 없습니다. --cost-basis 로 청약원가를 넣지 않으면 '
-             '매도대금 전액이 손익으로 계상됩니다.')
+             '취득원가가 GS 리포트에 없고 청약내역에서도 찾지 못했습니다. '
+             '--cost-basis 로 직접 넣지 않으면 매도대금 전액이 손익으로 계상됩니다.')
     for symbol, amount in cost_adjust.items():
         warn(f'{symbol}: 취득원가 {amount:,.2f} USD 차감 '
              f'(환율기준일 {cost_fx_date.get(symbol)}) — --cost-basis 반영')
@@ -852,7 +987,24 @@ def write_excel(out_path, frame, meta, expenses, root):
          'Custody Position(AR=301712), Custody Transaction(AR=286534), '
          'Syn Contract P&V(AR=303172), MTD SynSettle(AR=302553), '
          'Asset Servicing(AR=303179), Custody Cash Balances(AR=302239), '
-         'Interest MTD Accrual(AR=302415)'),
+         'Interest MTD Accrual(AR=302415), Custody MTD Transaction(AR=303209)'),
+        ('', ''),
+        ('[Citco 와 다를 수 있는 항목] 1. 월말 환율',
+         'Qube/Citco 는 KRWUSD 를 런던 16:00 Refinitiv 스냅으로 사용. 본 리포트는 '
+         'GS 포지션 리포트의 Base/Local 평가액에서 역산한 환율을 쓴다. 2026-07 대사에서 '
+         'Dunamis 1,424 vs Citco 1,438.23 (약 1%) 차이 발생 — Citco 월말 환율을 받으면 '
+         '고정값으로 대체 가능.'),
+        ('[Citco 와 다를 수 있는 항목] 2. 실현/미실현 배분',
+         'Citco 는 OTE Change(자기 장부원가 대비) / P&S 로 구분. 본 리포트의 현물은 '
+         '월초 평가액을 기초원가로 보는 이동평균법이라 합계는 같아도 배분이 다를 수 있다. '
+         '스왑은 Equity MTM / Unsettled P&L 로 나눠 Citco 개념과 정렬됨.'),
+        ('[Citco 와 다를 수 있는 항목] 3. 선물환·현금 평가',
+         '미결제 FX(Forward Cash) 포지션을 스팟으로 재평가해 Cross Rate 에 포함했다. '
+         'Citco 는 Cross Rate 와 Cash Balance 를 분리하고 결제일 기준 선물환율을 쓸 '
+         '가능성이 있어 줄 단위로는 어긋날 수 있다.'),
+        ('미포함 항목',
+         '계좌 간 자금이동(IPO 청약대금 등)은 손익이 아니므로 제외. '
+         '871m 원천징수·대차·Stock Loan 리포트는 당월 NO DATA 로 확인됨.'),
     ]
     for ex_date, name, amount, ric in meta['dividend_items']:
         notes.append((f'현물 배당 ex-date {ex_date}',
@@ -962,7 +1114,10 @@ def main():
     parser.add_argument('--expenses', default=None,
                         help='월별 비용 JSON (예: {"Other Data costs": -3150})')
     parser.add_argument('--cost-basis', default=None,
-                        help='무상입고(IPO 청약) 종목의 취득원가 JSON')
+                        help='무상입고(IPO 청약) 종목의 취득원가 JSON '
+                             '(생략하면 청약내역에서 자동 도출)')
+    parser.add_argument('--subscriptions', default=None,
+                        help=f'청약내역 엑셀 (기본 {SUBSCRIPTION_PATH})')
     parser.add_argument('-o', '--output', default=None, help='출력 엑셀 경로')
     args = parser.parse_args()
 
@@ -981,7 +1136,8 @@ def main():
 
     ric_map = load_ric_map(args.ric_map)
     cost_basis = load_cost_basis(args.cost_basis)
-    frame, meta = build_monthly(root, prev_root, ric_map, cost_basis)
+    frame, meta = build_monthly(root, prev_root, ric_map, cost_basis,
+                                args.subscriptions)
 
     output = Path(args.output) if args.output else \
         root / f"Dunamis - Manager's P&L {root.name}.xlsx"
