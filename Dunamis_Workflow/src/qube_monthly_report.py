@@ -469,6 +469,9 @@ def write_security_level(out_path, frame, month_end):
     from openpyxl.styles import Alignment, Font, PatternFill
     from openpyxl.utils import get_column_letter
 
+    # 열 구성은 한 줄로 검산되게 둔다:
+    #   GS Reported P&L + IPO Cost Basis Adj. = $ MTD P&L   (모든 행에서 성립)
+    # Financing 은 계정 단위 Interest 행에 이미 합산돼 있으므로 참고용이며 더하지 않는다.
     sec = pd.DataFrame({
         'Type': frame['Type'],
         'Description': frame['Description'],
@@ -478,11 +481,16 @@ def write_security_level(out_path, frame, month_end):
         'EOM quantity / positions': frame['EOM quantity / positions'],
         'ME price': frame['ME price'],
         'ME FX': frame['ME FX'],
-        'Realized + Unrealized (USD)': frame['_equity'] + frame['_dividend'],
+        'GS Reported P&L': frame['$ MTD P&L'] - frame['_cost_adj'],
         'of which Dividend': frame['_dividend'],
-        'Financing (account level)': frame['_financing'],
+        'IPO Cost Basis Adj.': frame['_cost_adj'],
+        'Financing (per-contract, memo only)': frame['_financing'],
         '$ MTD P&L': frame['$ MTD P&L'],
     })
+    residual = (sec['GS Reported P&L'] + sec['IPO Cost Basis Adj.']
+                - sec['$ MTD P&L']).abs().max()
+    if residual > 0.005:
+        warn(f'Security Level 항등식 오차 {residual:,.4f} — 열 구성 확인 필요.')
     with pd.ExcelWriter(out_path, engine='openpyxl') as writer:
         sec.to_excel(writer, sheet_name='Security Level P&L', index=False)
         ws = writer.book['Security Level P&L']
@@ -498,6 +506,10 @@ def write_security_level(out_path, frame, month_end):
             letter = get_column_letter(col[0].column)
             if header in ('Description',):
                 ws.column_dimensions[letter].width = 44
+            elif header == 'Financing (per-contract, memo only)':
+                ws.column_dimensions[letter].width = 22
+                for cell in col[1:]:
+                    cell.number_format = '#,##0.00;[Red]-#,##0.00'
             elif header in ('Type', 'Bloomberg Ticker', 'Ric', 'ISIN'):
                 ws.column_dimensions[letter].width = 20
             else:
